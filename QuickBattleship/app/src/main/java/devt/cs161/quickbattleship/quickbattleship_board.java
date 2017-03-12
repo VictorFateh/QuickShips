@@ -35,6 +35,27 @@ public class quickbattleship_board {
         }
     }
 
+    public boolean makeMove(int i) {
+        quickbattleship_board_slot targetedSlot = _completeBoard[i];
+        targetedSlot.setHit(true);
+        if (targetedSlot.isOccupied()) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    public boolean checkGameOver() {
+        boolean gameOver = true;
+        for (int i = 0; i < 100; i++) {
+            if (_completeBoard[i].isOccupied() && !_completeBoard[i].isHit()) {
+                gameOver = false;
+            }
+        }
+        return gameOver;
+    }
+
     @Override
     public String toString() {
         String returnString = "Player ID (" + _player_ID + "), ";
