@@ -8,4 +8,10 @@
     <keyboard-shortcut first-keystroke="meta y" />
   </action>
   <action id="EditorDeleteLine" />
+  <action id="ImplementMethods" />
+  <action id="MethodHierarchy.ImplementMethodAction" />
+  <action id="ReformatCode">
+    <keyboard-shortcut first-keystroke="meta alt l" />
+    <keyboard-shortcut first-keystroke="meta i" />
+  </action>
 </keymap>
