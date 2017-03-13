@@ -9,43 +9,15 @@ import java.util.UUID;
  */
 
 public class quickbattleship_controller {
-    quickbattleship_model model;
 
     public quickbattleship_controller() {
-        model = new quickbattleship_model();
-    }
-
-    public void testCode() {
-        String temp_id = UUID.randomUUID().toString();
-        String temp_id2;
-        quickbattleship_board opponent_0 = new quickbattleship_board(temp_id);
-        model.copyOpponentGameBoard(temp_id, opponent_0);
-
-        temp_id = UUID.randomUUID().toString();
-        quickbattleship_board opponent_1 = new quickbattleship_board(temp_id);
-        model.copyOpponentGameBoard(temp_id, opponent_1);
-
-        temp_id = UUID.randomUUID().toString();
-        temp_id2 = temp_id;
-        quickbattleship_board opponent_2 = new quickbattleship_board(temp_id);
-        model.copyOpponentGameBoard(temp_id, opponent_2);
-
-        temp_id = UUID.randomUUID().toString();
-        quickbattleship_board opponent_3 = new quickbattleship_board(temp_id);
-        model.copyOpponentGameBoard(temp_id, opponent_3);
-
-        temp_id = UUID.randomUUID().toString();
-        quickbattleship_board opponent_4 = new quickbattleship_board(temp_id);
-        model.copyOpponentGameBoard(temp_id, opponent_4);
-
-        model.copyOpponentGameBoard(opponent_4.getGame_ID(), opponent_4);
-
-        temp_id = UUID.randomUUID().toString();
-        quickbattleship_board opponent_5 = new quickbattleship_board(temp_id);
-        model.copyOpponentGameBoard(temp_id, opponent_5);
-
-        model.printMap_debug();
-        Log.d("debug", "\n**********************************************************************\n");
-        Log.d("debug", model.printSingleBoard_debug(temp_id2).toString());
+        quickbattleship_model player1 = new quickbattleship_model();
+        quickbattleship_model player2 = new quickbattleship_model();
+        quickbattleship_board player1Board = player1.getPlayerGameBoard();
+        quickbattleship_board player2Board = player2.getPlayerGameBoard();
+        player1.copyOpponentGameBoard(player2Board);
+        player2.copyOpponentGameBoard(player1Board);
+        player1.printMap_debug();
+        player2.printMap_debug();
     }
 }

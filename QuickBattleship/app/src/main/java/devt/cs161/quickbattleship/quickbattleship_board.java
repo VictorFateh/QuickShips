@@ -10,19 +10,19 @@ import java.util.UUID;
 
 public class quickbattleship_board {
 
-    private String _player_ID;
+    private String _playerID;
     private quickbattleship_board_slot[] _completeBoard;
 
     public quickbattleship_board(String player_ID) {
-        _player_ID = player_ID;
+        _playerID = player_ID;
         _completeBoard = new quickbattleship_board_slot[100];
         for (int i = 0; i < 100; i++) {
             _completeBoard[i] = new quickbattleship_board_slot();
         }
     }
 
-    public String getGame_ID() {
-        return _player_ID;
+    public String getPlayerID() {
+        return _playerID;
     }
 
     public void printBoard_debug() {
@@ -35,6 +35,7 @@ public class quickbattleship_board {
         }
     }
 
+    // If the move is a hit, return true
     public boolean makeMove(int i) {
         quickbattleship_board_slot targetedSlot = _completeBoard[i];
         targetedSlot.setHit(true);
@@ -58,7 +59,7 @@ public class quickbattleship_board {
 
     @Override
     public String toString() {
-        String returnString = "Player ID (" + _player_ID + "), ";
+        String returnString = "Player ID (" + _playerID + "), ";
         for (int i = 0; i < 5; i++) {
             if (_completeBoard[i].isOccupied()) {
                 if (i != 4) {
