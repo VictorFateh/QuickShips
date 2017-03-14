@@ -12,6 +12,10 @@ IntelliLang.xml
 
 gradle.run.settings.xml
 
+other.xml
+
+_mac/
+
 keymaps/
 
 inspection/
