@@ -1,12 +1,6 @@
 
 androidStudioFirstRun.xml
 
-androidStudioFirstRun.xml
-
-androidStudioFirstRun.xml
-
-debugger.xml
-
 debugger.xml
 
 diff.xml
@@ -19,18 +13,8 @@ IntelliLang.xml
 
 gradle.run.settings.xml
 
-diff.xml
+_mac/
 
-debugger.xml
+keymaps/
 
-androidStudioFirstRun.xml
-
-inspection/Default.xml
-
-keymaps/Trinh.xml
-
-QuickShip/.idea/misc.xml
-
-keymaps/Trinh.xml
-
-inspection/Default.xml
+inspection/
