@@ -87,3 +87,23 @@ freeline_project_description.json
 gen-external-apklibs
 
 # End of https://www.gitignore.io/api/android
+
+gradle/
+
+gradle/wrapper
+
+wrapper/
+
+build.gradle
+
+gradle.properties
+
+gradlew
+
+gradlew.bat
+
+settings.gradle
+
+gradle-wrapper.jar
+
+gradle-wrapper.properties
