@@ -1,4 +1,3 @@
-
 androidStudioFirstRun.xml
 
 debugger.xml
@@ -12,6 +11,8 @@ ui.lnf.xml
 IntelliLang.xml
 
 gradle.run.settings.xml
+
+other.xml
 
 _mac/
 
