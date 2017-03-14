@@ -109,3 +109,5 @@ gradle-wrapper.jar
 gradle-wrapper.properties
 
 proguard-rules.pro
+
+app.iml
