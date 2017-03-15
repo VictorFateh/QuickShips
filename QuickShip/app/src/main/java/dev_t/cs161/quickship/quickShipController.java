@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 
-public class quickShipController extends Activity {
+public class quickShipController extends Activity implements Runnable {
 
     private quickShipView _mainView;
     private quickShipController _mainController;
@@ -16,6 +16,7 @@ public class quickShipController extends Activity {
 
         _mainController = new quickShipController();
         _mainView = (quickShipView) findViewById(R.id.main_screen);
+
         quickShipModel player1 = new quickShipModel();
         quickShipModel player2 = new quickShipModel();
         quickShipBoard player1Board = player1.getPlayerGameBoard();
@@ -30,4 +31,8 @@ public class quickShipController extends Activity {
         _mainView.clearCanvas();
     }
 
+    @Override
+    public void run() {
+        
+    }
 }
