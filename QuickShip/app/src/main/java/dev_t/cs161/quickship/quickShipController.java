@@ -1,22 +1,41 @@
 package dev_t.cs161.quickship;
 
 import android.app.Activity;
+import android.graphics.Point;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Display;
 import android.view.View;
+import android.widget.FrameLayout;
 
-public class quickShipController extends Activity implements Runnable {
+public class quickShipController extends Activity {
 
     private quickShipView _mainView;
-    private quickShipController _mainController;
+    private boolean running;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        _mainView = new quickShipView(this);
+        setContentView(_mainView);
+        newGame();
+    }
 
-        _mainController = new quickShipController();
-        _mainView = (quickShipView) findViewById(R.id.main_screen);
+    @Override
+    protected void onResume() {
+        // TODO Auto-generated method stub
+        super.onResume();
+        _mainView.onResumeMySurfaceView();
+    }
 
+    @Override
+    protected void onPause() {
+        // TODO Auto-generated method stub
+        super.onPause();
+        _mainView.onPauseMySurfaceView();
+    }
+
+    public void newGame() {
         quickShipModel player1 = new quickShipModel();
         quickShipModel player2 = new quickShipModel();
         quickShipBoard player1Board = player1.getPlayerGameBoard();
@@ -25,14 +44,6 @@ public class quickShipController extends Activity implements Runnable {
         player2.copyOpponentGameBoard(player1Board);
         player1.printMap_debug();
         player2.printMap_debug();
-    }
-
-    public void clearCanvas(View v) {
-        _mainView.clearCanvas();
-    }
-
-    @Override
-    public void run() {
-        
+        running = true;
     }
 }
