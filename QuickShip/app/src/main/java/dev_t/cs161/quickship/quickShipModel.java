@@ -8,29 +8,29 @@ import java.util.Map;
 import java.util.UUID;
 
 public class quickShipModel {
-    private String _player_ID;
+    private String player_ID;
     private int _personalTurnCount;
-    private quickShipBoard _playerGameBoard;
-    private Map<String, quickShipBoard> _opponentGameBoards;
+    private quickShipBoard playerGameBoard;
+    private Map<String, quickShipBoard> opponentGameBoards;
 
     public quickShipModel() {
-        _player_ID = UUID.randomUUID().toString();
+        player_ID = UUID.randomUUID().toString();
 
-        _playerGameBoard = new quickShipBoard(_player_ID);
-        _opponentGameBoards = new HashMap<>();
+        playerGameBoard = new quickShipBoard(player_ID);
+        opponentGameBoards = new HashMap<>();
     }
 
     public quickShipBoard getPlayerGameBoard() {
-        return _playerGameBoard;
+        return playerGameBoard;
     }
 
     public void copyOpponentGameBoard(quickShipBoard opponentGameBoard) {
         String opponent_ID = opponentGameBoard.getPlayerID();
-        _opponentGameBoards.put(opponent_ID, opponentGameBoard);
+        opponentGameBoards.put(opponent_ID, opponentGameBoard);
     }
 
     public void printMap_debug() {
-        Iterator it = _opponentGameBoards.entrySet().iterator();
+        Iterator it = opponentGameBoards.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
             Log.d("debug", pair.getKey() + " = " + pair.getValue() + "\n");
@@ -39,7 +39,7 @@ public class quickShipModel {
     }
 
     public quickShipBoard printSingleBoard_debug(String opponent_ID) {
-        return _opponentGameBoards.get(opponent_ID);
+        return opponentGameBoards.get(opponent_ID);
     }
 
     public void testCode_debug() {

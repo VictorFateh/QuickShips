@@ -6,7 +6,7 @@ import android.os.Bundle;
 public class quickShipController extends Activity implements Runnable {
 
     Thread thread = null;
-    private quickShipViewTemplate _mainView;
+    private quickShipViewBoard mainView;
     private volatile boolean running;
     private volatile long timeNow;
     private volatile long timePrevFrame = 0;
@@ -15,8 +15,8 @@ public class quickShipController extends Activity implements Runnable {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        _mainView = new quickShipViewTemplate(this);
-        setContentView(_mainView);
+        mainView = new quickShipViewBoard(this);
+        setContentView(mainView);
         newGame();
     }
 
@@ -72,7 +72,7 @@ public class quickShipController extends Activity implements Runnable {
                 }
             }
             timePrevFrame = System.currentTimeMillis();
-            _mainView.render();
+            mainView.render();
         }
     }
 }
