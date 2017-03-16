@@ -11,6 +11,9 @@ import android.view.Display;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import static java.lang.Math.abs;
 
@@ -44,10 +47,14 @@ public class quickShipViewBoard extends SurfaceView {
     private Float boardGridSelectedStartY;
     private Float boardGridSelectedEndX;
     private Float boardGridSelectedEndY;
+    private Float boardGridFrameMargin;
+    private Float viewHeight;
+    private quickShipViewBoardOption mOptionGUI;
 
 
-    public quickShipViewBoard(Context context) {
+    public quickShipViewBoard(Context context, quickShipViewBoardOption optionGUI) {
         super(context);
+        mOptionGUI = optionGUI;
         Display display = ((Activity) context).getWindowManager().getDefaultDisplay();
         display.getSize(screen);
         initializeValues();
@@ -83,7 +90,7 @@ public class quickShipViewBoard extends SurfaceView {
     public void calculateBoardGUIPositions() {
         screenWidth = (float) screen.x;
         screenHeight = (float) screen.y;
-        float boardGridFrameMargin = (screenWidth - (screenWidth * (float) 0.9)) / 2;
+        boardGridFrameMargin = (screenWidth - (screenWidth * (float) 0.9)) / 2;
         boardGridFrameStartX = boardGridFrameMargin;
         boardGridFrameStartY = boardGridFrameMargin;
         boardGridFrameEndX = boardGridFrameMargin + (screenWidth * (float) 0.9);
@@ -92,6 +99,7 @@ public class quickShipViewBoard extends SurfaceView {
         float boardGridFrameHeight = boardGridFrameEndY - boardGridFrameStartY;
         boardGridCellWidth = boardGridFrameWidth / 10;
         boardGridCellHeight = boardGridFrameHeight / 10;
+        viewHeight = boardGridFrameEndY + boardGridFrameMargin;
         float tempDividerX = boardGridFrameStartX;
         for (int i = 0; i < 11; i++) {
             boardGridFrameDividerX[i] = tempDividerX;
@@ -158,8 +166,8 @@ public class quickShipViewBoard extends SurfaceView {
                         currentIndex = selectedIndex;
                         Log.d("debug", "Index: " + currentIndex);
                         calculateSelectedRect(currentIndex);
-                    }
-                    else {
+                        mOptionGUI.setMissileBtnStatus(true);
+                    } else {
                         deSelectCell();
                     }
                 } else {
@@ -178,12 +186,12 @@ public class quickShipViewBoard extends SurfaceView {
 
     public void calculateSelectedRect(int index) {
         int xIndex = index % 10;
-        index = index/10;
+        index = index / 10;
         int yIndex = index % 10;
         boardGridSelectedStartX = boardGridFrameDividerX[xIndex];
-        boardGridSelectedEndX = boardGridFrameDividerX[xIndex+1];
+        boardGridSelectedEndX = boardGridFrameDividerX[xIndex + 1];
         boardGridSelectedStartY = boardGridFrameDividerY[yIndex];
-        boardGridSelectedEndY = boardGridFrameDividerY[yIndex+1];
+        boardGridSelectedEndY = boardGridFrameDividerY[yIndex + 1];
     }
 
     public int calculateCellTouched(float x, float y) {
@@ -202,12 +210,25 @@ public class quickShipViewBoard extends SurfaceView {
         return index;
     }
 
+    public float getViewHeight() {
+        return viewHeight;
+    }
+
+    public float getBoardGridFrameMargin() {
+        return boardGridFrameMargin;
+    }
+
+    public int getCurrentIndex() {
+        return currentIndex;
+    }
+
     public void deSelectCell() {
         currentIndex = -1;
         boardGridSelectedStartX = null;
         boardGridSelectedStartY = null;
         boardGridSelectedEndX = null;
         boardGridSelectedEndY = null;
+        mOptionGUI.setMissileBtnStatus(false);
     }
 
     public static boolean isBetween(float x, float lower, float upper) {

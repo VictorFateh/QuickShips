@@ -1,23 +1,46 @@
 package dev_t.cs161.quickship;
 
 import android.app.Activity;
+import android.graphics.Point;
 import android.os.Bundle;
+import android.view.Display;
+import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 public class quickShipController extends Activity implements Runnable {
 
     Thread thread = null;
-    private quickShipViewBoard mainView;
+    private Point screen = new Point();
+    private FrameLayout mainView;
+    private quickShipViewBoard boardScreen;
     private volatile boolean running;
     private volatile long timeNow;
     private volatile long timePrevFrame = 0;
     private volatile long timeDelta;
+    private Float screenWidth;
+    private Float screenHeight;
+    private Button fireMissleBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mainView = new quickShipViewBoard(this);
+        Display display = getWindowManager().getDefaultDisplay();
+        display.getSize(screen);
+        screenWidth = (float) screen.x;
+        screenHeight = (float) screen.y;
+        mainView = new FrameLayout(this);
+        buildBoardScreen();
         setContentView(mainView);
         newGame();
+    }
+
+    public void buildBoardScreen() {
+        quickShipViewBoardOption gameWidgets = new quickShipViewBoardOption(this);
+        boardScreen = new quickShipViewBoard(this, gameWidgets);
+        gameWidgets.attachViewBoard(boardScreen);
+        mainView.addView(boardScreen);
+        mainView.addView(gameWidgets);
     }
 
     @Override
@@ -72,7 +95,7 @@ public class quickShipController extends Activity implements Runnable {
                 }
             }
             timePrevFrame = System.currentTimeMillis();
-            mainView.render();
+            boardScreen.render();
         }
     }
 }
