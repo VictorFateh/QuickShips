@@ -23,6 +23,7 @@ public class quickShipViewSampleCode extends SurfaceView {
     private Paint clearButtonPaint;
     private Paint clearButtonBorderPaint;
     private Paint textPaint;
+    private Paint paint;
     private String clearButtonText = "Clear";
     private float buttonWidth;
     private float textSize;
@@ -31,6 +32,7 @@ public class quickShipViewSampleCode extends SurfaceView {
 
     public quickShipViewSampleCode(Context context) {
         super(context);
+        setWillNotDraw(false);
         Display display = ((Activity) context).getWindowManager().getDefaultDisplay();
         display.getSize(screen);
         initializeValues();
@@ -38,6 +40,11 @@ public class quickShipViewSampleCode extends SurfaceView {
 
     public void initializeValues() {
         surfaceHolder = getHolder();
+        paint = new Paint();
+        paint.setColor(Color.BLACK);
+        paint.setStyle(Paint.Style.FILL_AND_STROKE);
+        paint.setStrokeWidth(10);
+
         clearButtonPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         clearButtonPaint.setStyle(Paint.Style.FILL);
         clearButtonPaint.setColor(Color.parseColor("#1f64d3"));
@@ -52,8 +59,8 @@ public class quickShipViewSampleCode extends SurfaceView {
         buttonXcoord = (screen.x / 2) - (buttonWidth / 2);
         buttonYcoord = screen.y - (textSize * 2);
     }
-
-    public void render() {
+    @Override
+    public void onDraw(Canvas c) {
         try {
             synchronized (surfaceHolder) {
                 canvas = surfaceHolder.lockCanvas();
@@ -67,10 +74,6 @@ public class quickShipViewSampleCode extends SurfaceView {
                             canvas.drawColor(Color.WHITE);
                         }
                         else {
-                            Paint paint = new Paint();
-                            paint.setColor(Color.BLACK);
-                            paint.setStyle(Paint.Style.FILL_AND_STROKE);
-                            paint.setStrokeWidth(10);
                             canvas.drawLine(start_x, start_y, end_x, end_y, paint);
                         }
                     }
@@ -103,6 +106,7 @@ public class quickShipViewSampleCode extends SurfaceView {
                 end_x = event.getX();
                 end_y = event.getY();
                 held = false;
+                invalidate();
                 break;
             case MotionEvent.ACTION_CANCEL:
                 break;

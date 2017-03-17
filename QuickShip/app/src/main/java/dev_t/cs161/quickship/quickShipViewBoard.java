@@ -11,9 +11,6 @@ import android.view.Display;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import static java.lang.Math.abs;
 
@@ -48,13 +45,24 @@ public class quickShipViewBoard extends SurfaceView {
     private Float boardGridSelectedEndX;
     private Float boardGridSelectedEndY;
     private Float boardGridFrameMargin;
+    private Float viewWidth;
     private Float viewHeight;
     private quickShipViewBoardOption mOptionGUI;
+    private Paint titlePaint;
+    private String mTitle;
+    private Float mTitleWidth;
+    private Float mTitleHeight;
+    private Float mTitleX;
+    private Float mTitleY;
+    private quickShipModel mQuickShipModel;
 
 
-    public quickShipViewBoard(Context context, quickShipViewBoardOption optionGUI) {
+    public quickShipViewBoard(Context context, quickShipViewBoardOption optionGUI, quickShipModel quickShipModel, String title) {
         super(context);
+        setWillNotDraw(false);
+        mQuickShipModel = quickShipModel;
         mOptionGUI = optionGUI;
+        mTitle = title;
         Display display = ((Activity) context).getWindowManager().getDefaultDisplay();
         display.getSize(screen);
         initializeValues();
@@ -65,6 +73,11 @@ public class quickShipViewBoard extends SurfaceView {
         held = true;
         currentIndex = -1;
         surfaceHolder = getHolder();
+
+        titlePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        titlePaint.setColor(Color.BLACK);
+        titlePaint.setTextSize(50);
+
         boardGridFramePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         boardGridFramePaint.setStyle(Paint.Style.FILL);
         boardGridFramePaint.setColor(Color.parseColor("#5a8ddd"));
@@ -90,33 +103,45 @@ public class quickShipViewBoard extends SurfaceView {
     public void calculateBoardGUIPositions() {
         screenWidth = (float) screen.x;
         screenHeight = (float) screen.y;
+
         boardGridFrameMargin = (screenWidth - (screenWidth * (float) 0.9)) / 2;
+
+        mTitleHeight = titlePaint.getTextSize();
+        mTitleWidth = titlePaint.measureText(mTitle);
+        mTitleX = boardGridFrameMargin;
+        mTitleY = mTitleHeight + (mTitleHeight / 2);
+
         boardGridFrameStartX = boardGridFrameMargin;
-        boardGridFrameStartY = boardGridFrameMargin;
+        boardGridFrameStartY = boardGridFrameMargin + mTitleHeight;
         boardGridFrameEndX = boardGridFrameMargin + (screenWidth * (float) 0.9);
         boardGridFrameEndY = boardGridFrameMargin + (screenWidth * (float) 0.9);
         float boardGridFrameWidth = boardGridFrameEndX - boardGridFrameStartX;
         float boardGridFrameHeight = boardGridFrameEndY - boardGridFrameStartY;
         boardGridCellWidth = boardGridFrameWidth / 10;
         boardGridCellHeight = boardGridFrameHeight / 10;
+
+        viewWidth = screenWidth;
         viewHeight = boardGridFrameEndY + boardGridFrameMargin;
+
         float tempDividerX = boardGridFrameStartX;
         for (int i = 0; i < 11; i++) {
             boardGridFrameDividerX[i] = tempDividerX;
             tempDividerX = tempDividerX + boardGridCellWidth;
         }
-        float tempDividerY = boardGridFrameStartX;
+        float tempDividerY = boardGridFrameStartY;
         for (int i = 0; i < 11; i++) {
             boardGridFrameDividerY[i] = tempDividerY;
             tempDividerY = tempDividerY + boardGridCellHeight;
         }
     }
 
-    public void render() {
+    @Override
+    public void onDraw(Canvas c) {
         try {
             synchronized (surfaceHolder) {
                 canvas = surfaceHolder.lockCanvas();
                 if (surfaceHolder.getSurface().isValid()) {
+                    canvas.drawText(mTitle, mTitleX, mTitleY, titlePaint);
                     canvas.drawRect(boardGridFrameStartX, boardGridFrameStartY, boardGridFrameEndX, boardGridFrameEndY, boardGridFramePaint);
 
                     float verticalX = boardGridFrameStartX + boardGridCellWidth;
@@ -181,6 +206,7 @@ public class quickShipViewBoard extends SurfaceView {
                 break;
             default:
         }
+        invalidate();
         return true;
     }
 
@@ -212,6 +238,10 @@ public class quickShipViewBoard extends SurfaceView {
 
     public float getViewHeight() {
         return viewHeight;
+    }
+
+    public float getViewWidth() {
+        return viewWidth;
     }
 
     public float getBoardGridFrameMargin() {
