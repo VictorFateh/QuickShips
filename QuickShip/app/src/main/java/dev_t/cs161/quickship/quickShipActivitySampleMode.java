@@ -6,6 +6,7 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.view.Display;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -26,7 +27,6 @@ public class quickShipActivitySampleMode extends Activity {
         screenHeight = (float) screen.y;
         mainView = new FrameLayout(this);
         buildSampleScreen();
-        setContentView(mainView);
     }
 
     public void buildSampleScreen() {
@@ -34,7 +34,12 @@ public class quickShipActivitySampleMode extends Activity {
         quickShipViewSampleCode tempScreen = new quickShipViewSampleCode(this);
         mainView.addView(tempScreen);
         mainView.addView(gameWidgets);
-        tempScreen.invalidate();
+        WebView wView = new WebView(this);
+        wView.loadUrl("file:///android_asset/oddish.gif");
+        wView.setX(0);
+        wView.setY(600);
+        mainView.addView(wView);
+        setContentView(mainView);
     }
 
     public void switchActivity() {
