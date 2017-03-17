@@ -2,6 +2,7 @@ package dev_t.cs161.quickship;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.view.Display;
@@ -38,6 +39,7 @@ public class quickShipActivityGameMode extends Activity implements Runnable {
 
     public void buildBoardScreen() {
         mainView = new FrameLayout(this);
+        mainView.setBackgroundColor(Color.parseColor("#1f64d3"));
         quickShipViewBoardOption gameWidgets = new quickShipViewBoardOption(this);
         boardScreen = new quickShipViewBoard(this, gameWidgets, mPlayerModel, "Your Board");
         gameWidgets.attachViewBoard(boardScreen);
@@ -99,6 +101,7 @@ public class quickShipActivityGameMode extends Activity implements Runnable {
 
     public void switchActivity3() {
         mainView = new FrameLayout(this);
+        mainView.setBackgroundColor(Color.parseColor("#ffff"));
         quickShipViewBoardOption gameWidgets = new quickShipViewBoardOption(this);
         boardScreen = new quickShipViewBoard(this, gameWidgets, mPlayerModel, "Your Board");
         gameWidgets.attachViewBoard(boardScreen);

@@ -48,7 +48,7 @@ public class quickShipViewBoardOption extends LinearLayout {
             public void onClick(View v) {
                 if(mContext instanceof quickShipActivityGameMode) {
                     quickShipActivityGameMode tempActivity = (quickShipActivityGameMode)mContext;
-                    ((quickShipActivityGameMode) mContext).switchActivity();
+                    ((quickShipActivityGameMode) mContext).switchActivity2();
                 }
             }
         });

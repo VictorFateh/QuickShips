@@ -59,6 +59,7 @@ public class quickShipViewBoard extends SurfaceView {
 
     public quickShipViewBoard(Context context, quickShipViewBoardOption optionGUI, quickShipModel quickShipModel, String title) {
         super(context);
+        setBackgroundColor(Color.parseColor("#ffff"));
         setWillNotDraw(false);
         mQuickShipModel = quickShipModel;
         mOptionGUI = optionGUI;
