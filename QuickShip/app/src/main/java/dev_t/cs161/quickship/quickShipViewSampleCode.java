@@ -36,6 +36,7 @@ public class quickShipViewSampleCode extends SurfaceView {
         Display display = ((Activity) context).getWindowManager().getDefaultDisplay();
         display.getSize(screen);
         initializeValues();
+        setBackgroundColor(Color.parseColor("#FFFFFF"));
     }
 
     public void initializeValues() {

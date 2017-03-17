@@ -3,6 +3,8 @@ package dev_t.cs161.quickship;
 public class quickShipBoardSlot {
     private boolean isHit;
     private boolean isOccupied;
+    private boolean isAnchor;
+    private String shipType;
 
     public quickShipBoardSlot() {
         setHit(false);

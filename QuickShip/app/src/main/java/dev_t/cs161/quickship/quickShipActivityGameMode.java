@@ -34,18 +34,36 @@ public class quickShipActivityGameMode extends Activity implements Runnable {
         screenWidth = (float) screen.x;
         screenHeight = (float) screen.y;
         newGame();
-        buildBoardScreen();
+        victorScreen();
     }
 
-    public void buildBoardScreen() {
+    public void trinhScreen() {
+        quickShipModel temp = new quickShipModel();
+
+    }
+
+    public void victorScreen() {
         mainView = new FrameLayout(this);
-        mainView.setBackgroundColor(Color.parseColor("#1f64d3"));
+        mainView.setBackgroundColor(Color.parseColor("#FFFFFF"));
         quickShipViewBoardOption gameWidgets = new quickShipViewBoardOption(this);
-        boardScreen = new quickShipViewBoard(this, gameWidgets, mPlayerModel, "Your Board");
+        quickShipModel playerBoardData = new quickShipModel();
+        quickShipModel opponentBoardData = new quickShipModel();
+        //
+        playerBoardData.getPlayerGameBoard().setOccuppied(5);
+        playerBoardData.getPlayerGameBoard().setOccuppied(6);
+        playerBoardData.getPlayerGameBoard().setOccuppied(7);
+        playerBoardData.getPlayerGameBoard().setOccuppied(8);
+        playerBoardData.getPlayerGameBoard().setOccuppied(9);
+        //
+        boardScreen = new quickShipViewBoard(this, gameWidgets, playerBoardData, opponentBoardData, "Your Board");
         gameWidgets.attachViewBoard(boardScreen);
         mainView.addView(boardScreen);
         mainView.addView(gameWidgets);
         setContentView(mainView);
+    }
+
+    public void buildBoardScreen() {
+
     }
 
     @Override
@@ -103,7 +121,7 @@ public class quickShipActivityGameMode extends Activity implements Runnable {
         mainView = new FrameLayout(this);
         mainView.setBackgroundColor(Color.parseColor("#ffffff"));
         quickShipViewBoardOption gameWidgets = new quickShipViewBoardOption(this);
-        boardScreen = new quickShipViewBoard(this, gameWidgets, mPlayerModel, "Your Board");
+        boardScreen = new quickShipViewBoard(this, gameWidgets, mPlayerModel, mOpponentModel, "Your Board");
         gameWidgets.attachViewBoard(boardScreen);
         mainView.addView(boardScreen);
         mainView.addView(gameWidgets);

@@ -54,14 +54,16 @@ public class quickShipViewBoard extends SurfaceView {
     private Float mTitleHeight;
     private Float mTitleX;
     private Float mTitleY;
-    private quickShipModel mQuickShipModel;
+    private quickShipModel mplayerBoardData;
+    private quickShipModel mOpponentBoarddata;
 
 
-    public quickShipViewBoard(Context context, quickShipViewBoardOption optionGUI, quickShipModel quickShipModel, String title) {
+    public quickShipViewBoard(Context context, quickShipViewBoardOption optionGUI, quickShipModel playerBoardData, quickShipModel opponentBoardData, String title) {
         super(context);
         //setBackgroundColor(Color.parseColor("#ffffff"));
         setWillNotDraw(false);
-        mQuickShipModel = quickShipModel;
+        mplayerBoardData = playerBoardData;
+        mOpponentBoarddata = opponentBoardData;
         mOptionGUI = optionGUI;
         mTitle = title;
         Display display = ((Activity) context).getWindowManager().getDefaultDisplay();

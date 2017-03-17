@@ -29,6 +29,11 @@ public class quickShipBoard {
         }
     }
 
+    public void setOccuppied(int index) {
+        completeBoard[index].setOccupied(true);
+    }
+
+
     // If the move is a hit, return true
     public boolean makeMove(int i) {
         quickShipBoardSlot targetedSlot = completeBoard[i];
