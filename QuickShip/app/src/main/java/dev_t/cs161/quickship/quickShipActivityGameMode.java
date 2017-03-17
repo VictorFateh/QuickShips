@@ -101,7 +101,7 @@ public class quickShipActivityGameMode extends Activity implements Runnable {
 
     public void switchActivity3() {
         mainView = new FrameLayout(this);
-        mainView.setBackgroundColor(Color.parseColor("#ffff"));
+        mainView.setBackgroundColor(Color.parseColor("#ffffff"));
         quickShipViewBoardOption gameWidgets = new quickShipViewBoardOption(this);
         boardScreen = new quickShipViewBoard(this, gameWidgets, mPlayerModel, "Your Board");
         gameWidgets.attachViewBoard(boardScreen);
