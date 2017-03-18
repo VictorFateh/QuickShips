@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">QuickShip</string>
+    <string name="play_mode_button_1">Switch Board</string>
+    <string name="play_mode_button_2">Fire!</string>
+    <string name="choose_mode_button_1">Rotate</string>
+    <string name="choose_mode_button_2">Place</string>
 </resources>

@@ -2,16 +2,16 @@ package dev_t.cs161.quickship;
 
 import android.util.Log;
 
-public class quickShipBoard {
+public class quickShipModelBoard {
 
     private String playerID;
-    private quickShipBoardSlot[] completeBoard;
+    private quickShipModelBoardSlot[] completeBoard;
 
-    public quickShipBoard(String player_ID) {
+    public quickShipModelBoard(String player_ID) {
         playerID = player_ID;
-        completeBoard = new quickShipBoardSlot[100];
+        completeBoard = new quickShipModelBoardSlot[100];
         for (int i = 0; i < 100; i++) {
-            completeBoard[i] = new quickShipBoardSlot();
+            completeBoard[i] = new quickShipModelBoardSlot();
         }
     }
 
@@ -36,7 +36,7 @@ public class quickShipBoard {
 
     // If the move is a hit, return true
     public boolean makeMove(int i) {
-        quickShipBoardSlot targetedSlot = completeBoard[i];
+        quickShipModelBoardSlot targetedSlot = completeBoard[i];
         targetedSlot.setHit(true);
         if (targetedSlot.isOccupied()) {
             return true;

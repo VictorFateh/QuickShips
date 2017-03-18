@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.util.Log;
 import android.view.Display;
@@ -14,7 +15,7 @@ import android.view.SurfaceView;
 
 import static java.lang.Math.abs;
 
-public class quickShipViewBoard extends SurfaceView {
+public class quickShipViewChooseModeGrid extends SurfaceView {
 
     private Point screen = new Point();
     private SurfaceHolder surfaceHolder;
@@ -47,7 +48,6 @@ public class quickShipViewBoard extends SurfaceView {
     private Float boardGridFrameMargin;
     private Float viewWidth;
     private Float viewHeight;
-    private quickShipViewBoardOption mOptionGUI;
     private Paint titlePaint;
     private String mTitle;
     private Float mTitleWidth;
@@ -55,17 +55,15 @@ public class quickShipViewBoard extends SurfaceView {
     private Float mTitleX;
     private Float mTitleY;
     private quickShipModel mplayerBoardData;
-    private quickShipModel mOpponentBoarddata;
+    private quickShipModel mOpponentBoardData;
 
 
-    public quickShipViewBoard(Context context, quickShipViewBoardOption optionGUI, quickShipModel playerBoardData, quickShipModel opponentBoardData, String title) {
+    public quickShipViewChooseModeGrid(Context context, quickShipModel playerBoardData, quickShipModel opponentBoardData) {
         super(context);
-        //setBackgroundColor(Color.parseColor("#ffffff"));
         setWillNotDraw(false);
+        setZOrderOnTop(true);
         mplayerBoardData = playerBoardData;
-        mOpponentBoarddata = opponentBoardData;
-        mOptionGUI = optionGUI;
-        mTitle = title;
+        mOpponentBoardData = opponentBoardData;
         Display display = ((Activity) context).getWindowManager().getDefaultDisplay();
         display.getSize(screen);
         initializeValues();
@@ -73,9 +71,11 @@ public class quickShipViewBoard extends SurfaceView {
     }
 
     public void initializeValues() {
+        mTitle = "Place your ships";
         held = true;
         currentIndex = -1;
         surfaceHolder = getHolder();
+        surfaceHolder.setFormat(PixelFormat.TRANSLUCENT);
 
         titlePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         titlePaint.setColor(Color.BLACK);
@@ -144,6 +144,7 @@ public class quickShipViewBoard extends SurfaceView {
             synchronized (surfaceHolder) {
                 canvas = surfaceHolder.lockCanvas();
                 if (surfaceHolder.getSurface().isValid()) {
+                    canvas.drawColor(0, android.graphics.PorterDuff.Mode.CLEAR);
                     canvas.drawText(mTitle, mTitleX, mTitleY, titlePaint);
                     canvas.drawRect(boardGridFrameStartX, boardGridFrameStartY, boardGridFrameEndX, boardGridFrameEndY, boardGridFramePaint);
 
@@ -194,7 +195,6 @@ public class quickShipViewBoard extends SurfaceView {
                         currentIndex = selectedIndex;
                         Log.d("debug", "Index: " + currentIndex);
                         calculateSelectedRect(currentIndex);
-                        mOptionGUI.setMissileBtnStatus(true);
                     } else {
                         deSelectCell();
                     }
@@ -261,7 +261,6 @@ public class quickShipViewBoard extends SurfaceView {
         boardGridSelectedStartY = null;
         boardGridSelectedEndX = null;
         boardGridSelectedEndY = null;
-        mOptionGUI.setMissileBtnStatus(false);
     }
 
     public static boolean isBetween(float x, float lower, float upper) {

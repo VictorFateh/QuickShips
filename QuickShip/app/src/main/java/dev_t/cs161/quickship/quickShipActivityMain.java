@@ -1,30 +1,24 @@
 package dev_t.cs161.quickship;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.view.Display;
-import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
-public class quickShipActivityGameMode extends Activity implements Runnable {
+public class quickShipActivityMain extends Activity implements Runnable {
 
     Thread thread = null;
     private Point screen = new Point();
-    private FrameLayout mainView;
-    private quickShipViewBoard boardScreen;
     private volatile boolean running;
     private volatile long timeNow;
     private volatile long timePrevFrame = 0;
     private volatile long timeDelta;
     private Float screenWidth;
     private Float screenHeight;
-    private quickShipModel mPlayerModel;
-    private quickShipModel mOpponentModel;
+    private volatile quickShipModel mPlayerModel;
+    private volatile quickShipModel mOpponentModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,14 +32,9 @@ public class quickShipActivityGameMode extends Activity implements Runnable {
     }
 
     public void trinhScreen() {
-        quickShipModel temp = new quickShipModel();
-
-    }
-
-    public void victorScreen() {
-        mainView = new FrameLayout(this);
-        mainView.setBackgroundColor(Color.parseColor("#FFFFFF"));
-        quickShipViewBoardOption gameWidgets = new quickShipViewBoardOption(this);
+        setContentView(R.layout.quickship_choose_mode_screen);
+        LinearLayout topLinear = (LinearLayout) findViewById(R.id.choose_mode_top_linear);
+        FrameLayout topFrame = (FrameLayout) findViewById(R.id.choose_mode_top_frame);
         quickShipModel playerBoardData = new quickShipModel();
         quickShipModel opponentBoardData = new quickShipModel();
         //
@@ -55,15 +44,31 @@ public class quickShipActivityGameMode extends Activity implements Runnable {
         playerBoardData.getPlayerGameBoard().setOccuppied(8);
         playerBoardData.getPlayerGameBoard().setOccuppied(9);
         //
-        boardScreen = new quickShipViewBoard(this, gameWidgets, playerBoardData, opponentBoardData, "Your Board");
-        gameWidgets.attachViewBoard(boardScreen);
-        mainView.addView(boardScreen);
-        mainView.addView(gameWidgets);
-        setContentView(mainView);
+        quickShipViewChooseModeGrid boardScreen = new quickShipViewChooseModeGrid(this, playerBoardData, opponentBoardData);
+        topFrame.getLayoutParams().height = Math.round(screenWidth);
+        topFrame.addView(boardScreen);
+        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Math.round(screenWidth));
+        topLinear.setLayoutParams(param);
     }
 
-    public void buildBoardScreen() {
-
+    public void victorScreen() {
+        setContentView(R.layout.quickship_play_mode_screen);
+        LinearLayout topLinear = (LinearLayout) findViewById(R.id.play_mode_top_linear);
+        FrameLayout topFrame = (FrameLayout) findViewById(R.id.play_mode_top_frame);
+        quickShipModel playerBoardData = new quickShipModel();
+        quickShipModel opponentBoardData = new quickShipModel();
+        //
+        playerBoardData.getPlayerGameBoard().setOccuppied(5);
+        playerBoardData.getPlayerGameBoard().setOccuppied(6);
+        playerBoardData.getPlayerGameBoard().setOccuppied(7);
+        playerBoardData.getPlayerGameBoard().setOccuppied(8);
+        playerBoardData.getPlayerGameBoard().setOccuppied(9);
+        //
+        quickShipViewPlayModeGrid boardScreen = new quickShipViewPlayModeGrid(this, playerBoardData, opponentBoardData);
+        topFrame.getLayoutParams().height = Math.round(screenWidth);
+        topFrame.addView(boardScreen);
+        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Math.round(screenWidth));
+        topLinear.setLayoutParams(param);
     }
 
     @Override
@@ -94,38 +99,11 @@ public class quickShipActivityGameMode extends Activity implements Runnable {
     public void newGame() {
         mPlayerModel = new quickShipModel();
         mOpponentModel = new quickShipModel();
-        quickShipBoard player1Board = mPlayerModel.getPlayerGameBoard();
-        quickShipBoard player2Board = mOpponentModel.getPlayerGameBoard();
+        quickShipModelBoard player1Board = mPlayerModel.getPlayerGameBoard();
+        quickShipModelBoard player2Board = mOpponentModel.getPlayerGameBoard();
         mPlayerModel.copyOpponentGameBoard(player2Board);
         mOpponentModel.copyOpponentGameBoard(player1Board);
-        mPlayerModel.printMap_debug();
-        mOpponentModel.printMap_debug();
         running = true;
-    }
-
-    public void switchActivity() {
-        Intent intent = new Intent(this, quickShipActivitySampleMode.class);
-        startActivity(intent);
-    }
-
-    public void switchActivity2() {
-        mainView = new FrameLayout(this);
-        quickShipViewSampleCodeButtons gameWidgets = new quickShipViewSampleCodeButtons(this);
-        quickShipViewSampleCode tempScreen = new quickShipViewSampleCode(this);
-        mainView.addView(tempScreen);
-        mainView.addView(gameWidgets);
-        setContentView(mainView);
-    }
-
-    public void switchActivity3() {
-        mainView = new FrameLayout(this);
-        mainView.setBackgroundColor(Color.parseColor("#ffffff"));
-        quickShipViewBoardOption gameWidgets = new quickShipViewBoardOption(this);
-        boardScreen = new quickShipViewBoard(this, gameWidgets, mPlayerModel, mOpponentModel, "Your Board");
-        gameWidgets.attachViewBoard(boardScreen);
-        mainView.addView(boardScreen);
-        mainView.addView(gameWidgets);
-        setContentView(mainView);
     }
 
     @Override
