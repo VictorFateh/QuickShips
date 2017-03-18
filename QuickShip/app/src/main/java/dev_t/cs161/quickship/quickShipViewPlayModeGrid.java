@@ -71,7 +71,7 @@ public class quickShipViewPlayModeGrid extends SurfaceView {
     }
 
     public void initializeValues() {
-        mTitle = "Your Board";
+        mTitle = getContext().getResources().getString(R.string.play_mode_grid_player_title);
         held = true;
         currentIndex = -1;
         surfaceHolder = getHolder();

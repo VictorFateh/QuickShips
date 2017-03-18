@@ -38,11 +38,11 @@ public class quickShipActivityMain extends Activity implements Runnable {
         quickShipModel playerBoardData = new quickShipModel();
         quickShipModel opponentBoardData = new quickShipModel();
         //
-        playerBoardData.getPlayerGameBoard().setOccuppied(5);
-        playerBoardData.getPlayerGameBoard().setOccuppied(6);
-        playerBoardData.getPlayerGameBoard().setOccuppied(7);
-        playerBoardData.getPlayerGameBoard().setOccuppied(8);
-        playerBoardData.getPlayerGameBoard().setOccuppied(9);
+        playerBoardData.getPlayerGameBoard().setOccupied(5, true);
+        playerBoardData.getPlayerGameBoard().setOccupied(6, true);
+        playerBoardData.getPlayerGameBoard().setOccupied(7, true);
+        playerBoardData.getPlayerGameBoard().setOccupied(8, true);
+        playerBoardData.getPlayerGameBoard().setOccupied(9, true);
         //
         quickShipViewChooseModeGrid boardScreen = new quickShipViewChooseModeGrid(this, playerBoardData, opponentBoardData);
         topFrame.getLayoutParams().height = Math.round(screenWidth);
@@ -58,11 +58,11 @@ public class quickShipActivityMain extends Activity implements Runnable {
         quickShipModel playerBoardData = new quickShipModel();
         quickShipModel opponentBoardData = new quickShipModel();
         //
-        playerBoardData.getPlayerGameBoard().setOccuppied(5);
-        playerBoardData.getPlayerGameBoard().setOccuppied(6);
-        playerBoardData.getPlayerGameBoard().setOccuppied(7);
-        playerBoardData.getPlayerGameBoard().setOccuppied(8);
-        playerBoardData.getPlayerGameBoard().setOccuppied(9);
+        playerBoardData.getPlayerGameBoard().setOccupied(5, true);
+        playerBoardData.getPlayerGameBoard().setOccupied(6, true);
+        playerBoardData.getPlayerGameBoard().setOccupied(7, true);
+        playerBoardData.getPlayerGameBoard().setOccupied(8, true);
+        playerBoardData.getPlayerGameBoard().setOccupied(9, true);
         //
         quickShipViewPlayModeGrid boardScreen = new quickShipViewPlayModeGrid(this, playerBoardData, opponentBoardData);
         topFrame.getLayoutParams().height = Math.round(screenWidth);

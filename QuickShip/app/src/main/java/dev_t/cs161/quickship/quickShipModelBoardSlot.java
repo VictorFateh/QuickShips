@@ -6,7 +6,8 @@ public class quickShipModelBoardSlot {
     private boolean isAnchor;
     private boolean isVertical;
     private boolean isHorizontal;
-    private int shipType;
+    private Direction direction;
+    private ShipType shipType;
 
     public quickShipModelBoardSlot() {
         setHit(false);
@@ -14,7 +15,6 @@ public class quickShipModelBoardSlot {
         setAnchor(false);
         setVertical(false);
         setHorizontal(false);
-        setShipType(-1);
     }
 
     public boolean isHorizontal() {
@@ -31,14 +31,6 @@ public class quickShipModelBoardSlot {
 
     public void setVertical(boolean vertical) {
         isVertical = vertical;
-    }
-
-    public int getShipType() {
-        return shipType;
-    }
-
-    public void setShipType(int shipType) {
-        this.shipType = shipType;
     }
 
     public boolean isAnchor() {
@@ -63,5 +55,21 @@ public class quickShipModelBoardSlot {
 
     public void setOccupied(boolean occupied) {
         isOccupied = occupied;
+    }
+
+    public Direction getDirection() {
+        return direction;
+    }
+
+    public void setDirection(Direction direction) {
+        this.direction = direction;
+    }
+
+    public ShipType getShipType() {
+        return shipType;
+    }
+
+    public void setShipType(ShipType shipType) {
+        this.shipType = shipType;
     }
 }

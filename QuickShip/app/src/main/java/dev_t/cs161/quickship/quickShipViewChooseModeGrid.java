@@ -71,7 +71,7 @@ public class quickShipViewChooseModeGrid extends SurfaceView {
     }
 
     public void initializeValues() {
-        mTitle = "Place your ships";
+        mTitle = getContext().getResources().getString(R.string.choose_mode_grid_title);
         held = true;
         currentIndex = -1;
         surfaceHolder = getHolder();

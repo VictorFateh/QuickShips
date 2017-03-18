@@ -4,4 +4,7 @@
     <string name="play_mode_button_2">Fire!</string>
     <string name="choose_mode_button_1">Rotate</string>
     <string name="choose_mode_button_2">Place</string>
+    <string name="choose_mode_grid_title">Place your ships</string>
+    <string name="play_mode_grid_player_title">Your Board</string>
+    <string name="play_mode_grid_opponent_title">Enemy Board</string>
 </resources>
