@@ -71,20 +71,12 @@ public class quickShipModelBoard {
         return returnString;
     }
 
-    public boolean isHorizontal(int index) {
-        return completeBoard[index].isHorizontal();
+    public Orientation getOrientation(int index) {
+        return completeBoard[index].getOrientation();
     }
 
-    public void setHorizontal(int index, boolean horizontal) {
-        completeBoard[index].setHorizontal(horizontal);
-    }
-
-    public boolean isVertical(int index) {
-        return completeBoard[index].isVertical();
-    }
-
-    public void setVertical(int index, boolean vertical) {
-        completeBoard[index].setVertical(vertical);
+    public void setOrientation(int index, Orientation orientation) {
+        completeBoard[index].setOrientation(orientation);
     }
 
     public boolean isAnchor(int index) {
