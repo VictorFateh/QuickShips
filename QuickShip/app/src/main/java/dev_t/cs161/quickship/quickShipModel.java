@@ -5,54 +5,54 @@ import android.util.Log;
 import java.util.UUID;
 
 public class quickShipModel {
-    private String player_ID;
-    private int _personalTurnCount;
-    private quickShipModelBoard playerGameBoard;
+
+    private String mPlayerID;
+    private quickShipModelBoard mPlayerGameBoard;
     private quickShipModelBoard mOpponentGameBoard;
+    private int mTurnCount;
 
     public quickShipModel() {
-        player_ID = UUID.randomUUID().toString();
-        playerGameBoard = new quickShipModelBoard(player_ID);
+        mPlayerID = UUID.randomUUID().toString();
+        mPlayerGameBoard = new quickShipModelBoard(mPlayerID);
+        mOpponentGameBoard = new quickShipModelBoard();
+        mTurnCount = 0;
     }
 
     public quickShipModelBoard getPlayerGameBoard() {
-        return playerGameBoard;
+        return mPlayerGameBoard;
     }
 
-    public void copyOpponentGameBoard(quickShipModelBoard opponentGameBoard) {
+    public void setPlayerGameBoard(String playerID, quickShipModelBoard playerGameBoard) {
+        mPlayerGameBoard = playerGameBoard;
+
+    }
+
+    public void setPlayerGameBoard(quickShipModelBoard playerGameBoard) {
+        mPlayerGameBoard = playerGameBoard;
+    }
+
+    public quickShipModelBoard getOpponentGameBoard() {
+        return mOpponentGameBoard;
+    }
+
+    public void setOpponentGameBoard(quickShipModelBoard opponentGameBoard) {
         mOpponentGameBoard = opponentGameBoard;
     }
 
-    public void testCode_debug() {
+    public String getPlayerID() {
+        return mPlayerID;
+    }
+
+    public void setPlayerID(String playerID) {
+        mPlayerID = playerID;
+    }
+
+    public void testCodeDebug() {
         String temp_id = UUID.randomUUID().toString();
-        String temp_id2;
-        quickShipModelBoard opponent_0 = new quickShipModelBoard(temp_id);
-        copyOpponentGameBoard(opponent_0);
+        quickShipModelBoard opponent0 = new quickShipModelBoard(temp_id);
+        setOpponentGameBoard(opponent0);
 
-        temp_id = UUID.randomUUID().toString();
-        quickShipModelBoard opponent_1 = new quickShipModelBoard(temp_id);
-        copyOpponentGameBoard(opponent_1);
-
-        temp_id = UUID.randomUUID().toString();
-        temp_id2 = temp_id;
-        quickShipModelBoard opponent_2 = new quickShipModelBoard(temp_id);
-        copyOpponentGameBoard(opponent_2);
-
-        temp_id = UUID.randomUUID().toString();
-        quickShipModelBoard opponent_3 = new quickShipModelBoard(temp_id);
-        copyOpponentGameBoard(opponent_3);
-
-        temp_id = UUID.randomUUID().toString();
-        quickShipModelBoard opponent_4 = new quickShipModelBoard(temp_id);
-        copyOpponentGameBoard(opponent_4);
-
-        copyOpponentGameBoard(opponent_4);
-
-        temp_id = UUID.randomUUID().toString();
-        quickShipModelBoard opponent_5 = new quickShipModelBoard(temp_id);
-        copyOpponentGameBoard(opponent_5);
-
-        Log.d("debug", " Player: " + playerGameBoard);
+        Log.d("debug", " Player: " + mPlayerGameBoard);
         Log.d("debug", " Opponent: " + mOpponentGameBoard);
     }
 }

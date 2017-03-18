@@ -4,9 +4,9 @@ public class quickShipModelBoardSlot {
     private boolean isHit;
     private boolean isOccupied;
     private boolean isAnchor;
-    private Orientation orientation;
-    private Direction direction;
-    private ShipType shipType;
+    private Orientation mOrientation;
+    private Direction mDirection;
+    private ShipType mShipType;
 
     public quickShipModelBoardSlot() {
         setHit(false);
@@ -15,11 +15,11 @@ public class quickShipModelBoardSlot {
     }
 
     public Orientation getOrientation() {
-        return orientation;
+        return mOrientation;
     }
 
     public void setOrientation(Orientation orientation) {
-        this.orientation = orientation;
+        mOrientation = orientation;
     }
 
     public boolean isAnchor() {
@@ -47,18 +47,18 @@ public class quickShipModelBoardSlot {
     }
 
     public Direction getDirection() {
-        return direction;
+        return mDirection;
     }
 
     public void setDirection(Direction direction) {
-        this.direction = direction;
+        mDirection = direction;
     }
 
     public ShipType getShipType() {
-        return shipType;
+        return mShipType;
     }
 
     public void setShipType(ShipType shipType) {
-        this.shipType = shipType;
+        mShipType = shipType;
     }
 }

@@ -4,19 +4,22 @@ import android.util.Log;
 
 public class quickShipModelBoard {
 
-    private String playerID;
+    private String mPlayerID;
     private quickShipModelBoardSlot[] completeBoard;
 
-    public quickShipModelBoard(String player_ID) {
-        playerID = player_ID;
+    public quickShipModelBoard() {
         completeBoard = new quickShipModelBoardSlot[100];
         for (int i = 0; i < 100; i++) {
             completeBoard[i] = new quickShipModelBoardSlot();
         }
     }
 
-    public String getPlayerID() {
-        return playerID;
+    public quickShipModelBoard(String playerID) {
+        mPlayerID = playerID;
+        completeBoard = new quickShipModelBoardSlot[100];
+        for (int i = 0; i < 100; i++) {
+            completeBoard[i] = new quickShipModelBoardSlot();
+        }
     }
 
     public void printBoard_debug() {
@@ -52,7 +55,7 @@ public class quickShipModelBoard {
 
     @Override
     public String toString() {
-        String returnString = "Player ID (" + playerID + "), ";
+        String returnString = "Player ID (" + mPlayerID + "), ";
         for (int i = 0; i < 5; i++) {
             if (completeBoard[i].isOccupied()) {
                 if (i != 4) {
@@ -69,6 +72,14 @@ public class quickShipModelBoard {
             }
         }
         return returnString;
+    }
+
+    public String getPlayerID() {
+        return mPlayerID;
+    }
+
+    public void setPlayerID(String playerID) {
+        mPlayerID = playerID;
     }
 
     public Orientation getOrientation(int index) {

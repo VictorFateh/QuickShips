@@ -101,8 +101,8 @@ public class quickShipActivityMain extends Activity implements Runnable {
         mOpponentModel = new quickShipModel();
         quickShipModelBoard player1Board = mPlayerModel.getPlayerGameBoard();
         quickShipModelBoard player2Board = mOpponentModel.getPlayerGameBoard();
-        mPlayerModel.copyOpponentGameBoard(player2Board);
-        mOpponentModel.copyOpponentGameBoard(player1Board);
+        mPlayerModel.setPlayerGameBoard(player1Board);
+        mOpponentModel.setOpponentGameBoard(player2Board);
         running = true;
     }
 
