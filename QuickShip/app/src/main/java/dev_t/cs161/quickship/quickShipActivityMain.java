@@ -30,6 +30,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
     private volatile quickShipViewChooseModeGrid chooseModeGrid;
     private volatile quickShipViewPlayModePlayerGrid playModePlayerGrid;
     private volatile quickShipViewPlayModeOpponentGrid playModeOpponentGrid;
+    private Button mPlayModeFireBtn;
     private Button mPlayerGridBtn;
     private Button mOpponentGridBtn;
 
@@ -46,6 +47,8 @@ public class quickShipActivityMain extends Activity implements Runnable {
 
     public void initializeView() {
         setContentView(R.layout.quickship_main_screen);
+        mPlayModeFireBtn = (Button) findViewById(R.id.play_mode_fire_btn);
+        mPlayModeFireBtn.setEnabled(false);
         mPlayerGridBtn = (Button) findViewById(R.id.play_mode_player_grid_btn);
         mPlayerGridBtn.setOnTouchListener(new View.OnTouchListener() {
 
@@ -78,6 +81,10 @@ public class quickShipActivityMain extends Activity implements Runnable {
         chooseModeInitializeView();
         playModeInitializeView();
         attachViewFlipperToPlayViews();
+    }
+
+    public void setPlayModeFireBtnStatus(boolean status) {
+        mPlayModeFireBtn.setEnabled(status);
     }
 
     public void attachViewFlipperToPlayViews() {

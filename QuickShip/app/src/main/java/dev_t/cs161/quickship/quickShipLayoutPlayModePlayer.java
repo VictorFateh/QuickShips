@@ -16,7 +16,6 @@ import static java.lang.Math.abs;
 
 public class quickShipLayoutPlayModePlayer extends LinearLayout {
 
-    private ViewFlipper playModeFlipper;
     private Point screen = new Point();
     private Float screenWidth;
     private Float screenHeight;
@@ -47,9 +46,9 @@ public class quickShipLayoutPlayModePlayer extends LinearLayout {
                 break;
             case MotionEvent.ACTION_UP:
                 finalX = touchevent.getX();
-                if (initialX > finalX && abs(initialX - finalX) > swipeThreshold && initialX > (screenWidth * 0.8)) {
+                if (initialX > finalX && abs(initialX - finalX) > swipeThreshold) {
                     mMainActivity.playModeSwitchToOpponentGrid(null);
-                } else if (abs(initialX - finalX) > swipeThreshold && initialX < (screenWidth * 0.2)) {
+                } else if (abs(initialX - finalX) > swipeThreshold) {
                     mMainActivity.playModeSwitchToPlayerGrid(null);
                 }
                 break;

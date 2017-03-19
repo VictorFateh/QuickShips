@@ -54,7 +54,6 @@ public class quickShipViewPlayModeOpponentGrid extends View {
     private Float mTitleHeight;
     private Float mTitleX;
     private Float mTitleY;
-    private ViewFlipper playModeFlipper;
     private quickShipModel mplayerBoardData;
     private quickShipModel mOpponentBoardData;
     private quickShipActivityMain mMainActivity;
@@ -107,7 +106,7 @@ public class quickShipViewPlayModeOpponentGrid extends View {
         screenWidth = (float) screen.x;
         screenHeight = (float) screen.y;
 
-        swipeThreshold = screenWidth * 0.1f;
+        swipeThreshold = screenWidth * 0.2f;
 
         boardGridFrameMargin = (screenWidth - (screenWidth * (float) 0.9)) / 2;
 
@@ -180,9 +179,9 @@ public class quickShipViewPlayModeOpponentGrid extends View {
             case MotionEvent.ACTION_UP:
                 endX = event.getX();
                 endY = event.getY();
-                if (initialX > endX && abs(initialX - endX) > swipeThreshold && initialX > (screenWidth * 0.9)) {
+                if (initialX > endX && abs(initialX - endX) > swipeThreshold) {
                     mMainActivity.playModeSwitchToOpponentGrid(null);
-                } else if (abs(initialX - endX) > swipeThreshold && initialX < (screenWidth * 0.1)) {
+                } else if (abs(initialX - endX) > swipeThreshold) {
                     mMainActivity.playModeSwitchToPlayerGrid(null);
                 } else {
                     if (endX >= boardGridFrameStartX && endX <= boardGridFrameEndX && endY >= boardGridFrameStartY && endY <= boardGridFrameEndY && abs(endX - initialX) < 5 && abs(endY - initialY) < 5) {
@@ -191,6 +190,7 @@ public class quickShipViewPlayModeOpponentGrid extends View {
                             currentIndex = selectedIndex;
                             Log.d("debug", "Index: " + currentIndex);
                             calculateSelectedRect(currentIndex);
+                            mMainActivity.setPlayModeFireBtnStatus(true);
                         } else {
                             deSelectCell();
                         }
@@ -254,6 +254,7 @@ public class quickShipViewPlayModeOpponentGrid extends View {
     }
 
     public void deSelectCell() {
+        mMainActivity.setPlayModeFireBtnStatus(false);
         currentIndex = -1;
         boardGridSelectedStartX = null;
         boardGridSelectedStartY = null;

@@ -10,21 +10,21 @@
         android:id="@+id/play_mode_player_top_linear"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1"
+        android:layout_weight="10"
         android:orientation="horizontal">
 
         <FrameLayout
             android:id="@+id/play_mode_player_top_frame"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:background="@color/play_mode_player_top">
         </FrameLayout>
     </LinearLayout>
 
     <FrameLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_weight="1.6">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="16">
 
         <LinearLayout
             android:layout_width="match_parent"
