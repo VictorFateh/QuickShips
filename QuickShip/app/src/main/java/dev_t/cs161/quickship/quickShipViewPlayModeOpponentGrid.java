@@ -70,6 +70,10 @@ public class quickShipViewPlayModeOpponentGrid extends View {
         calculateBoardGUIPositions();
     }
 
+    public void attachAttributes(ViewFlipper v) {
+        playModeFlipper = v;
+    }
+
     public void initializeValues() {
         mTitle = getContext().getResources().getString(R.string.play_mode_grid_opponent_title);
         held = true;
@@ -99,10 +103,6 @@ public class quickShipViewPlayModeOpponentGrid extends View {
         boardGridSelectedPaint.setColor(Color.parseColor("#f4a442"));
         boardGridFrameDividerX = new Float[11];
         boardGridFrameDividerY = new Float[11];
-    }
-
-    public void attachAttributes(ViewFlipper v) {
-        playModeFlipper = v;
     }
 
     public void calculateBoardGUIPositions() {

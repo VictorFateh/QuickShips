@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <dev_t.cs161.quickship.quickShipLayoutPlayModePlayer
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/quickship_play_mode_player"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">

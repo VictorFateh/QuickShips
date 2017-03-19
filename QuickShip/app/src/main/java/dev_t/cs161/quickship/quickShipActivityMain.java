@@ -54,11 +54,11 @@ public class quickShipActivityMain extends Activity implements Runnable {
         playModeFlipper = (ViewFlipper) findViewById(R.id.play_mode_view_flipper);
         quickShipLayoutPlayModeOpponent quickShipLayoutPlayModeOpponent = (quickShipLayoutPlayModeOpponent) findViewById(R.id.quickship_play_mode_opponent);
         if (quickShipLayoutPlayModeOpponent != null) {
-            quickShipLayoutPlayModeOpponent.attachAttributes(playModeFlipper, screen);
+            quickShipLayoutPlayModeOpponent.attachAttributes(playModeFlipper);
         }
         quickShipLayoutPlayModePlayer quickShipLayoutPlayModePlayer = (quickShipLayoutPlayModePlayer) findViewById(R.id.quickship_play_mode_player);
         if (quickShipLayoutPlayModePlayer != null) {
-            quickShipLayoutPlayModePlayer.attachAttributes(playModeFlipper, screen);
+            quickShipLayoutPlayModePlayer.attachAttributes(playModeFlipper);
         }
         playModeOpponentGrid.attachAttributes(playModeFlipper);
         playModePlayerGrid.attachAttributes(playModeFlipper);
@@ -130,13 +130,13 @@ public class quickShipActivityMain extends Activity implements Runnable {
     public void switchToPlayModeScreen(View view) {
         mainScreenViewFlipper.setInAnimation(AnimationUtils.loadAnimation(this, R.anim.in_from_right));
         mainScreenViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(this, R.anim.out_from_left));
-        mainScreenViewFlipper.setDisplayedChild(mainScreenViewFlipper.indexOfChild(findViewById(R.id.play_mode_screen)));
+        mainScreenViewFlipper.setDisplayedChild(mainScreenViewFlipper.indexOfChild(findViewById(R.id.play_mode)));
     }
 
     public void switchToChooseModeScreen(View view) {
         mainScreenViewFlipper.setInAnimation(AnimationUtils.loadAnimation(this, R.anim.in_from_left));
         mainScreenViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(this, R.anim.out_from_right));
-        mainScreenViewFlipper.setDisplayedChild(mainScreenViewFlipper.indexOfChild(findViewById(R.id.choose_mode_screen)));
+        mainScreenViewFlipper.setDisplayedChild(mainScreenViewFlipper.indexOfChild(findViewById(R.id.choose_mode)));
     }
 
     public void switchToOpponentGrid(View view) {

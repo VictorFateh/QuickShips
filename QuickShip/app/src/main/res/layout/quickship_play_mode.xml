@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:id="@+id/play_mode"
              android:layout_width="match_parent"
              android:layout_height="match_parent">
+
     <ViewFlipper
         android:id="@+id/play_mode_view_flipper"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
 
         <include
-            android:id="@+id/quickship_play_mode_opponent"
             layout="@layout/quickship_play_mode_opponent_grid_screen"/>
 
         <include
-            android:id="@+id/quickship_play_mode_player"
             layout="@layout/quickship_play_mode_player_grid_screen"/>
     </ViewFlipper>
 </FrameLayout>

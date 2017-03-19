@@ -1,5 +1,6 @@
 <dev_t.cs161.quickship.quickShipLayoutPlayModeOpponent
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/quickship_play_mode_opponent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">

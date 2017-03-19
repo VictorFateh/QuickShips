@@ -9,11 +9,9 @@
         android:layout_height="fill_parent">
 
         <include
-            android:id="@+id/play_mode_screen"
             layout="@layout/quickship_play_mode"/>
 
         <include
-            android:id="@+id/choose_mode_screen"
             layout="@layout/quickship_choose_mode_screen"/>
     </ViewFlipper>
 </FrameLayout>
