@@ -16,15 +16,14 @@
             android:id="@+id/play_mode_opponent_top_frame"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:background="#bfca49">
+            android:background="@color/play_mode_oppponent_top">
         </FrameLayout>
     </LinearLayout>
 
     <FrameLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_weight="1.6"
-        android:background="#759f81">
+        android:layout_weight="1.6">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -34,16 +33,27 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#91a3cc"
+                android:background="@color/play_mode_oppponent_bottom"
                 android:gravity="center"
                 android:orientation="horizontal">
 
+
                 <Button
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="top"
                     android:layout_marginTop="10dp"
-                    android:text="@string/play_mode_button_2"/>
+                    android:layout_weight="0.5"
+                    android:onClick="switchToChooseModeScreen"
+                    android:text="Choose Mode"/>
+
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top"
+                    android:layout_marginTop="10dp"
+                    android:layout_weight="0.5"
+                    android:text="@string/play_mode_fire_btn"/>
             </LinearLayout>
         </LinearLayout>
     </FrameLayout>

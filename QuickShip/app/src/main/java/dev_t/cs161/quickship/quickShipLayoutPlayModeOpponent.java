@@ -24,21 +24,19 @@ public class quickShipLayoutPlayModeOpponent extends LinearLayout {
     private float initialX;
     private float finalX;
     private Context mContext;
+    private quickShipActivityMain mMainActivity;
 
     public quickShipLayoutPlayModeOpponent(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
         if (!isInEditMode()) {
+            mMainActivity = (quickShipActivityMain) context;
             Display display = ((Activity) context).getWindowManager().getDefaultDisplay();
             display.getSize(screen);
             screenWidth = (float) screen.x;
             screenHeight = (float) screen.y;
             swipeThreshold = screenWidth * 0.1f;
         }
-    }
-
-    public void attachAttributes(ViewFlipper v) {
-        playModeFlipper = v;
     }
 
     @Override
@@ -50,13 +48,9 @@ public class quickShipLayoutPlayModeOpponent extends LinearLayout {
             case MotionEvent.ACTION_UP:
                 finalX = touchevent.getX();
                 if (initialX > finalX && abs(initialX - finalX) > swipeThreshold && initialX > (screenWidth * 0.8)) {
-                    playModeFlipper.setInAnimation(AnimationUtils.loadAnimation(mContext, R.anim.in_from_right));
-                    playModeFlipper.setOutAnimation(AnimationUtils.loadAnimation(mContext, R.anim.out_from_left));
-                    playModeFlipper.setDisplayedChild(playModeFlipper.indexOfChild(findViewById(R.id.quickship_play_mode_player)));
+                    mMainActivity.playModeSwitchToOpponentGrid(null);
                 } else if (abs(initialX - finalX) > swipeThreshold && initialX < (screenWidth * 0.2)) {
-                    playModeFlipper.setInAnimation(AnimationUtils.loadAnimation(mContext, R.anim.in_from_left));
-                    playModeFlipper.setOutAnimation(AnimationUtils.loadAnimation(mContext, R.anim.out_from_right));
-                    playModeFlipper.setDisplayedChild(playModeFlipper.indexOfChild(findViewById(R.id.quickship_play_mode_player)));
+                    mMainActivity.playModeSwitchToPlayerGrid(null);
                 }
                 break;
         }

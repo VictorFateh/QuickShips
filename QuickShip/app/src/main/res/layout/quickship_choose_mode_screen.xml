@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:background="#49d95c"
+        android:background="@color/choose_mode_top"
         android:orientation="horizontal">
 
         <FrameLayout
@@ -23,8 +23,7 @@
     <FrameLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_weight="1.6"
-        android:background="#759f81">
+        android:layout_weight="1.6">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -35,7 +34,7 @@
                 android:id="@+id/choose_mode_bottom_linear1"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#c873e2"
+                android:background="@color/choose_mode_bottom"
                 android:layout_weight="0.5"
                 android:orientation="horizontal">
 
@@ -46,7 +45,7 @@
                     android:layout_gravity="top"
                     android:layout_marginTop="10dp"
                     android:layout_weight="0.5"
-                    android:text="@string/choose_mode_button_1"/>
+                    android:text="@string/choose_mode_rotate_btn"/>
 
                 <Button
                     android:id="@+id/choose_mode_button2"
@@ -55,23 +54,24 @@
                     android:layout_gravity="top"
                     android:layout_marginTop="10dp"
                     android:layout_weight="0.5"
-                    android:text="@string/choose_mode_button_2"/>
+                    android:text="@string/choose_mode_place_ship_btn"/>
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/choose_mode_bottom_linear2"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#cfaf5d"
-                android:layout_weight="0.5"
+                android:background="@color/choose_mode_slider"
+                android:layout_weight="2"
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/play_mode"
+                    android:id="@+id/play_mode_btn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
                     android:onClick="switchToPlayModeScreen"
+
                     android:text="Play Mode"/>
             </LinearLayout>
         </LinearLayout>

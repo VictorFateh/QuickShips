@@ -57,21 +57,19 @@ public class quickShipViewPlayModePlayerGrid extends View {
     private ViewFlipper playModeFlipper;
     private quickShipModel mplayerBoardData;
     private quickShipModel mOpponentBoardData;
+    private quickShipActivityMain mMainActivity;
 
 
     public quickShipViewPlayModePlayerGrid(Context context, quickShipModel playerBoardData, quickShipModel opponentBoardData) {
         super(context);
         mContext = context;
+        mMainActivity = (quickShipActivityMain) context;
         mplayerBoardData = playerBoardData;
         mOpponentBoardData = opponentBoardData;
         Display display = ((Activity) context).getWindowManager().getDefaultDisplay();
         display.getSize(screen);
         initializeValues();
         calculateBoardGUIPositions();
-    }
-
-    public void attachAttributes(ViewFlipper v) {
-        playModeFlipper = v;
     }
 
     public void initializeValues() {
@@ -184,13 +182,9 @@ public class quickShipViewPlayModePlayerGrid extends View {
                 endY = event.getY();
 
                 if (initialX > endX && abs(initialX - endX) > swipeThreshold && initialX > (screenWidth * 0.9)) {
-                    playModeFlipper.setInAnimation(AnimationUtils.loadAnimation(mContext, R.anim.in_from_right));
-                    playModeFlipper.setOutAnimation(AnimationUtils.loadAnimation(mContext, R.anim.out_from_left));
-                    playModeFlipper.setDisplayedChild(2);
+                    mMainActivity.playModeSwitchToOpponentGrid(null);
                 } else if (abs(initialX - endX) > swipeThreshold && initialX < (screenWidth * 0.1)) {
-                    playModeFlipper.setInAnimation(AnimationUtils.loadAnimation(mContext, R.anim.in_from_left));
-                    playModeFlipper.setOutAnimation(AnimationUtils.loadAnimation(mContext, R.anim.out_from_right));
-                    playModeFlipper.setDisplayedChild(2);
+                    mMainActivity.playModeSwitchToPlayerGrid(null);
                 } else {
                     if (endX >= boardGridFrameStartX && endX <= boardGridFrameEndX && endY >= boardGridFrameStartY && endY <= boardGridFrameEndY && abs(endX - initialX) < 5 && abs(endY - initialY) < 5) {
                         selectedIndex = calculateCellTouched(initialX, initialY);

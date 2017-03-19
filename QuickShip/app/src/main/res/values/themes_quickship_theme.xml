@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Generated with http://android-holo-colors.com -->
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="quickship_theme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowAnimationStyle">@null</item>
+
+        <item name="android:buttonStyle">@style/Buttonquickship_theme</item>
+
+        <item name="android:imageButtonStyle">@style/ImageButtonquickship_theme</item>
+
+    </style>
+
+</resources>
