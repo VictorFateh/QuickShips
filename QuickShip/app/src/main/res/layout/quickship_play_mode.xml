@@ -26,7 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/play_mode_slider"
-            android:layout_weight="12"
+            android:layout_weight="11"
             android:orientation="horizontal">
             <Button
                 android:id="@+id/play_mode_player_grid_btn"

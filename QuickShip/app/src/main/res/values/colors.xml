@@ -9,8 +9,17 @@
     <color name="play_mode_oppponent_bottom">#91a3cc</color>
     <color name="play_mode_player_top">#9ad48b</color>
     <color name="play_mode_player_bottom">#3f6cd4</color>
+    <color name="play_mode_opponent_grid">#db699e</color>
+    <color name="play_mode_opponent_grid_line">#dcdfe5</color>
+    <color name="play_mode_player_grid">#5a8ddd</color>
+    <color name="play_mode_player_grid_line">#dcdfe5</color>
+    <color name="play_mode_player_cell_selected">#f4a442</color>
+    <color name="play_mode_player_cell_missed">#c1c3c7</color>
 
     <color name="choose_mode_slider">#cfaf5d</color>
-    <color name="choose_mode_top">#759f81</color>
+    <color name="choose_mode_top">#758e9f</color>
     <color name="choose_mode_bottom">#c873e2</color>
+    <color name="choose_mode_grid">#8fd786</color>
+    <color name="choose_mode_grid_line">#dcdfe5</color>
+    <color name="choose_mode_cell_selected">#f4a442</color>
 </resources>

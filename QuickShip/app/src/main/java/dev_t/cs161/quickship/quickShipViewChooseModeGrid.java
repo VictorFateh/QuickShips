@@ -16,6 +16,7 @@ import static java.lang.Math.abs;
 public class quickShipViewChooseModeGrid extends View {
 
     private Point screen = new Point();
+    private Context mContext;
     private volatile boolean held;
     private volatile Float initialX, initialY;
     private volatile Float endX, endY;
@@ -56,6 +57,7 @@ public class quickShipViewChooseModeGrid extends View {
 
     public quickShipViewChooseModeGrid(Context context, quickShipModel playerBoardData, quickShipModel opponentBoardData) {
         super(context);
+        mContext = context;
         mplayerBoardData = playerBoardData;
         mOpponentBoardData = opponentBoardData;
         Display display = ((Activity) context).getWindowManager().getDefaultDisplay();
@@ -71,11 +73,11 @@ public class quickShipViewChooseModeGrid extends View {
 
         titlePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         titlePaint.setColor(Color.BLACK);
-        titlePaint.setTextSize(50);
+        titlePaint.setTextSize(16 * getResources().getDisplayMetrics().density);
 
         boardGridFramePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         boardGridFramePaint.setStyle(Paint.Style.FILL);
-        boardGridFramePaint.setColor(Color.parseColor("#5a8ddd"));
+        boardGridFramePaint.setColor(mContext.getResources().getColor(R.color.choose_mode_grid));
         boardGridFrameBorderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         boardGridFrameBorderPaint.setStyle(Paint.Style.STROKE);
         boardGridFrameBorderStrokeWidth = 15;
@@ -86,11 +88,11 @@ public class quickShipViewChooseModeGrid extends View {
         boardGridLinePaint.setStyle(Paint.Style.STROKE);
         boardGridLinePaintStrokeWidth = 1;
         boardGridLinePaint.setStrokeWidth(boardGridLinePaintStrokeWidth);
-        boardGridLinePaint.setColor(Color.parseColor("#dcdfe5"));
+        boardGridLinePaint.setColor(mContext.getResources().getColor(R.color.choose_mode_grid_line));
 
         boardGridSelectedPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         boardGridSelectedPaint.setStyle(Paint.Style.FILL);
-        boardGridSelectedPaint.setColor(Color.parseColor("#f4a442"));
+        boardGridSelectedPaint.setColor(mContext.getResources().getColor(R.color.choose_mode_cell_selected));
         boardGridFrameDividerX = new Float[11];
         boardGridFrameDividerY = new Float[11];
     }
