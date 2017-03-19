@@ -139,16 +139,16 @@ public class quickShipActivityMain extends Activity implements Runnable {
         mainScreenViewFlipper.setDisplayedChild(mainScreenViewFlipper.indexOfChild(findViewById(R.id.choose_mode)));
     }
 
-    public void switchToOpponentGrid(View view) {
-        playModeFlipper.setInAnimation(AnimationUtils.loadAnimation(this, R.anim.in_from_right));
-        playModeFlipper.setOutAnimation(AnimationUtils.loadAnimation(this, R.anim.out_from_left));
-        playModeFlipper.setDisplayedChild(playModeFlipper.indexOfChild(findViewById(R.id.quickship_play_mode_opponent)));
-    }
-
-    public void switchToPlayerGrid(View view) {
-        playModeFlipper.setInAnimation(AnimationUtils.loadAnimation(this, R.anim.in_from_left));
-        playModeFlipper.setOutAnimation(AnimationUtils.loadAnimation(this, R.anim.out_from_right));
-        playModeFlipper.setDisplayedChild(playModeFlipper.indexOfChild(findViewById(R.id.quickship_play_mode_player)));
+    public void switchToPlayModeGrid(View view) {
+        if (playModeFlipper.getDisplayedChild() == 1) {
+            playModeFlipper.setInAnimation(AnimationUtils.loadAnimation(this, R.anim.in_from_left));
+            playModeFlipper.setOutAnimation(AnimationUtils.loadAnimation(this, R.anim.out_from_right));
+            playModeFlipper.setDisplayedChild(2);
+        } else {
+            playModeFlipper.setInAnimation(AnimationUtils.loadAnimation(this, R.anim.in_from_right));
+            playModeFlipper.setOutAnimation(AnimationUtils.loadAnimation(this, R.anim.out_from_left));
+            playModeFlipper.setDisplayedChild(1);
+        }
     }
 
     @Override

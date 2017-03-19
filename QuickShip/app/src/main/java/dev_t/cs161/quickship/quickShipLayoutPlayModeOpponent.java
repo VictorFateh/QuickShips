@@ -28,11 +28,13 @@ public class quickShipLayoutPlayModeOpponent extends LinearLayout {
     public quickShipLayoutPlayModeOpponent(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
-        Display display = ((Activity) context).getWindowManager().getDefaultDisplay();
-        display.getSize(screen);
-        screenWidth = (float) screen.x;
-        screenHeight = (float) screen.y;
-        swipeThreshold = screenWidth * 0.1f;
+        if (!isInEditMode()) {
+            Display display = ((Activity) context).getWindowManager().getDefaultDisplay();
+            display.getSize(screen);
+            screenWidth = (float) screen.x;
+            screenHeight = (float) screen.y;
+            swipeThreshold = screenWidth * 0.1f;
+        }
     }
 
     public void attachAttributes(ViewFlipper v) {
