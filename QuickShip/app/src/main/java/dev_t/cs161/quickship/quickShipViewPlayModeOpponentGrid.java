@@ -5,26 +5,26 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
+import android.view.View;
+import android.view.animation.AnimationUtils;
+import android.widget.ViewFlipper;
 
 import static java.lang.Math.abs;
 
-public class quickShipViewPlayModeGrid extends SurfaceView {
+public class quickShipViewPlayModeOpponentGrid extends View {
 
     private Point screen = new Point();
-    private SurfaceHolder surfaceHolder;
+    private Context mContext;
     private volatile boolean held;
-    private Canvas canvas;
-    private volatile Float start_x, start_y;
-    private volatile Float end_x, end_y;
+    private volatile Float initialX, initialY;
+    private volatile Float endX, endY;
     private Float screenWidth;
     private Float screenHeight;
+    private Float swipeThreshold;
     private Paint boardGridFramePaint;
     private Float boardGridFrameStartX;
     private Float boardGridFrameStartY;
@@ -54,14 +54,14 @@ public class quickShipViewPlayModeGrid extends SurfaceView {
     private Float mTitleHeight;
     private Float mTitleX;
     private Float mTitleY;
+    private ViewFlipper playModeFlipper;
     private quickShipModel mplayerBoardData;
     private quickShipModel mOpponentBoardData;
 
 
-    public quickShipViewPlayModeGrid(Context context, quickShipModel playerBoardData, quickShipModel opponentBoardData) {
+    public quickShipViewPlayModeOpponentGrid(Context context, quickShipModel playerBoardData, quickShipModel opponentBoardData) {
         super(context);
-        setWillNotDraw(false);
-        setZOrderOnTop(true);
+        mContext = context;
         mplayerBoardData = playerBoardData;
         mOpponentBoardData = opponentBoardData;
         Display display = ((Activity) context).getWindowManager().getDefaultDisplay();
@@ -71,11 +71,9 @@ public class quickShipViewPlayModeGrid extends SurfaceView {
     }
 
     public void initializeValues() {
-        mTitle = getContext().getResources().getString(R.string.play_mode_grid_player_title);
+        mTitle = getContext().getResources().getString(R.string.play_mode_grid_opponent_title);
         held = true;
         currentIndex = -1;
-        surfaceHolder = getHolder();
-        surfaceHolder.setFormat(PixelFormat.TRANSLUCENT);
 
         titlePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         titlePaint.setColor(Color.BLACK);
@@ -83,7 +81,7 @@ public class quickShipViewPlayModeGrid extends SurfaceView {
 
         boardGridFramePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         boardGridFramePaint.setStyle(Paint.Style.FILL);
-        boardGridFramePaint.setColor(Color.parseColor("#5a8ddd"));
+        boardGridFramePaint.setColor(Color.parseColor("#db699e"));
         boardGridFrameBorderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         boardGridFrameBorderPaint.setStyle(Paint.Style.STROKE);
         boardGridFrameBorderStrokeWidth = 15;
@@ -103,9 +101,15 @@ public class quickShipViewPlayModeGrid extends SurfaceView {
         boardGridFrameDividerY = new Float[11];
     }
 
+    public void attachAttributes(ViewFlipper v) {
+        playModeFlipper = v;
+    }
+
     public void calculateBoardGUIPositions() {
         screenWidth = (float) screen.x;
         screenHeight = (float) screen.y;
+
+        swipeThreshold = screenWidth * 0.1f;
 
         boardGridFrameMargin = (screenWidth - (screenWidth * (float) 0.9)) / 2;
 
@@ -139,38 +143,27 @@ public class quickShipViewPlayModeGrid extends SurfaceView {
     }
 
     @Override
-    public void onDraw(Canvas c) {
-        try {
-            synchronized (surfaceHolder) {
-                canvas = surfaceHolder.lockCanvas();
-                if (surfaceHolder.getSurface().isValid()) {
-                    canvas.drawColor(0, android.graphics.PorterDuff.Mode.CLEAR);
-                    canvas.drawText(mTitle, mTitleX, mTitleY, titlePaint);
-                    canvas.drawRect(boardGridFrameStartX, boardGridFrameStartY, boardGridFrameEndX, boardGridFrameEndY, boardGridFramePaint);
+    public void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+        canvas.drawText(mTitle, mTitleX, mTitleY, titlePaint);
+        canvas.drawRect(boardGridFrameStartX, boardGridFrameStartY, boardGridFrameEndX, boardGridFrameEndY, boardGridFramePaint);
 
-                    float verticalX = boardGridFrameStartX + boardGridCellWidth;
-                    for (int i = 0; i < 9; i++) {
-                        canvas.drawLine(verticalX, boardGridFrameStartY, verticalX, boardGridFrameEndY, boardGridLinePaint);
-                        verticalX = verticalX + boardGridCellWidth;
-                    }
-                    float verticalY = boardGridFrameStartY + boardGridCellHeight;
-                    for (int i = 0; i < 9; i++) {
-                        canvas.drawLine(boardGridFrameStartX, verticalY, boardGridFrameEndX, verticalY, boardGridLinePaint);
-                        verticalY = verticalY + boardGridCellHeight;
-                    }
-
-                    if (boardGridSelectedStartX != null && boardGridSelectedEndX != null && boardGridSelectedStartY != null && boardGridSelectedEndY != null) {
-                        canvas.drawRect(boardGridSelectedStartX, boardGridSelectedStartY, boardGridSelectedEndX, boardGridSelectedEndY, boardGridSelectedPaint);
-                    }
-
-                    canvas.drawRect(boardGridFrameStartX, boardGridFrameStartY, boardGridFrameEndX, boardGridFrameEndY, boardGridFrameBorderPaint);
-                }
-            }
-        } finally {
-            if (canvas != null) {
-                surfaceHolder.unlockCanvasAndPost(canvas);
-            }
+        float verticalX = boardGridFrameStartX + boardGridCellWidth;
+        for (int i = 0; i < 9; i++) {
+            canvas.drawLine(verticalX, boardGridFrameStartY, verticalX, boardGridFrameEndY, boardGridLinePaint);
+            verticalX = verticalX + boardGridCellWidth;
         }
+        float verticalY = boardGridFrameStartY + boardGridCellHeight;
+        for (int i = 0; i < 9; i++) {
+            canvas.drawLine(boardGridFrameStartX, verticalY, boardGridFrameEndX, verticalY, boardGridLinePaint);
+            verticalY = verticalY + boardGridCellHeight;
+        }
+
+        if (boardGridSelectedStartX != null && boardGridSelectedEndX != null && boardGridSelectedStartY != null && boardGridSelectedEndY != null) {
+            canvas.drawRect(boardGridSelectedStartX, boardGridSelectedStartY, boardGridSelectedEndX, boardGridSelectedEndY, boardGridSelectedPaint);
+        }
+
+        canvas.drawRect(boardGridFrameStartX, boardGridFrameStartY, boardGridFrameEndX, boardGridFrameEndY, boardGridFrameBorderPaint);
     }
 
     @Override
@@ -180,26 +173,36 @@ public class quickShipViewPlayModeGrid extends SurfaceView {
         int action = event.getAction();
         switch (action) {
             case MotionEvent.ACTION_DOWN:
-                start_x = event.getX();
-                start_y = event.getY();
+                initialX = event.getX();
+                initialY = event.getY();
                 held = true;
                 break;
             case MotionEvent.ACTION_MOVE:
                 break;
             case MotionEvent.ACTION_UP:
-                end_x = event.getX();
-                end_y = event.getY();
-                if (end_x >= boardGridFrameStartX && end_x <= boardGridFrameEndX && end_y >= boardGridFrameStartY && end_y <= boardGridFrameEndY && abs(end_x - start_x) < 5 && abs(end_y - start_y) < 5) {
-                    selectedIndex = calculateCellTouched(start_x, start_y);
-                    if (selectedIndex != currentIndex) {
-                        currentIndex = selectedIndex;
-                        Log.d("debug", "Index: " + currentIndex);
-                        calculateSelectedRect(currentIndex);
+                endX = event.getX();
+                endY = event.getY();
+                if (initialX > endX && abs(initialX - endX) > swipeThreshold && initialX > (screenWidth * 0.9)) {
+                    playModeFlipper.setInAnimation(AnimationUtils.loadAnimation(mContext, R.anim.in_from_right));
+                    playModeFlipper.setOutAnimation(AnimationUtils.loadAnimation(mContext, R.anim.out_from_left));
+                    playModeFlipper.setDisplayedChild(1);
+                } else if (abs(initialX - endX) > swipeThreshold && initialX < (screenWidth * 0.1)) {
+                    playModeFlipper.setInAnimation(AnimationUtils.loadAnimation(mContext, R.anim.in_from_left));
+                    playModeFlipper.setOutAnimation(AnimationUtils.loadAnimation(mContext, R.anim.out_from_right));
+                    playModeFlipper.setDisplayedChild(1);
+                } else {
+                    if (endX >= boardGridFrameStartX && endX <= boardGridFrameEndX && endY >= boardGridFrameStartY && endY <= boardGridFrameEndY && abs(endX - initialX) < 5 && abs(endY - initialY) < 5) {
+                        selectedIndex = calculateCellTouched(initialX, initialY);
+                        if (selectedIndex != currentIndex) {
+                            currentIndex = selectedIndex;
+                            Log.d("debug", "Index: " + currentIndex);
+                            calculateSelectedRect(currentIndex);
+                        } else {
+                            deSelectCell();
+                        }
                     } else {
                         deSelectCell();
                     }
-                } else {
-                    deSelectCell();
                 }
                 held = false;
                 break;
@@ -209,6 +212,7 @@ public class quickShipViewPlayModeGrid extends SurfaceView {
                 break;
             default:
         }
+
         invalidate();
         return true;
     }

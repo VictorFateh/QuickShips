@@ -3,9 +3,14 @@ package dev_t.cs161.quickship;
 import android.app.Activity;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Display;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.ViewFlipper;
 
 public class quickShipActivityMain extends Activity implements Runnable {
 
@@ -17,8 +22,13 @@ public class quickShipActivityMain extends Activity implements Runnable {
     private volatile long timeDelta;
     private Float screenWidth;
     private Float screenHeight;
+    private ViewFlipper mainScreenViewFlipper;
+    private ViewFlipper playModeFlipper;
     private volatile quickShipModel mPlayerModel;
     private volatile quickShipModel mOpponentModel;
+    private volatile quickShipViewChooseModeGrid chooseModeGrid;
+    private volatile quickShipViewPlayModePlayerGrid playModePlayerGrid;
+    private volatile quickShipViewPlayModeOpponentGrid playModeOpponentGrid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,47 +38,58 @@ public class quickShipActivityMain extends Activity implements Runnable {
         screenWidth = (float) screen.x;
         screenHeight = (float) screen.y;
         newGame();
-        victorScreen();
+        initializeView();
     }
 
-    public void trinhScreen() {
-        setContentView(R.layout.quickship_choose_mode_screen);
+    public void initializeView() {
+        setContentView(R.layout.quickship_main_screen);
+        chooseModeInitializeView();
+        playModeInitializeView();
+        attachViewFlipperToPlayViews();
+    }
+
+    public void attachViewFlipperToPlayViews() {
+        mainScreenViewFlipper = (ViewFlipper) findViewById(R.id.main_screen_view_flipper);
+
+        playModeFlipper = (ViewFlipper) findViewById(R.id.play_mode_view_flipper);
+        quickShipLayoutPlayModeOpponent quickShipLayoutPlayModeOpponent = (quickShipLayoutPlayModeOpponent) findViewById(R.id.quickship_play_mode_opponent);
+        if (quickShipLayoutPlayModeOpponent != null) {
+            quickShipLayoutPlayModeOpponent.attachAttributes(playModeFlipper, screen);
+        }
+        quickShipLayoutPlayModePlayer quickShipLayoutPlayModePlayer = (quickShipLayoutPlayModePlayer) findViewById(R.id.quickship_play_mode_player);
+        if (quickShipLayoutPlayModePlayer != null) {
+            quickShipLayoutPlayModePlayer.attachAttributes(playModeFlipper, screen);
+        }
+        playModeOpponentGrid.attachAttributes(playModeFlipper);
+        playModePlayerGrid.attachAttributes(playModeFlipper);
+    }
+
+    public void chooseModeInitializeView() {
         LinearLayout topLinear = (LinearLayout) findViewById(R.id.choose_mode_top_linear);
         FrameLayout topFrame = (FrameLayout) findViewById(R.id.choose_mode_top_frame);
-        quickShipModel playerBoardData = new quickShipModel();
-        quickShipModel opponentBoardData = new quickShipModel();
-        //
-        playerBoardData.getPlayerGameBoard().setOccupied(5, true);
-        playerBoardData.getPlayerGameBoard().setOccupied(6, true);
-        playerBoardData.getPlayerGameBoard().setOccupied(7, true);
-        playerBoardData.getPlayerGameBoard().setOccupied(8, true);
-        playerBoardData.getPlayerGameBoard().setOccupied(9, true);
-        //
-        quickShipViewChooseModeGrid boardScreen = new quickShipViewChooseModeGrid(this, playerBoardData, opponentBoardData);
+        chooseModeGrid = new quickShipViewChooseModeGrid(this, mPlayerModel, mOpponentModel);
         topFrame.getLayoutParams().height = Math.round(screenWidth);
-        topFrame.addView(boardScreen);
+        topFrame.addView(chooseModeGrid);
         LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Math.round(screenWidth));
         topLinear.setLayoutParams(param);
     }
 
-    public void victorScreen() {
-        setContentView(R.layout.quickship_play_mode_screen);
-        LinearLayout topLinear = (LinearLayout) findViewById(R.id.play_mode_top_linear);
-        FrameLayout topFrame = (FrameLayout) findViewById(R.id.play_mode_top_frame);
-        quickShipModel playerBoardData = new quickShipModel();
-        quickShipModel opponentBoardData = new quickShipModel();
-        //
-        playerBoardData.getPlayerGameBoard().setOccupied(5, true);
-        playerBoardData.getPlayerGameBoard().setOccupied(6, true);
-        playerBoardData.getPlayerGameBoard().setOccupied(7, true);
-        playerBoardData.getPlayerGameBoard().setOccupied(8, true);
-        playerBoardData.getPlayerGameBoard().setOccupied(9, true);
-        //
-        quickShipViewPlayModeGrid boardScreen = new quickShipViewPlayModeGrid(this, playerBoardData, opponentBoardData);
-        topFrame.getLayoutParams().height = Math.round(screenWidth);
-        topFrame.addView(boardScreen);
+    public void playModeInitializeView() {
+        LinearLayout topOpponentLinear = (LinearLayout) findViewById(R.id.play_mode_opponent_top_linear);
+        FrameLayout topOpponentFrame = (FrameLayout) findViewById(R.id.play_mode_opponent_top_frame);
+        playModeOpponentGrid = new quickShipViewPlayModeOpponentGrid(this, mPlayerModel, mOpponentModel);
+        topOpponentFrame.getLayoutParams().height = Math.round(screenWidth);
+        topOpponentFrame.addView(playModeOpponentGrid);
         LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Math.round(screenWidth));
-        topLinear.setLayoutParams(param);
+        topOpponentLinear.setLayoutParams(param);
+
+        LinearLayout topPlayerLinear = (LinearLayout) findViewById(R.id.play_mode_player_top_linear);
+        FrameLayout topPlayerFrame = (FrameLayout) findViewById(R.id.play_mode_player_top_frame);
+        playModePlayerGrid = new quickShipViewPlayModePlayerGrid(this, mPlayerModel, mOpponentModel);
+        topPlayerFrame.getLayoutParams().height = Math.round(screenWidth);
+        topPlayerFrame.addView(playModePlayerGrid);
+        LinearLayout.LayoutParams param2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Math.round(screenWidth));
+        topPlayerLinear.setLayoutParams(param2);
     }
 
     @Override
@@ -104,6 +125,30 @@ public class quickShipActivityMain extends Activity implements Runnable {
         mPlayerModel.setPlayerGameBoard(player1Board);
         mOpponentModel.setOpponentGameBoard(player2Board);
         running = true;
+    }
+
+    public void switchToPlayModeScreen(View view) {
+        mainScreenViewFlipper.setInAnimation(AnimationUtils.loadAnimation(this, R.anim.in_from_right));
+        mainScreenViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(this, R.anim.out_from_left));
+        mainScreenViewFlipper.setDisplayedChild(mainScreenViewFlipper.indexOfChild(findViewById(R.id.play_mode_screen)));
+    }
+
+    public void switchToChooseModeScreen(View view) {
+        mainScreenViewFlipper.setInAnimation(AnimationUtils.loadAnimation(this, R.anim.in_from_left));
+        mainScreenViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(this, R.anim.out_from_right));
+        mainScreenViewFlipper.setDisplayedChild(mainScreenViewFlipper.indexOfChild(findViewById(R.id.choose_mode_screen)));
+    }
+
+    public void switchToOpponentGrid(View view) {
+        playModeFlipper.setInAnimation(AnimationUtils.loadAnimation(this, R.anim.in_from_right));
+        playModeFlipper.setOutAnimation(AnimationUtils.loadAnimation(this, R.anim.out_from_left));
+        playModeFlipper.setDisplayedChild(playModeFlipper.indexOfChild(findViewById(R.id.quickship_play_mode_opponent)));
+    }
+
+    public void switchToPlayerGrid(View view) {
+        playModeFlipper.setInAnimation(AnimationUtils.loadAnimation(this, R.anim.in_from_left));
+        playModeFlipper.setOutAnimation(AnimationUtils.loadAnimation(this, R.anim.out_from_right));
+        playModeFlipper.setDisplayedChild(playModeFlipper.indexOfChild(findViewById(R.id.quickship_play_mode_player)));
     }
 
     @Override

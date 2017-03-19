@@ -10,17 +10,21 @@ import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.AnimationUtils;
+import android.widget.ViewFlipper;
 
 import static java.lang.Math.abs;
 
-public class quickShipViewChooseModeGrid extends View {
+public class quickShipViewPlayModePlayerGrid extends View {
 
     private Point screen = new Point();
+    private Context mContext;
     private volatile boolean held;
     private volatile Float initialX, initialY;
     private volatile Float endX, endY;
     private Float screenWidth;
     private Float screenHeight;
+    private Float swipeThreshold;
     private Paint boardGridFramePaint;
     private Float boardGridFrameStartX;
     private Float boardGridFrameStartY;
@@ -50,12 +54,14 @@ public class quickShipViewChooseModeGrid extends View {
     private Float mTitleHeight;
     private Float mTitleX;
     private Float mTitleY;
+    private ViewFlipper playModeFlipper;
     private quickShipModel mplayerBoardData;
     private quickShipModel mOpponentBoardData;
 
 
-    public quickShipViewChooseModeGrid(Context context, quickShipModel playerBoardData, quickShipModel opponentBoardData) {
+    public quickShipViewPlayModePlayerGrid(Context context, quickShipModel playerBoardData, quickShipModel opponentBoardData) {
         super(context);
+        mContext = context;
         mplayerBoardData = playerBoardData;
         mOpponentBoardData = opponentBoardData;
         Display display = ((Activity) context).getWindowManager().getDefaultDisplay();
@@ -64,8 +70,12 @@ public class quickShipViewChooseModeGrid extends View {
         calculateBoardGUIPositions();
     }
 
+    public void attachAttributes(ViewFlipper v) {
+        playModeFlipper = v;
+    }
+
     public void initializeValues() {
-        mTitle = getContext().getResources().getString(R.string.choose_mode_grid_title);
+        mTitle = getContext().getResources().getString(R.string.play_mode_grid_player_title);
         held = true;
         currentIndex = -1;
 
@@ -98,6 +108,8 @@ public class quickShipViewChooseModeGrid extends View {
     public void calculateBoardGUIPositions() {
         screenWidth = (float) screen.x;
         screenHeight = (float) screen.y;
+
+        swipeThreshold = screenWidth * 0.1f;
 
         boardGridFrameMargin = (screenWidth - (screenWidth * (float) 0.9)) / 2;
 
@@ -170,17 +182,28 @@ public class quickShipViewChooseModeGrid extends View {
             case MotionEvent.ACTION_UP:
                 endX = event.getX();
                 endY = event.getY();
-                if (endX >= boardGridFrameStartX && endX <= boardGridFrameEndX && endY >= boardGridFrameStartY && endY <= boardGridFrameEndY && abs(endX - initialX) < 5 && abs(endY - initialY) < 5) {
-                    selectedIndex = calculateCellTouched(initialX, initialY);
-                    if (selectedIndex != currentIndex) {
-                        currentIndex = selectedIndex;
-                        Log.d("debug", "Index: " + currentIndex);
-                        calculateSelectedRect(currentIndex);
+
+                if (initialX > endX && abs(initialX - endX) > swipeThreshold && initialX > (screenWidth * 0.9)) {
+                    playModeFlipper.setInAnimation(AnimationUtils.loadAnimation(mContext, R.anim.in_from_right));
+                    playModeFlipper.setOutAnimation(AnimationUtils.loadAnimation(mContext, R.anim.out_from_left));
+                    playModeFlipper.setDisplayedChild(2);
+                } else if (abs(initialX - endX) > swipeThreshold && initialX < (screenWidth * 0.1)) {
+                    playModeFlipper.setInAnimation(AnimationUtils.loadAnimation(mContext, R.anim.in_from_left));
+                    playModeFlipper.setOutAnimation(AnimationUtils.loadAnimation(mContext, R.anim.out_from_right));
+                    playModeFlipper.setDisplayedChild(2);
+                } else {
+                    if (endX >= boardGridFrameStartX && endX <= boardGridFrameEndX && endY >= boardGridFrameStartY && endY <= boardGridFrameEndY && abs(endX - initialX) < 5 && abs(endY - initialY) < 5) {
+                        selectedIndex = calculateCellTouched(initialX, initialY);
+                        if (selectedIndex != currentIndex) {
+                            currentIndex = selectedIndex;
+                            Log.d("debug", "Index: " + currentIndex);
+                            calculateSelectedRect(currentIndex);
+                        } else {
+                            deSelectCell();
+                        }
                     } else {
                         deSelectCell();
                     }
-                } else {
-                    deSelectCell();
                 }
                 held = false;
                 break;

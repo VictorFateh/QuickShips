@@ -1,22 +1,21 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:id="@+id/choose_mode"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical">
+<dev_t.cs161.quickship.quickShipLayoutPlayModeOpponent
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <LinearLayout
-        android:id="@+id/choose_mode_top_linear"
+        android:id="@+id/play_mode_opponent_top_linear"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:background="#49d95c"
         android:orientation="horizontal">
 
         <FrameLayout
-            android:id="@+id/choose_mode_top_frame"
+            android:id="@+id/play_mode_opponent_top_frame"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
+            android:layout_height="fill_parent"
+            android:background="#bfca49">
         </FrameLayout>
     </LinearLayout>
 
@@ -32,48 +31,45 @@
             android:orientation="vertical">
 
             <LinearLayout
-                android:id="@+id/choose_mode_bottom_linear1"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#c873e2"
                 android:layout_weight="0.5"
+                android:background="#91a3cc"
+                android:gravity="center"
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/choose_mode_button1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="top"
                     android:layout_marginTop="10dp"
-                    android:layout_weight="0.5"
-                    android:text="@string/choose_mode_button_1"/>
-
-                <Button
-                    android:id="@+id/choose_mode_button2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="top"
-                    android:layout_marginTop="10dp"
-                    android:layout_weight="0.5"
-                    android:text="@string/choose_mode_button_2"/>
+                    android:text="@string/play_mode_button_2"/>
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/choose_mode_bottom_linear2"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#cfaf5d"
                 android:layout_weight="0.5"
+                android:background="#6fcdd6"
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/play_mode"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
-                    android:onClick="switchToPlayModeScreen"
-                    android:text="Play Mode"/>
+                    android:layout_weight="0.5"
+                    android:onClick="switchToChooseModeScreen"
+                    android:text="Choose Mode"/>
+
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_weight="0.5"
+                    android:onClick="switchToPlayerGrid"
+                    android:text="@string/play_mode_button_1"/>
             </LinearLayout>
+
         </LinearLayout>
     </FrameLayout>
-</LinearLayout>
+</dev_t.cs161.quickship.quickShipLayoutPlayModeOpponent>
