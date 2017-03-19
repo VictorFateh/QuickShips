@@ -34,6 +34,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
+                android:gravity="center"
                 android:layout_weight="1"
                 android:onClick="playModeSwitchToPlayerGrid"
                 android:text="@string/play_mode_player_grid_btn"/>
@@ -43,6 +44,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
+                android:gravity="center"
                 android:layout_weight="1"
                 android:onClick="playModeSwitchToOpponentGrid"
                 android:text="@string/play_mode_opponent_grid_btn"/>

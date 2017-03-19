@@ -7,11 +7,12 @@
 	  <item name="android:background">@drawable/quickship_theme_btn_default_holo_dark</item>
 	  <item name="android:minHeight">48dip</item>
 	  <item name="android:minWidth">64dip</item>
-	  <item name="android:textColor">#ffffff</item>
+	  <item name="android:textColor">@color/quickship_theme_btn_color</item>
   </style>
 
   <style name="ImageButtonquickship_theme" parent="android:Widget.ImageButton">
 	  <item name="android:background">@drawable/quickship_theme_btn_default_holo_dark</item>
+	  <item name="android:textColor">@color/quickship_theme_btn_color</item>
   </style>
 
 </resources>
