@@ -20,6 +20,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
     Thread thread = null;
     private Point screen = new Point();
     private quickShipActivityMain mActivityMain;
+    private volatile boolean initialBoot;
     private volatile boolean running;
     private volatile long timeNow;
     private volatile long timePrevFrame = 0;
@@ -45,6 +46,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
         display.getSize(screen);
         screenWidth = (float) screen.x;
         screenHeight = (float) screen.y;
+        initialBoot = true;
         newGame();
         initializeView();
     }
@@ -146,15 +148,19 @@ public class quickShipActivityMain extends Activity implements Runnable {
 
     @Override
     protected void onResume() {
-        // TODO Auto-generated method stub
         super.onResume();
+        if (!initialBoot) {
+            reinitializeUI();
+        }
+        else {
+            initialBoot = false;
+        }
         thread = new Thread(this);
         thread.start();
     }
 
     @Override
     protected void onPause() {
-        // TODO Auto-generated method stub
         super.onPause();
         boolean retry = true;
         running = false;
@@ -173,7 +179,17 @@ public class quickShipActivityMain extends Activity implements Runnable {
     protected void onRestart() {
         // TODO Auto-generated method stub
         super.onRestart();
-        reinitializeUI();
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (!initialBoot) {
+            reinitializeUI();
+        }
+        else {
+            initialBoot = false;
+        }
     }
 
     public void reinitializeUI() {
