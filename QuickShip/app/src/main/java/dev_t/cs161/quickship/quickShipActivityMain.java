@@ -156,7 +156,6 @@ public class quickShipActivityMain extends Activity implements Runnable {
     protected void onPause() {
         // TODO Auto-generated method stub
         super.onPause();
-        reinitializeUI();
         boolean retry = true;
         running = false;
         while (retry) {
@@ -170,15 +169,22 @@ public class quickShipActivityMain extends Activity implements Runnable {
         }
     }
 
+    @Override
+    protected void onRestart() {
+        // TODO Auto-generated method stub
+        super.onRestart();
+        reinitializeUI();
+    }
+
     public void reinitializeUI() {
         if (playModeFlipper.getDisplayedChild() == 0) {
             mOpponentGridBtn.setPressed(false);
             mPlayModeOptionsBtn.setPressed(false);
             mPlayerGridBtn.setPressed(true);
         } else if (playModeFlipper.getDisplayedChild() == 1) {
-            mOpponentGridBtn.setPressed(false);
             mPlayModeOptionsBtn.setPressed(false);
-            mPlayerGridBtn.setPressed(true);
+            mPlayerGridBtn.setPressed(false);
+            mOpponentGridBtn.setPressed(true);
         } else {
             mOpponentGridBtn.setPressed(false);
             mPlayerGridBtn.setPressed(false);
