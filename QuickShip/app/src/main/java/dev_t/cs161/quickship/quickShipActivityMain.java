@@ -60,7 +60,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if (playModeFlipper.getDisplayedChild() == 0 || playModeFlipper.getDisplayedChild() == 2) {
+                if (playModeFlipper.getDisplayedChild() == 1 || playModeFlipper.getDisplayedChild() == 2) {
                     playModeSwitchToPlayerGrid(null);
                     mOpponentGridBtn.setPressed(false);
                     mPlayModeOptionsBtn.setPressed(false);
@@ -77,7 +77,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if (playModeFlipper.getDisplayedChild() == 1 || playModeFlipper.getDisplayedChild() == 2) {
+                if (playModeFlipper.getDisplayedChild() == 0 || playModeFlipper.getDisplayedChild() == 2) {
                     playModeSwitchToOpponentGrid(null);
                     mPlayerGridBtn.setPressed(false);
                     mPlayModeOptionsBtn.setPressed(false);
@@ -106,6 +106,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
 
         mainScreenViewFlipper = (ViewFlipper) findViewById(R.id.main_screen_view_flipper);
         playModeFlipper = (ViewFlipper) findViewById(R.id.play_mode_view_flipper);
+        playModeFlipper.setDisplayedChild(1);
 
         chooseModeInitializeView();
         playModeInitializeView();
@@ -208,10 +209,10 @@ public class quickShipActivityMain extends Activity implements Runnable {
     }
 
     public void playModeSwitchToPlayerGrid(View view) {
-        if (playModeFlipper.getDisplayedChild() == 0 || playModeFlipper.getDisplayedChild() == 2) {
+        if (playModeFlipper.getDisplayedChild() == 1 || playModeFlipper.getDisplayedChild() == 2) {
             playModeFlipper.setInAnimation(AnimationUtils.loadAnimation(this, R.anim.in_from_left));
             playModeFlipper.setOutAnimation(AnimationUtils.loadAnimation(this, R.anim.out_from_right));
-            playModeFlipper.setDisplayedChild(1);
+            playModeFlipper.setDisplayedChild(0);
             mOpponentGridBtn.setPressed(false);
             mPlayModeOptionsBtn.setPressed(false);
             mPlayerGridBtn.setPressed(true);
@@ -219,15 +220,15 @@ public class quickShipActivityMain extends Activity implements Runnable {
     }
 
     public void playModeSwitchToOpponentGrid(View view) {
-        if (playModeFlipper.getDisplayedChild() == 1 || playModeFlipper.getDisplayedChild() == 2) {
-            if (playModeFlipper.getDisplayedChild() == 1) {
+        if (playModeFlipper.getDisplayedChild() == 0 || playModeFlipper.getDisplayedChild() == 2) {
+            if (playModeFlipper.getDisplayedChild() == 0) {
                 playModeFlipper.setInAnimation(AnimationUtils.loadAnimation(this, R.anim.in_from_right));
                 playModeFlipper.setOutAnimation(AnimationUtils.loadAnimation(this, R.anim.out_from_left));
             } else {
                 playModeFlipper.setInAnimation(AnimationUtils.loadAnimation(this, R.anim.in_from_left));
                 playModeFlipper.setOutAnimation(AnimationUtils.loadAnimation(this, R.anim.out_from_right));
             }
-            playModeFlipper.setDisplayedChild(0);
+            playModeFlipper.setDisplayedChild(1);
             mPlayerGridBtn.setPressed(false);
             mPlayModeOptionsBtn.setPressed(false);
             mOpponentGridBtn.setPressed(true);

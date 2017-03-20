@@ -179,24 +179,10 @@ public class quickShipViewPlayModePlayerGrid extends View {
             case MotionEvent.ACTION_UP:
                 endX = event.getX();
                 endY = event.getY();
-
                 if (initialX > endX && abs(initialX - endX) > swipeThreshold) {
                     mMainActivity.playModeSwitchToOpponentGrid(null);
                 } else if (abs(initialX - endX) > swipeThreshold) {
                     mMainActivity.playModeSwitchToPlayerGrid(null);
-                } else {
-                    if (endX >= boardGridFrameStartX && endX <= boardGridFrameEndX && endY >= boardGridFrameStartY && endY <= boardGridFrameEndY && abs(endX - initialX) < 5 && abs(endY - initialY) < 5) {
-                        selectedIndex = calculateCellTouched(initialX, initialY);
-                        if (selectedIndex != currentIndex) {
-                            currentIndex = selectedIndex;
-                            Log.d("debug", "Index: " + currentIndex);
-                            calculateSelectedRect(currentIndex);
-                        } else {
-                            deSelectCell();
-                        }
-                    } else {
-                        deSelectCell();
-                    }
                 }
                 held = false;
                 break;
