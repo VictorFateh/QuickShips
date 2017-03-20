@@ -1,0 +1,23 @@
+<dev_t.cs161.quickship.quickShipLayoutPlayModeOptions
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/quickship_play_mode_options"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/play_mode_settings_background">
+
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"
+        android:text="Options"
+        android:textSize="30sp"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="switchToChooseModeScreen"
+        android:text="Choose Mode"/>
+</dev_t.cs161.quickship.quickShipLayoutPlayModeOptions>

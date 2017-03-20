@@ -60,9 +60,8 @@
             <LinearLayout
                 android:id="@+id/choose_mode_bottom_linear2"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:background="@color/choose_mode_slider"
-                android:layout_weight="4"
                 android:orientation="horizontal">
 
                 <Button

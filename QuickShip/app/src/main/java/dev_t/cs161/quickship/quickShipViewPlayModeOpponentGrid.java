@@ -10,8 +10,6 @@ import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.AnimationUtils;
-import android.widget.ViewFlipper;
 
 import static java.lang.Math.abs;
 
@@ -180,7 +178,7 @@ public class quickShipViewPlayModeOpponentGrid extends View {
                 endX = event.getX();
                 endY = event.getY();
                 if (initialX > endX && abs(initialX - endX) > swipeThreshold) {
-                    mMainActivity.playModeSwitchToOpponentGrid(null);
+                    mMainActivity.playModeSwitchToOptions(null);
                 } else if (abs(initialX - endX) > swipeThreshold) {
                     mMainActivity.playModeSwitchToPlayerGrid(null);
                 } else {

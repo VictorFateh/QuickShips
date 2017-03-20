@@ -20,12 +20,15 @@
 
             <include
                 layout="@layout/quickship_play_mode_player_grid_screen"/>
+
+            <include
+                layout="@layout/quickship_play_mode_options_screen"/>
+
         </ViewFlipper>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="12"
+            android:layout_height="wrap_content"
             android:background="@color/play_mode_slider"
             android:orientation="horizontal">
 
@@ -34,9 +37,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
-                android:gravity="center"
                 android:layout_weight="1"
-                android:onClick="playModeSwitchToPlayerGrid"
                 android:text="@string/play_mode_player_grid_btn"/>
 
             <Button
@@ -44,10 +45,16 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
-                android:gravity="center"
                 android:layout_weight="1"
-                android:onClick="playModeSwitchToOpponentGrid"
                 android:text="@string/play_mode_opponent_grid_btn"/>
+
+            <Button
+                android:id="@+id/play_mode_options_btn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_weight="1"
+                android:text="@string/play_mode_options_btn"/>
         </LinearLayout>
     </LinearLayout>
 </FrameLayout>

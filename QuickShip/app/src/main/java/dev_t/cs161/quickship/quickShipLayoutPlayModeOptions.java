@@ -11,7 +11,7 @@ import android.widget.LinearLayout;
 
 import static java.lang.Math.abs;
 
-public class quickShipLayoutPlayModeOpponent extends LinearLayout {
+public class quickShipLayoutPlayModeOptions extends LinearLayout {
 
     private Point screen = new Point();
     private Float screenWidth;
@@ -22,7 +22,7 @@ public class quickShipLayoutPlayModeOpponent extends LinearLayout {
     private Context mContext;
     private quickShipActivityMain mMainActivity;
 
-    public quickShipLayoutPlayModeOpponent(Context context, @Nullable AttributeSet attrs) {
+    public quickShipLayoutPlayModeOptions(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
         if (!isInEditMode()) {
@@ -31,7 +31,7 @@ public class quickShipLayoutPlayModeOpponent extends LinearLayout {
             display.getSize(screen);
             screenWidth = (float) screen.x;
             screenHeight = (float) screen.y;
-            swipeThreshold = screenWidth * 0.2f;
+            swipeThreshold = screenWidth * 0.1f;
         }
     }
 
@@ -46,7 +46,7 @@ public class quickShipLayoutPlayModeOpponent extends LinearLayout {
                 if (initialX > finalX && abs(initialX - finalX) > swipeThreshold) {
                     mMainActivity.playModeSwitchToOptions(null);
                 } else if (abs(initialX - finalX) > swipeThreshold) {
-                    mMainActivity.playModeSwitchToPlayerGrid(null);
+                    mMainActivity.playModeSwitchToOpponentGrid(null);
                 }
                 break;
         }

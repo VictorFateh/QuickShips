@@ -4,6 +4,8 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
+    <color name="play_mode_settings_background">#0d4194</color>
+
     <color name="play_mode_slider">#6fcdd6</color>
     <color name="play_mode_oppponent_top">#bfca49</color>
     <color name="play_mode_oppponent_bottom">#91a3cc</color>

@@ -9,4 +9,5 @@
     <string name="play_mode_grid_opponent_title">Enemy Board</string>
     <string name="play_mode_player_grid_btn">Your Board</string>
     <string name="play_mode_opponent_grid_btn">Enemy Board</string>
+    <string name="play_mode_options_btn">Options</string>
 </resources>

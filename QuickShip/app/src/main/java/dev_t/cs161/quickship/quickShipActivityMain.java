@@ -3,10 +3,12 @@ package dev_t.cs161.quickship;
 import android.app.Activity;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -17,6 +19,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
 
     Thread thread = null;
     private Point screen = new Point();
+    private quickShipActivityMain mActivityMain;
     private volatile boolean running;
     private volatile long timeNow;
     private volatile long timePrevFrame = 0;
@@ -33,6 +36,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
     private Button mPlayModeFireBtn;
     private Button mPlayerGridBtn;
     private Button mOpponentGridBtn;
+    private Button mPlayModeOptionsBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,49 +51,68 @@ public class quickShipActivityMain extends Activity implements Runnable {
 
     public void initializeView() {
         setContentView(R.layout.quickship_main_screen);
+        mActivityMain = this;
         mPlayModeFireBtn = (Button) findViewById(R.id.play_mode_fire_btn);
         mPlayModeFireBtn.setEnabled(false);
+
         mPlayerGridBtn = (Button) findViewById(R.id.play_mode_player_grid_btn);
         mPlayerGridBtn.setOnTouchListener(new View.OnTouchListener() {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if (playModeFlipper.getDisplayedChild() == 0) {
+                if (playModeFlipper.getDisplayedChild() == 0 || playModeFlipper.getDisplayedChild() == 2) {
                     playModeSwitchToPlayerGrid(null);
                     mOpponentGridBtn.setPressed(false);
+                    mPlayModeOptionsBtn.setPressed(false);
                     mPlayerGridBtn.setPressed(true);
                 }
                 return true;
 
             }
         });
+
         mOpponentGridBtn = (Button) findViewById(R.id.play_mode_opponent_grid_btn);
         mOpponentGridBtn.setPressed(true);
         mOpponentGridBtn.setOnTouchListener(new View.OnTouchListener() {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if (playModeFlipper.getDisplayedChild() == 1) {
+                if (playModeFlipper.getDisplayedChild() == 1 || playModeFlipper.getDisplayedChild() == 2) {
                     playModeSwitchToOpponentGrid(null);
                     mPlayerGridBtn.setPressed(false);
+                    mPlayModeOptionsBtn.setPressed(false);
                     mOpponentGridBtn.setPressed(true);
                 }
                 return true;
 
             }
         });
+
+        mPlayModeOptionsBtn = (Button) findViewById(R.id.play_mode_options_btn);
+        mPlayModeOptionsBtn.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (playModeFlipper.getDisplayedChild() == 0 || playModeFlipper.getDisplayedChild() == 1) {
+                    playModeSwitchToOptions(null);
+                    mPlayerGridBtn.setPressed(false);
+                    mOpponentGridBtn.setPressed(false);
+                    mPlayModeOptionsBtn.setPressed(true);
+                }
+                return true;
+
+            }
+        });
+
+        mainScreenViewFlipper = (ViewFlipper) findViewById(R.id.main_screen_view_flipper);
+        playModeFlipper = (ViewFlipper) findViewById(R.id.play_mode_view_flipper);
+
         chooseModeInitializeView();
         playModeInitializeView();
-        attachViewFlipperToPlayViews();
     }
 
     public void setPlayModeFireBtnStatus(boolean status) {
         mPlayModeFireBtn.setEnabled(status);
-    }
-
-    public void attachViewFlipperToPlayViews() {
-        mainScreenViewFlipper = (ViewFlipper) findViewById(R.id.main_screen_view_flipper);
-        playModeFlipper = (ViewFlipper) findViewById(R.id.play_mode_view_flipper);
     }
 
     public void chooseModeInitializeView() {
@@ -132,6 +155,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
     protected void onPause() {
         // TODO Auto-generated method stub
         super.onPause();
+        reinitializeUI();
         boolean retry = true;
         running = false;
         while (retry) {
@@ -142,6 +166,22 @@ public class quickShipActivityMain extends Activity implements Runnable {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
+        }
+    }
+
+    public void reinitializeUI() {
+        if (playModeFlipper.getDisplayedChild() == 0) {
+            mOpponentGridBtn.setPressed(false);
+            mPlayModeOptionsBtn.setPressed(false);
+            mPlayerGridBtn.setPressed(true);
+        } else if (playModeFlipper.getDisplayedChild() == 1) {
+            mOpponentGridBtn.setPressed(false);
+            mPlayModeOptionsBtn.setPressed(false);
+            mPlayerGridBtn.setPressed(true);
+        } else {
+            mOpponentGridBtn.setPressed(false);
+            mPlayerGridBtn.setPressed(false);
+            mPlayModeOptionsBtn.setPressed(true);
         }
     }
 
@@ -168,22 +208,40 @@ public class quickShipActivityMain extends Activity implements Runnable {
     }
 
     public void playModeSwitchToPlayerGrid(View view) {
-        if (playModeFlipper.getDisplayedChild() == 0) {
+        if (playModeFlipper.getDisplayedChild() == 0 || playModeFlipper.getDisplayedChild() == 2) {
             playModeFlipper.setInAnimation(AnimationUtils.loadAnimation(this, R.anim.in_from_left));
             playModeFlipper.setOutAnimation(AnimationUtils.loadAnimation(this, R.anim.out_from_right));
             playModeFlipper.setDisplayedChild(1);
             mOpponentGridBtn.setPressed(false);
+            mPlayModeOptionsBtn.setPressed(false);
             mPlayerGridBtn.setPressed(true);
         }
     }
 
     public void playModeSwitchToOpponentGrid(View view) {
-        if (playModeFlipper.getDisplayedChild() == 1) {
-            playModeFlipper.setInAnimation(AnimationUtils.loadAnimation(this, R.anim.in_from_right));
-            playModeFlipper.setOutAnimation(AnimationUtils.loadAnimation(this, R.anim.out_from_left));
+        if (playModeFlipper.getDisplayedChild() == 1 || playModeFlipper.getDisplayedChild() == 2) {
+            if (playModeFlipper.getDisplayedChild() == 1) {
+                playModeFlipper.setInAnimation(AnimationUtils.loadAnimation(this, R.anim.in_from_right));
+                playModeFlipper.setOutAnimation(AnimationUtils.loadAnimation(this, R.anim.out_from_left));
+            } else {
+                playModeFlipper.setInAnimation(AnimationUtils.loadAnimation(this, R.anim.in_from_left));
+                playModeFlipper.setOutAnimation(AnimationUtils.loadAnimation(this, R.anim.out_from_right));
+            }
             playModeFlipper.setDisplayedChild(0);
             mPlayerGridBtn.setPressed(false);
+            mPlayModeOptionsBtn.setPressed(false);
             mOpponentGridBtn.setPressed(true);
+        }
+    }
+
+    public void playModeSwitchToOptions(View view) {
+        if (playModeFlipper.getDisplayedChild() == 0 || playModeFlipper.getDisplayedChild() == 1) {
+            playModeFlipper.setInAnimation(AnimationUtils.loadAnimation(this, R.anim.in_from_right));
+            playModeFlipper.setOutAnimation(AnimationUtils.loadAnimation(this, R.anim.out_from_left));
+            playModeFlipper.setDisplayedChild(2);
+            mPlayerGridBtn.setPressed(false);
+            mOpponentGridBtn.setPressed(false);
+            mPlayModeOptionsBtn.setPressed(true);
         }
     }
 
