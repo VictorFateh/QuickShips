@@ -14,17 +14,23 @@
         android:text="Status."
         android:textColor="#000"
         android:layout_weight="1" />
+
+    <ListView
+        android:id="@+id/lv_newDevices"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"/>
+
     <Button
         android:id="@+id/btn_connect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Connect" />
+        android:text="Enable Bluetooth" />
 
     <Button
         android:id="@+id/btn_disconnect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Disconnect" />
+        android:text="Disable Bluetooth" />
 
     <Button
         android:id="@+id/btn_hostGame"
@@ -36,7 +42,8 @@
         android:id="@+id/btn_joinGame"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Join Game" />
+        android:text="Discover Devices" />
+
 
 
 </LinearLayout>
