@@ -5,19 +5,22 @@ import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.os.Build;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.content.Intent;
 import android.content.IntentFilter;
 
 import android.widget.ListView;
+
+import java.nio.charset.Charset;
 import java.util.ArrayList;
-
-
+import java.util.UUID;
 
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener{
@@ -27,10 +30,22 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private Button btn_disconnect;
     private Button btn_hostGame, btn_joinGame;
 
+    private Button btn_joinGameConnect;
+    private Button btn_sendMsg;
+    private EditText et_msg;
+
+    BluetoothConnectionService mBluetoothConnection;
+    BluetoothDevice mBTDevice;
+    StringBuilder messages;
+
     private ArrayList<BluetoothDevice> mBTDevices = new ArrayList<>();
     private DeviceListAdapter mDeviceListAdapter;
     ListView lv_newDevices;
 
+
+
+    private static final UUID MY_UUID_INSECURE =
+            UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,8 +59,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         btn_joinGame = (Button) findViewById(R.id.btn_joinGame);
         lv_newDevices = (ListView) findViewById(R.id.lv_newDevices);
 
+        et_msg = (EditText) findViewById(R.id.et_msg);
+        btn_joinGameConnect = (Button) findViewById(R.id.btn_joinGameConnect);
+        btn_sendMsg = (Button) findViewById(R.id.btn_sendMsg);
+        messages = new StringBuilder();
 
-
+        LocalBroadcastManager.getInstance(this).registerReceiver(msgReceiver, new IntentFilter("incomingMessage"));
 
         lv_newDevices.setOnItemClickListener(MainActivity.this);
 
@@ -58,6 +77,18 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             btn_joinGame.setEnabled(false);
         }
         setupUI();
+    }
+
+    // IMPORTANT: devices must be paired before running this method
+    private void startConnection(){
+        startBTConnection(mBTDevice,MY_UUID_INSECURE);
+    }
+
+    // start client method; start connect thread
+
+    private void startBTConnection(BluetoothDevice device, UUID uuid){
+        tv_status.setText("Starting Connection...");
+        mBluetoothConnection.startClient(device, uuid);
     }
 
     private void setupUI() {
@@ -97,7 +128,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             public void onClick(View view) {
                 if(btAdapter != null) {
 
-                    mBTDevices.clear();
+
+                    //mBTDevices.clear(); //TODO solve fix
 
                     btAdapter.disable();
 
@@ -123,12 +155,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
                 tv_status.setText("Attempting to Host Game...");
                 //btn_joinGame.setVisibility(View.GONE);
-                mBTDevices.clear();
-                IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);//TODO
-                registerReceiver(mReceiver, filter);//TODO
+                //mBTDevices.clear(); //TODO solve fix
+
+                IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
+                registerReceiver(mReceiver, filter);
 
                 startActivity(discoverableIntent);
-                //startActivityForResult(discoverableIntent, 1);
+
             }
         });
 
@@ -171,24 +204,47 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 // Bluetooth Tutorial - Discover Devices in Android Studio @3:05
 
                 tv_status.setText("Devices Discovered...");
-                //TODO clear mBTDevices for fresh scan
+
+                //Clear mBTDevices for fresh scan
                 mBTDevices.clear();
+
+                // Lollipop+ may need extra manual permissions check
+                //checkBTPermissions();
 
                 btAdapter.startDiscovery();
 
                 IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
                 registerReceiver(mReceiver, filter);
 
-                //TODO Broadcasts when bond state changes (ie:pairing) added @ onCreate in tutorial
-                //IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
-                //registerReceiver(mReceiver, filter);
             }
         });
 
-        //TODO once devices are connected, start threads to allow data to flow between devices.
+        btn_joinGameConnect.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                startConnection();
+            }
+
+        });
+
+        btn_sendMsg.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                byte[] bytes = et_msg.getText().toString().getBytes(Charset.defaultCharset());
+                mBluetoothConnection.write(bytes);
+                et_msg.setText("");//clear message
+            }
+
+        });
     }
-
-
+    private final BroadcastReceiver msgReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String text = intent.getStringExtra("theMsg");
+            messages.append(text+"\n");
+            tv_status.setText(messages);
+        }
+    };
     // Create a BroadcastReceiver for ACTION_FOUND.
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
@@ -219,7 +275,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 }
             }
 
-            // Hosting Game toggled on or off
+            // Hosting Game pressed; discoverability enabled
 
             if(action.equals(btAdapter.ACTION_SCAN_MODE_CHANGED)) {
                 int mode = intent.getIntExtra(BluetoothAdapter.EXTRA_SCAN_MODE, btAdapter.ERROR);
@@ -245,31 +301,34 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 }
             }
 
-            // Join Game Discovering Devices
+            // DIscover Devices pressed; Discovering Devices enabled
 
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 // Discovery has found a device. Get the BluetoothDevice
                 // object and its info from the Intent.
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
 
-
+                /* DEBUGGING
                 String deviceName = device.getName();
                 String deviceHardwareAddress = device.getAddress(); // MAC address
                 tv_status.setText(tv_status.getText().toString() + "\n" +deviceName + " -> " + deviceHardwareAddress);
+                */
 
                 mBTDevices.add(device);
                 mDeviceListAdapter = new DeviceListAdapter(context, R.layout.device_adapter_view, mBTDevices);
                 lv_newDevices.setAdapter(mDeviceListAdapter);
             }
 
-            // Join Game Pairing
+            // Discovered device Item pressed; Pairing devices
+
             if(action.equals(BluetoothDevice.ACTION_BOND_STATE_CHANGED)){
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
 
                 // case1: bonded already
                 if( device.getBondState() == BluetoothDevice.BOND_BONDED){
                     tv_status.setText("Devices Successfully Paired.");
-                    mBTDevices.clear();
+                    //mBTDevices.clear(); //TODO remove mBTDevices
+                    mBTDevice = device; // device it is paired with
                 }
 
                 // case 2: creating a bond
@@ -295,6 +354,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         // Don't forget to unregister the ACTION_FOUND receiver.
         unregisterReceiver(mReceiver);
+        unregisterReceiver(msgReceiver);
     }
 
     @Override
@@ -309,7 +369,23 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             tv_status.setText(tv_status.getText().toString() + " with...\n" +deviceName + " -> " + deviceMAC);
             mBTDevices.get(i).createBond();
 
+            mBTDevice = mBTDevices.get(i);
+            mBluetoothConnection = new BluetoothConnectionService(MainActivity.this);
         }
 
     }
+
+    /*
+    private void checkBTPermissions() {
+        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP){
+            int permissionCheck = this.checkSelfPermission("Manifest.permission.ACCESS_FINE_LOCATION");
+            permissionCheck += this.checkSelfPermission("Manifest.permission.ACCESS_COARSE_LOCATION");
+            if (permissionCheck != 0) {
+
+                this.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1001); //Any number
+            }
+        }else{
+            Log.d(TAG, "checkBTPermissions: No need to check permissions. SDK version < LOLLIPOP.");
+        }
+    }*/
 }

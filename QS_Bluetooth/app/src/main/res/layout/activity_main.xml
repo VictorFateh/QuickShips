@@ -19,19 +19,28 @@
         android:id="@+id/lv_newDevices"
         android:layout_width="match_parent"
         android:layout_height="200dp"/>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <Button
-        android:id="@+id/btn_connect"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Enable Bluetooth" />
+        <Button
+            android:id="@+id/btn_connect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Enable Bluetooth" />
 
-    <Button
-        android:id="@+id/btn_disconnect"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Disable Bluetooth" />
+        <Button
+            android:id="@+id/btn_disconnect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Disable Bluetooth" />
+    </LinearLayout>
 
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
     <Button
         android:id="@+id/btn_hostGame"
         android:layout_width="wrap_content"
@@ -43,6 +52,25 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Discover Devices" />
+
+    <Button
+        android:id="@+id/btn_joinGameConnect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Join Game" />
+    </LinearLayout>
+
+
+    <EditText
+        android:id="@+id/et_msg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="send message..." />
+    <Button
+        android:id="@+id/btn_sendMsg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Send" />
 
 
 
