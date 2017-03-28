@@ -11,6 +11,8 @@ import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
 
+import java.util.ArrayList;
+
 import static java.lang.Math.abs;
 
 public class quickShipViewChooseModeGrid extends View {
@@ -52,14 +54,16 @@ public class quickShipViewChooseModeGrid extends View {
     private Float mTitleX;
     private Float mTitleY;
     private quickShipModel mplayerBoardData;
-    private quickShipModel mOpponentBoardData;
+    private quickShipModelBoard mTemporaryBoard;
+    private ArrayList<quickShipModelBoardSlot> shipList;
+    private quickShipModelBoardSlot currentSelectedPiece;
 
 
-    public quickShipViewChooseModeGrid(Context context, quickShipModel playerBoardData, quickShipModel opponentBoardData) {
+    public quickShipViewChooseModeGrid(Context context, quickShipModel playerBoardData) {
         super(context);
         mContext = context;
         mplayerBoardData = playerBoardData;
-        mOpponentBoardData = opponentBoardData;
+        mTemporaryBoard = new quickShipModelBoard();
         Display display = ((Activity) context).getWindowManager().getDefaultDisplay();
         display.getSize(screen);
         initializeValues();
@@ -67,6 +71,28 @@ public class quickShipViewChooseModeGrid extends View {
     }
 
     public void initializeValues() {
+        shipList = new ArrayList<>();
+        quickShipModelBoardSlot piece1 = new quickShipModelBoardSlot();
+        piece1.setShipType(ShipType.TWO);
+        piece1.setAnchor(true);
+        quickShipModelBoardSlot piece2 = new quickShipModelBoardSlot();
+        piece2.setShipType(ShipType.THREE_A);
+        piece2.setAnchor(true);
+        quickShipModelBoardSlot piece3 = new quickShipModelBoardSlot();
+        piece3.setShipType(ShipType.THREE_B);
+        piece3.setAnchor(true);
+        quickShipModelBoardSlot piece4 = new quickShipModelBoardSlot();
+        piece4.setShipType(ShipType.FOUR);
+        piece4.setAnchor(true);
+        quickShipModelBoardSlot piece5 = new quickShipModelBoardSlot();
+        piece5.setShipType(ShipType.FIVE);
+        piece5.setAnchor(true);
+        shipList.add(piece1);
+        shipList.add(piece2);
+        shipList.add(piece3);
+        shipList.add(piece4);
+        shipList.add(piece5);
+
         mTitle = getContext().getResources().getString(R.string.choose_mode_grid_title);
         held = true;
         currentIndex = -1;
@@ -158,8 +184,6 @@ public class quickShipViewChooseModeGrid extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        // TODO Auto-generated method stub
-
         int action = event.getAction();
         switch (action) {
             case MotionEvent.ACTION_DOWN:

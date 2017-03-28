@@ -4,14 +4,35 @@ public class quickShipModelBoardSlot {
     private boolean isHit;
     private boolean isOccupied;
     private boolean isAnchor;
+    private boolean isSet;
     private Orientation mOrientation;
     private Direction mDirection;
     private ShipType mShipType;
+    private int mAnchorIndex;
 
     public quickShipModelBoardSlot() {
         setHit(false);
         setOccupied(false);
         setAnchor(false);
+        setSet(false);
+        setAnchorIndex(-1);
+        setOrientation(Orientation.HORIZONTAL);
+    }
+
+    public int getAnchorIndex() {
+        return mAnchorIndex;
+    }
+
+    public void setAnchorIndex(int anchorIndex) {
+        mAnchorIndex = anchorIndex;
+    }
+
+    public boolean isSet() {
+        return isSet;
+    }
+
+    public void setSet(boolean set) {
+        isSet = set;
     }
 
     public Orientation getOrientation() {

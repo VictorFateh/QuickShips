@@ -163,8 +163,6 @@ public class quickShipViewPlayModeOpponentGrid extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        // TODO Auto-generated method stub
-
         int action = event.getAction();
         switch (action) {
             case MotionEvent.ACTION_DOWN:

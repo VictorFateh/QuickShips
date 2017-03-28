@@ -32,6 +32,14 @@ public class quickShipModelBoard {
         }
     }
 
+    public void removeShip(int anchorIndex) {
+        for (int i = 0; i < 100; i++) {
+            if (completeBoard[i].getAnchorIndex() == anchorIndex) {
+                completeBoard[i] = new quickShipModelBoardSlot();
+            }
+        }
+    }
+
     // If the move is a hit, return true
     public boolean makeMove(int i) {
         quickShipModelBoardSlot targetedSlot = completeBoard[i];

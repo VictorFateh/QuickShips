@@ -121,7 +121,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
     public void chooseModeInitializeView() {
         LinearLayout topLinear = (LinearLayout) findViewById(R.id.choose_mode_top_linear);
         FrameLayout topFrame = (FrameLayout) findViewById(R.id.choose_mode_top_frame);
-        chooseModeGrid = new quickShipViewChooseModeGrid(this, mPlayerModel, mOpponentModel);
+        chooseModeGrid = new quickShipViewChooseModeGrid(this, mPlayerModel);
         topFrame.getLayoutParams().height = Math.round(screenWidth);
         topFrame.addView(chooseModeGrid);
         LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Math.round(screenWidth));
@@ -169,7 +169,6 @@ public class quickShipActivityMain extends Activity implements Runnable {
                 thread.join();
                 retry = false;
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
@@ -177,7 +176,6 @@ public class quickShipActivityMain extends Activity implements Runnable {
 
     @Override
     protected void onRestart() {
-        // TODO Auto-generated method stub
         super.onRestart();
     }
 
