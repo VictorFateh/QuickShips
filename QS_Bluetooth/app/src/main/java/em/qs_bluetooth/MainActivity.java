@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     // start client method; start connect thread
 
     private void startBTConnection(BluetoothDevice device, UUID uuid){
-        tv_status.setText("Join game lobby...");
+        tv_status.setText("Joining the Game Lobby.");
         mBluetoothConnection.startClient(device, uuid);
     }
 
@@ -291,11 +291,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private final BroadcastReceiver msgReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            String text = intent.getStringExtra("theMsg");
-            messages.append(text+"\n");
-            tv_status.setText(messages);
-            if(text.contains("Joined The Game!"))
-                view_connectedState();
+
+
+            if(intent.getStringExtra("theMsg") != null) {
+                String text = intent.getStringExtra("theMsg");
+                messages.append(text + "\n");
+                tv_status.setText(messages);
+            }else if(intent.getBooleanExtra("joinedLobby", false)){
+                                view_connectedState();
+            }
+
 
         }
     };

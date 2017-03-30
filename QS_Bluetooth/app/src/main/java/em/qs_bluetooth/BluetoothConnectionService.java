@@ -249,10 +249,17 @@ public class BluetoothConnectionService {
 
             int bytes; // bytes returned from read()
 
+            /*
             Intent x = new Intent("incomingMessage");
             String sendStatus = mmDevice.getName() + " Joined The Game!";
             x.putExtra("theMsg", sendStatus);
             LocalBroadcastManager.getInstance(mContext).sendBroadcast( x );
+            */
+            Intent x = new Intent("incomingMessage");
+            //String sendStatus = mmDevice.getName() + " Joined The Game!";
+            x.putExtra("joinedLobby", true);
+            LocalBroadcastManager.getInstance(mContext).sendBroadcast( x );
+
             // Keep listening to the InputStream until an exception occurs
             while (true) {
                 // Read from the InputStream
