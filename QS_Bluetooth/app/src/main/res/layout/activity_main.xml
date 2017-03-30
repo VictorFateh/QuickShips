@@ -45,13 +45,13 @@
         android:id="@+id/btn_hostGame"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Host Game" />
+        android:text="Broadcast/Connect to Player" />
 
     <Button
         android:id="@+id/btn_joinGame"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Discover Devices" />
+        android:text="Refresh Devices" />
 
     <Button
         android:id="@+id/btn_joinGameConnect"

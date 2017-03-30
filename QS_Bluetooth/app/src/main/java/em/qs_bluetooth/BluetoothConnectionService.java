@@ -201,7 +201,7 @@ public class BluetoothConnectionService {
         Log.d(TAG, "startClient: Started.");
 
         //initprogress dialog
-        mProgressDialog = ProgressDialog.show(mContext,"Connecting Bluetooth"
+        mProgressDialog = ProgressDialog.show(mContext,"Joining Game Lobby"
                 ,"Please Wait...",true);
 
         mConnectThread = new ConnectThread(device, uuid);
@@ -244,10 +244,15 @@ public class BluetoothConnectionService {
         }
 
         public void run(){
+            Log.d(TAG, "ConnecectedThread->run()");
             byte[] buffer = new byte[1024];  // buffer store for the stream
 
             int bytes; // bytes returned from read()
 
+            Intent x = new Intent("incomingMessage");
+            String sendStatus = mmDevice.getName() + " Joined The Game!";
+            x.putExtra("theMsg", sendStatus);
+            LocalBroadcastManager.getInstance(mContext).sendBroadcast( x );
             // Keep listening to the InputStream until an exception occurs
             while (true) {
                 // Read from the InputStream
