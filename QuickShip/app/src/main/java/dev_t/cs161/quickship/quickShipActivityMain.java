@@ -38,6 +38,8 @@ public class quickShipActivityMain extends Activity implements Runnable {
     private Button mPlayerGridBtn;
     private Button mOpponentGridBtn;
     private Button mPlayModeOptionsBtn;
+    private Button startGame;
+    private boolean startScreen;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,8 +49,22 @@ public class quickShipActivityMain extends Activity implements Runnable {
         screenWidth = (float) screen.x;
         screenHeight = (float) screen.y;
         initialBoot = true;
-        newGame();
-        initializeView();
+        startScreen = true;
+        launchStartScreen();
+    }
+
+    public void launchStartScreen() {
+        setContentView(R.layout.quickship_splash_screen);
+        mActivityMain = this;
+        running = true;
+        startGame = (Button) findViewById(R.id.start_game_btn);
+        startGame.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                newGame();
+                initializeView();
+                startScreen = false;
+            }
+        });
     }
 
     public void initializeView() {
@@ -182,7 +198,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        if (!initialBoot) {
+        if (!initialBoot && !startScreen) {
             reinitializeUI();
         }
         else {
