@@ -1,5 +1,7 @@
 package dev_t.cs161.quickship;
 
+import java.util.UUID;
+
 public class quickShipModelBoardSlot {
     private boolean isHit;
     private boolean isOccupied;
@@ -9,6 +11,7 @@ public class quickShipModelBoardSlot {
     private Direction mDirection;
     private ShipType mShipType;
     private int mAnchorIndex;
+    private String mShipID;
 
     public quickShipModelBoardSlot() {
         setHit(false);
@@ -17,6 +20,24 @@ public class quickShipModelBoardSlot {
         setSet(false);
         setAnchorIndex(-1);
         setOrientation(Orientation.HORIZONTAL);
+    }
+
+    public quickShipModelBoardSlot(boolean isAnchor) {
+        setHit(false);
+        setOccupied(false);
+        setAnchor(isAnchor);
+        setSet(false);
+        setAnchorIndex(-1);
+        setOrientation(Orientation.HORIZONTAL);
+        mShipID = UUID.randomUUID().toString();
+    }
+
+    public String getShipID() {
+        return mShipID;
+    }
+
+    public void setShipID(String shipID) {
+        mShipID = shipID;
     }
 
     public int getAnchorIndex() {
