@@ -37,6 +37,62 @@ public class quickShipBluetoothPacketsToBeSent implements Parcelable {
         }
     }
 
+    public PacketType getPacketType() {
+        return packetType;
+    }
+
+    public void setPacketType(PacketType packetType) {
+        this.packetType = packetType;
+    }
+
+    public String getPlayerID() {
+        return playerID;
+    }
+
+    public void setPlayerID(String playerID) {
+        this.playerID = playerID;
+    }
+
+    public String getChatMessage() {
+        return chatMessage;
+    }
+
+    public void setChatMessage(String chatMessage) {
+        this.chatMessage = chatMessage;
+    }
+
+    public int getMovesChosen() {
+        return movesChosen;
+    }
+
+    public void setMovesChosen(int movesChosen) {
+        this.movesChosen = movesChosen;
+    }
+
+    public boolean isTurnDone() {
+        return turnDone;
+    }
+
+    public void setTurnDone(boolean turnDone) {
+        this.turnDone = turnDone;
+    }
+
+    public String getEmojiType() {
+        return emojiType;
+    }
+
+    public void setEmojiType(String emojiType) {
+        this.emojiType = emojiType;
+    }
+
+    public boolean isShipsPlaced() {
+        return shipsPlaced;
+    }
+
+    public void setShipsPlaced(boolean shipsPlaced) {
+        this.shipsPlaced = shipsPlaced;
+    }
+
     protected quickShipBluetoothPacketsToBeSent(Parcel in) {
         playerID = in.readString();
         chatMessage = in.readString();
