@@ -3,12 +3,9 @@ package dev_t.cs161.quickship;
 import android.app.Activity;
 import android.graphics.Point;
 import android.os.Bundle;
-import android.os.Handler;
-import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -29,8 +26,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
     private Float screenHeight;
     private ViewFlipper mainScreenViewFlipper;
     private ViewFlipper playModeFlipper;
-    private volatile quickShipModel mPlayerModel;
-    private volatile quickShipModel mOpponentModel;
+    private volatile quickShipModel mGameModel;
     private volatile quickShipViewChooseModeGrid chooseModeGrid;
     private volatile quickShipViewPlayModePlayerGrid playModePlayerGrid;
     private volatile quickShipViewPlayModeOpponentGrid playModeOpponentGrid;
@@ -39,7 +35,6 @@ public class quickShipActivityMain extends Activity implements Runnable {
     private Button mOpponentGridBtn;
     private Button mPlayModeOptionsBtn;
     private Button startGame;
-    private boolean startScreen;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,20 +44,16 @@ public class quickShipActivityMain extends Activity implements Runnable {
         screenWidth = (float) screen.x;
         screenHeight = (float) screen.y;
         initialBoot = true;
-        startScreen = true;
-        launchStartScreen();
+        initializeView();
     }
 
     public void launchStartScreen() {
-        setContentView(R.layout.quickship_splash_screen);
-        mActivityMain = this;
-        running = true;
+        mainScreenViewFlipper.setDisplayedChild(0);
         startGame = (Button) findViewById(R.id.start_game_btn);
         startGame.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 newGame();
-                initializeView();
-                startScreen = false;
+                mainScreenViewFlipper.setDisplayedChild(1);
             }
         });
     }
@@ -124,10 +115,10 @@ public class quickShipActivityMain extends Activity implements Runnable {
 
         mainScreenViewFlipper = (ViewFlipper) findViewById(R.id.main_screen_view_flipper);
         playModeFlipper = (ViewFlipper) findViewById(R.id.play_mode_view_flipper);
-        playModeFlipper.setDisplayedChild(1);
 
         chooseModeInitializeView();
         playModeInitializeView();
+        launchStartScreen();
     }
 
     public void setPlayModeFireBtnStatus(boolean status) {
@@ -137,7 +128,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
     public void chooseModeInitializeView() {
         LinearLayout topLinear = (LinearLayout) findViewById(R.id.choose_mode_top_linear);
         FrameLayout topFrame = (FrameLayout) findViewById(R.id.choose_mode_top_frame);
-        chooseModeGrid = new quickShipViewChooseModeGrid(this, mPlayerModel);
+        chooseModeGrid = new quickShipViewChooseModeGrid(this, mGameModel);
         topFrame.getLayoutParams().height = Math.round(screenWidth);
         topFrame.addView(chooseModeGrid);
         LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Math.round(screenWidth));
@@ -147,7 +138,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
     public void playModeInitializeView() {
         LinearLayout topOpponentLinear = (LinearLayout) findViewById(R.id.play_mode_opponent_top_linear);
         FrameLayout topOpponentFrame = (FrameLayout) findViewById(R.id.play_mode_opponent_top_frame);
-        playModeOpponentGrid = new quickShipViewPlayModeOpponentGrid(this, mPlayerModel, mOpponentModel);
+        playModeOpponentGrid = new quickShipViewPlayModeOpponentGrid(this, mGameModel);
         topOpponentFrame.getLayoutParams().height = Math.round(screenWidth);
         topOpponentFrame.addView(playModeOpponentGrid);
         LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Math.round(screenWidth));
@@ -155,11 +146,12 @@ public class quickShipActivityMain extends Activity implements Runnable {
 
         LinearLayout topPlayerLinear = (LinearLayout) findViewById(R.id.play_mode_player_top_linear);
         FrameLayout topPlayerFrame = (FrameLayout) findViewById(R.id.play_mode_player_top_frame);
-        playModePlayerGrid = new quickShipViewPlayModePlayerGrid(this, mPlayerModel, mOpponentModel);
+        playModePlayerGrid = new quickShipViewPlayModePlayerGrid(this, mGameModel);
         topPlayerFrame.getLayoutParams().height = Math.round(screenWidth);
         topPlayerFrame.addView(playModePlayerGrid);
         LinearLayout.LayoutParams param2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Math.round(screenWidth));
         topPlayerLinear.setLayoutParams(param2);
+        playModeFlipper.setDisplayedChild(1);
     }
 
     @Override
@@ -198,7 +190,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        if (!initialBoot && !startScreen) {
+        if (!initialBoot) {
             reinitializeUI();
         }
         else {
@@ -223,12 +215,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
     }
 
     public void newGame() {
-        mPlayerModel = new quickShipModel();
-        mOpponentModel = new quickShipModel();
-        quickShipModelBoard player1Board = mPlayerModel.getPlayerGameBoard();
-        quickShipModelBoard player2Board = mOpponentModel.getPlayerGameBoard();
-        mPlayerModel.setPlayerGameBoard(player1Board);
-        mOpponentModel.setOpponentGameBoard(player2Board);
+        mGameModel = new quickShipModel();
         running = true;
     }
 

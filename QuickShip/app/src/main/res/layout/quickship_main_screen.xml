@@ -9,6 +9,9 @@
         android:layout_height="match_parent">
 
         <include
+            layout="@layout/quickship_splash_screen"/>
+
+        <include
             layout="@layout/quickship_play_mode"/>
 
         <include

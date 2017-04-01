@@ -6,12 +6,9 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
-import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.AnimationUtils;
-import android.widget.ViewFlipper;
 
 import static java.lang.Math.abs;
 
@@ -54,17 +51,15 @@ public class quickShipViewPlayModePlayerGrid extends View {
     private Float mTitleHeight;
     private Float mTitleX;
     private Float mTitleY;
-    private quickShipModel mplayerBoardData;
-    private quickShipModel mOpponentBoardData;
+    private quickShipModel mGameModel;
     private quickShipActivityMain mMainActivity;
 
 
-    public quickShipViewPlayModePlayerGrid(Context context, quickShipModel playerBoardData, quickShipModel opponentBoardData) {
+    public quickShipViewPlayModePlayerGrid(Context context, quickShipModel gameModel) {
         super(context);
         mContext = context;
         mMainActivity = (quickShipActivityMain) context;
-        mplayerBoardData = playerBoardData;
-        mOpponentBoardData = opponentBoardData;
+        mGameModel = gameModel;
         Display display = ((Activity) context).getWindowManager().getDefaultDisplay();
         display.getSize(screen);
         initializeValues();

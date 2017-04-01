@@ -18,6 +18,13 @@ public class quickShipModel {
         mTurnCount = 0;
     }
 
+    public quickShipModel(quickShipModelBoard opponentGameBoard) {
+        mPlayerID = UUID.randomUUID().toString();
+        mPlayerGameBoard = new quickShipModelBoard(mPlayerID);
+        mOpponentGameBoard = opponentGameBoard;
+        mTurnCount = 0;
+    }
+
     public quickShipModelBoard getPlayerGameBoard() {
         return mPlayerGameBoard;
     }

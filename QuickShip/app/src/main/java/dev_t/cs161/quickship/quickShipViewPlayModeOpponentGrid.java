@@ -52,17 +52,15 @@ public class quickShipViewPlayModeOpponentGrid extends View {
     private Float mTitleHeight;
     private Float mTitleX;
     private Float mTitleY;
-    private quickShipModel mplayerBoardData;
-    private quickShipModel mOpponentBoardData;
+    private quickShipModel mGameModel;
     private quickShipActivityMain mMainActivity;
 
 
-    public quickShipViewPlayModeOpponentGrid(Context context, quickShipModel playerBoardData, quickShipModel opponentBoardData) {
+    public quickShipViewPlayModeOpponentGrid(Context context, quickShipModel gameModel) {
         super(context);
         mContext = context;
         mMainActivity = (quickShipActivityMain) context;
-        mplayerBoardData = playerBoardData;
-        mOpponentBoardData = opponentBoardData;
+        mGameModel = gameModel;
         Display display = ((Activity) context).getWindowManager().getDefaultDisplay();
         display.getSize(screen);
         initializeValues();
