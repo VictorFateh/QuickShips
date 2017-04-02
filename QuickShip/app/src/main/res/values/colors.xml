@@ -18,10 +18,19 @@
     <color name="play_mode_player_cell_selected">#f4a442</color>
     <color name="play_mode_player_cell_missed">#c1c3c7</color>
 
-    <color name="choose_mode_slider">#cfaf5d</color>
     <color name="choose_mode_top">#758e9f</color>
-    <color name="choose_mode_bottom">#c873e2</color>
-    <color name="choose_mode_grid">#8fd786</color>
+    <color name="choose_mode_bottom">#758e9f</color>
+    <color name="choose_mode_grid">#66b75c</color>
     <color name="choose_mode_grid_line">#dcdfe5</color>
     <color name="choose_mode_cell_selected">#f4a442</color>
+    <color name="choose_mode_bottom_left">#758e9f</color>
+    <color name="choose_mode_bottom_right">#758e9f</color>
+    <color name="choose_mode_choose_ship_title">#000000</color>
+    <color name="choose_mode_choose_ship_box">#758e9f</color>
+    <color name="choose_mode_chat_box">#ffffff</color>
+    <color name="choose_mode_chat_message">#ffffff</color>
+    <color name="choose_mode_chat_message_text">#000000</color>
+    <color name="choose_mode_chat_message_hint">#c7c6c6</color>
+    <color name="choose_mode_ship_not_selected">#758e9f</color>
+    <color name="choose_mode_ship_selected">#e27807</color>
 </resources>

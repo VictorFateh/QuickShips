@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ViewFlipper;
 
@@ -35,6 +36,12 @@ public class quickShipActivityMain extends Activity implements Runnable {
     private Button mOpponentGridBtn;
     private Button mPlayModeOptionsBtn;
     private Button startGame;
+    private ImageView mSelectedShip;
+    private ImageView mShipSize2;
+    private ImageView mShipSize3a;
+    private ImageView mShipSize3b;
+    private ImageView mShipSize4;
+    private ImageView mShipSize5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +60,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
         startGame.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 newGame();
-                mainScreenViewFlipper.setDisplayedChild(1);
+                mainScreenViewFlipper.setDisplayedChild(2);
             }
         });
     }
@@ -113,6 +120,12 @@ public class quickShipActivityMain extends Activity implements Runnable {
             }
         });
 
+        mShipSize2 = (ImageView) findViewById(R.id.linear_layout_ship_size_2);
+        mShipSize3a = (ImageView) findViewById(R.id.linear_layout_ship_size_3_a);
+        mShipSize3b = (ImageView) findViewById(R.id.linear_layout_ship_size_3_b);
+        mShipSize4 = (ImageView) findViewById(R.id.linear_layout_ship_size_4);
+        mShipSize5 = (ImageView) findViewById(R.id.linear_layout_ship_size_5);
+
         mainScreenViewFlipper = (ViewFlipper) findViewById(R.id.main_screen_view_flipper);
         playModeFlipper = (ViewFlipper) findViewById(R.id.play_mode_view_flipper);
 
@@ -159,8 +172,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
         super.onResume();
         if (!initialBoot) {
             reinitializeUI();
-        }
-        else {
+        } else {
             initialBoot = false;
         }
         thread = new Thread(this);
@@ -192,8 +204,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
         super.onWindowFocusChanged(hasFocus);
         if (!initialBoot) {
             reinitializeUI();
-        }
-        else {
+        } else {
             initialBoot = false;
         }
     }
@@ -266,6 +277,22 @@ public class quickShipActivityMain extends Activity implements Runnable {
             mPlayerGridBtn.setPressed(false);
             mOpponentGridBtn.setPressed(false);
             mPlayModeOptionsBtn.setPressed(true);
+        }
+    }
+
+    public void setChooseModeSelectedShip(View selectedShip) {
+        mShipSize2.setBackgroundColor(0);
+        mShipSize3a.setBackgroundColor(0);
+        mShipSize3b.setBackgroundColor(0);
+        mShipSize4.setBackgroundColor(0);
+        mShipSize5.setBackgroundColor(0);
+
+        if (mSelectedShip == null || (selectedShip != null && !mSelectedShip.equals(selectedShip))) {
+            selectedShip.setBackgroundColor(getResources().getColor(R.color.choose_mode_ship_selected));
+            mSelectedShip = (ImageView) selectedShip;
+        }
+        else {
+            mSelectedShip = null;
         }
     }
 
