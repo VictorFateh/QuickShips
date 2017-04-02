@@ -1,7 +1,6 @@
 package dev_t.cs161.quickship;
 
 import android.app.Activity;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
@@ -141,29 +140,41 @@ public class quickShipActivityMain extends Activity implements Runnable {
         mainScreenViewFlipper = (ViewFlipper) findViewById(R.id.main_screen_view_flipper);
         playModeFlipper = (ViewFlipper) findViewById(R.id.play_mode_view_flipper);
 
-        chooseModeInitializeView();
-        playModeInitializeView();
-        launchStartScreen();
-    }
-
-    // This is required to avoid out of memory issues from loading large images
-    public void loadChooseModeBitmaps() {
         mShipSize2 = (ImageView) findViewById(R.id.image_view_ship_size_2);
         mShipSize3a = (ImageView) findViewById(R.id.image_view_ship_size_3_a);
         mShipSize3b = (ImageView) findViewById(R.id.image_view_ship_size_3_b);
         mShipSize4 = (ImageView) findViewById(R.id.image_view_ship_size_4);
         mShipSize5 = (ImageView) findViewById(R.id.image_view_ship_size_5);
 
-        int layoutheight;
-        int layoutwidth;
-        Bitmap tempBitmap;
+        chooseModeInitializeView();
+        playModeInitializeView();
+        launchStartScreen();
+    }
 
-        LinearLayout tempLayout = (LinearLayout) findViewById(R.id.linear_layout_ship_size_2_parent);
+    // This is required to avoid out of memory issues from loading large images
+    public void loadChooseModeBitmaps(String tag, int layoutHeight, int layoutWidth) {
 
-        layoutheight = tempLayout.getHeight();
-        layoutwidth = tempLayout.getWidth();
-        Log.d("debug", "Width: " + layoutheight + " Height: " + layoutwidth);
-        mShipSize2.setImageBitmap(decodeFile(R.id.image_view_ship_size_2, layoutheight, layoutwidth));
+        switch (tag) {
+            case "image_view_ship_size_2":
+                mShipSize2.setImageBitmap(scaleDownDrawableImage(R.drawable.ship_size2_horizontal, layoutHeight, layoutWidth));
+                break;
+
+            case "image_view_ship_size_3_a":
+                mShipSize3a.setImageBitmap(scaleDownDrawableImage(R.drawable.ship_size3_a_horizontal, layoutHeight, layoutWidth));
+                break;
+
+            case "image_view_ship_size_3_b":
+                mShipSize3b.setImageBitmap(scaleDownDrawableImage(R.drawable.ship_size3_b_horizontal, layoutHeight, layoutWidth));
+                break;
+
+            case "image_view_ship_size_4":
+                mShipSize4.setImageBitmap(scaleDownDrawableImage(R.drawable.ship_size4_horizontal, layoutHeight, layoutWidth));
+                break;
+
+            case "image_view_ship_size_5":
+                mShipSize5.setImageBitmap(scaleDownDrawableImage(R.drawable.ship_size5_horizontal, layoutHeight, layoutWidth));
+                break;
+        }
     }
 
     public void setPlayModeFireBtnStatus(boolean status) {
@@ -331,7 +342,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
         chooseModeGrid.setOrientation();
     }
 
-    private Bitmap decodeFile(int res, int width, int height) {
+    public Bitmap scaleDownDrawableImage(int res, int reqHeight, int reqWidth) {
         Bitmap b = null;
 
         //Decode image size
@@ -340,14 +351,25 @@ public class quickShipActivityMain extends Activity implements Runnable {
 
         BitmapFactory.decodeResource(getResources(), res, o);
 
-        int scale = 1;
-        if (o.outHeight > height || o.outWidth > width) {
-            scale = (int) Math.pow(2, (int) Math.ceil(Math.log(height / (double) Math.max(o.outHeight, o.outWidth)) / Math.log(0.5)));
+        int inSampleSize = 1;
+
+        if (o.outHeight > reqHeight || o.outWidth > reqWidth) {
+
+            final int halfHeight = o.outHeight / 2;
+            final int halfWidth = o.outWidth / 2;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) > reqHeight
+                    && (halfWidth / inSampleSize) > reqWidth) {
+                inSampleSize *= 2;
+            }
         }
 
         //Decode with inSampleSize
         BitmapFactory.Options o2 = new BitmapFactory.Options();
-        o2.inSampleSize = scale;
+        //o2.inScaled = false;
+        o2.inSampleSize = inSampleSize;
         b = BitmapFactory.decodeResource(getResources(), res, o2);
 
         return b;

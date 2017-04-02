@@ -22,12 +22,10 @@ public class quickShipLayoutPlayModePlayer extends LinearLayout {
     private Float swipeThreshold;
     private float initialX;
     private float finalX;
-    private Context mContext;
     private quickShipActivityMain mMainActivity;
 
     public quickShipLayoutPlayModePlayer(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        mContext = context;
         if (!isInEditMode()) {
             mMainActivity = (quickShipActivityMain) context;
             Display display = ((Activity) context).getWindowManager().getDefaultDisplay();

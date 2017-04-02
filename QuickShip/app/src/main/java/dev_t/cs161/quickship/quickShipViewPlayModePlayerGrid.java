@@ -56,9 +56,9 @@ public class quickShipViewPlayModePlayerGrid extends View {
 
     public quickShipViewPlayModePlayerGrid(quickShipActivityMain context, quickShipModel gameModel) {
         super(context);
-        mMainActivity = (quickShipActivityMain) context;
+        mMainActivity = context;
         mGameModel = gameModel;
-        Display display = ((Activity) context).getWindowManager().getDefaultDisplay();
+        Display display = context.getWindowManager().getDefaultDisplay();
         display.getSize(screen);
         initializeValues();
         calculateBoardGUIPositions();

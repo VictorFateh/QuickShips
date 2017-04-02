@@ -97,11 +97,12 @@
                                 android:layout_weight="1"
                                 android:orientation="horizontal">
 
-                                <LinearLayout
+                                <dev_t.cs161.quickship.quickShipChooseModeLinearLayout
                                     android:id="@+id/linear_layout_ship_size_2_parent"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
-                                    android:layout_weight="1"
+                                    android:layout_weight="2"
+                                    android:tag="image_view_ship_size_2"
                                     android:orientation="horizontal">
 
                                     <ImageView
@@ -109,13 +110,14 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
                                         android:onClick="setChooseModeSelectedShip"/>
-                                </LinearLayout>
+                                </dev_t.cs161.quickship.quickShipChooseModeLinearLayout>
 
-                                <LinearLayout
+                                <dev_t.cs161.quickship.quickShipChooseModeLinearLayout
                                     android:id="@+id/linear_layout_ship_size_4_parent"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:layout_weight="1"
+                                    android:tag="image_view_ship_size_4"
                                     android:orientation="horizontal">
 
                                     <ImageView
@@ -123,7 +125,7 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
                                         android:onClick="setChooseModeSelectedShip"/>
-                                </LinearLayout>
+                                </dev_t.cs161.quickship.quickShipChooseModeLinearLayout>
                             </LinearLayout>
 
                             <LinearLayout
@@ -132,11 +134,12 @@
                                 android:layout_weight="1"
                                 android:orientation="horizontal">
 
-                                <LinearLayout
+                                <dev_t.cs161.quickship.quickShipChooseModeLinearLayout
                                     android:id="@+id/linear_layout_ship_size_3_a_parent"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:layout_weight="1"
+                                    android:tag="image_view_ship_size_3_a"
                                     android:orientation="horizontal">
 
                                     <ImageView
@@ -144,13 +147,14 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
                                         android:onClick="setChooseModeSelectedShip"/>
-                                </LinearLayout>
+                                </dev_t.cs161.quickship.quickShipChooseModeLinearLayout>
 
-                                <LinearLayout
+                                <dev_t.cs161.quickship.quickShipChooseModeLinearLayout
                                     android:id="@+id/linear_layout_ship_size_3_b_parent"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:layout_weight="1"
+                                    android:tag="image_view_ship_size_3_b"
                                     android:orientation="horizontal">
 
                                     <ImageView
@@ -158,14 +162,15 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
                                         android:onClick="setChooseModeSelectedShip"/>
-                                </LinearLayout>
+                                </dev_t.cs161.quickship.quickShipChooseModeLinearLayout>
                             </LinearLayout>
 
-                            <LinearLayout
+                            <dev_t.cs161.quickship.quickShipChooseModeLinearLayout
                                 android:id="@+id/linear_layout_ship_size_5_parent"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:layout_weight="1"
+                                android:tag="image_view_ship_size_5"
                                 android:orientation="horizontal">
 
                                 <ImageView
@@ -174,7 +179,7 @@
                                     android:layout_height="match_parent"
                                     android:adjustViewBounds="false"
                                     android:onClick="setChooseModeSelectedShip"/>
-                            </LinearLayout>
+                            </dev_t.cs161.quickship.quickShipChooseModeLinearLayout>
                         </LinearLayout>
                     </LinearLayout>
 
@@ -198,8 +203,8 @@
 
     <ImageView
         android:id="@+id/temp_ship_spot"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:src="@drawable/ship_size5_horizontal"
-        android:visibility="visible"/>
+        android:visibility="invisible"/>
 </FrameLayout>

@@ -1,13 +1,10 @@
 package dev_t.cs161.quickship;
 
-import android.app.Activity;
-import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
@@ -68,11 +65,11 @@ public class quickShipViewChooseModeGrid extends View {
 
     public quickShipViewChooseModeGrid(quickShipActivityMain context, quickShipModel playerBoardData, FrameLayout chooseModeFrameLayout, ImageView tempShipSpot) {
         super(context);
-        mMainActivity = (quickShipActivityMain) context;
+        mMainActivity = context;
         mGameModel = playerBoardData;
         mChooseModeFrameLayout = chooseModeFrameLayout;
         mTempShipSpot = tempShipSpot;
-        Display display = ((Activity) context).getWindowManager().getDefaultDisplay();
+        Display display = context.getWindowManager().getDefaultDisplay();
         display.getSize(screen);
         initializeValues();
         calculateBoardGUIPositions();
@@ -129,7 +126,7 @@ public class quickShipViewChooseModeGrid extends View {
         boardGridSelectedPaint.setColor(mMainActivity.getResources().getColor(R.color.choose_mode_cell_selected));
         boardGridFrameDividerX = new Float[11];
         boardGridFrameDividerY = new Float[11];
-        mCurrentOrientation = Orientation.VERTICAL;
+        mCurrentOrientation = Orientation.HORIZONTAL;
     }
 
     public void calculateBoardGUIPositions() {
@@ -172,12 +169,12 @@ public class quickShipViewChooseModeGrid extends View {
         mTempShipSpotLayoutParam = new FrameLayout.LayoutParams(0, 0);
         mTempShipSpotLayoutParam.leftMargin = Math.round(boardGridSelectedStartX);
         mTempShipSpotLayoutParam.topMargin = Math.round(boardGridSelectedStartY);
-        mTempShipSpotLayoutParam.height = Math.round(boardGridCellHeight);
-        mTempShipSpotLayoutParam.width = Math.round(3*boardGridCellHeight);
+        int tempHeight = Math.round(boardGridCellHeight);
+        int tempWidth = Math.round(3*boardGridCellHeight);
+        mTempShipSpotLayoutParam.height = tempHeight;
+        mTempShipSpotLayoutParam.width = tempWidth;
         mTempShipSpot.setLayoutParams(mTempShipSpotLayoutParam);
-        mTempShipSpot.setImageResource(R.drawable.ship_size3_a_horizontal);
-        //mTempShipSpot.setAdjustViewBounds(true);
-        //mTempShipSpot.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        mTempShipSpot.setImageBitmap(mMainActivity.scaleDownDrawableImage(R.drawable.ship_size3_a_horizontal, tempHeight, tempWidth));
     }
 
     @Override
@@ -307,20 +304,20 @@ public class quickShipViewChooseModeGrid extends View {
             mTempShipSpotLayoutParam.leftMargin = Math.round(boardGridSelectedStartX);
             mTempShipSpotLayoutParam.topMargin = Math.round(boardGridSelectedStartY);
             if (mCurrentOrientation.equals(Orientation.VERTICAL)) {
-                mTempShipSpotLayoutParam.height = Math.round(3*boardGridCellHeight);
-                mTempShipSpotLayoutParam.width = Math.round(boardGridCellHeight);
+                int tempHeight = Math.round(3*boardGridCellHeight);
+                int tempWidth = Math.round(boardGridCellHeight);
+                mTempShipSpotLayoutParam.height = tempHeight;
+                mTempShipSpotLayoutParam.width = tempWidth;
                 mTempShipSpot.setLayoutParams(mTempShipSpotLayoutParam);
-                mTempShipSpot.setImageResource(R.drawable.ship_size3_a_vertical);
-                //mTempShipSpot.setAdjustViewBounds(true);
-                //mTempShipSpot.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                mTempShipSpot.setImageBitmap(mMainActivity.scaleDownDrawableImage(R.drawable.ship_size3_a_vertical, tempHeight, tempWidth));
             }
             else {
-                mTempShipSpotLayoutParam.height = Math.round(boardGridCellHeight);
-                mTempShipSpotLayoutParam.width = Math.round(3*boardGridCellHeight);
+                int tempHeight = Math.round(boardGridCellHeight);
+                int tempWidth = Math.round(3*boardGridCellHeight);
+                mTempShipSpotLayoutParam.height = tempHeight;
+                mTempShipSpotLayoutParam.width = tempWidth;
                 mTempShipSpot.setLayoutParams(mTempShipSpotLayoutParam);
-                mTempShipSpot.setImageResource(R.drawable.ship_size3_a_horizontal);
-                //mTempShipSpot.setAdjustViewBounds(true);
-                //mTempShipSpot.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                mTempShipSpot.setImageBitmap(mMainActivity.scaleDownDrawableImage(R.drawable.ship_size3_a_horizontal, tempHeight, tempWidth));
             }
         }
         mTempShipSpot.setVisibility(visible);
@@ -328,11 +325,5 @@ public class quickShipViewChooseModeGrid extends View {
 
     public static boolean isBetween(float x, float lower, float upper) {
         return lower <= x && x < upper;
-    }
-
-    @Override
-    protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        super.onLayout(changed, l, t, r, b);
-        mMainActivity.loadChooseModeBitmaps();
     }
 }
