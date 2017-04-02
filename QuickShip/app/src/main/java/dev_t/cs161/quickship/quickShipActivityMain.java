@@ -333,8 +333,31 @@ public class quickShipActivityMain extends Activity implements Runnable {
         if (mSelectedShip == null || (selectedShip != null && !mSelectedShip.equals(selectedShip))) {
             selectedShip.setBackgroundColor(getResources().getColor(R.color.choose_mode_ship_selected));
             mSelectedShip = (ImageView) selectedShip;
+            String shipTag = (String) mSelectedShip.getTag();
+            switch (shipTag) {
+                case "image_view_ship_size_2":
+                    chooseModeGrid.setShipSelected(ShipType.TWO);
+                    break;
+
+                case "image_view_ship_size_3_a":
+                    chooseModeGrid.setShipSelected(ShipType.THREE_A);
+                    break;
+
+                case "image_view_ship_size_3_b":
+                    chooseModeGrid.setShipSelected(ShipType.THREE_B);
+                    break;
+
+                case "image_view_ship_size_4":
+                    chooseModeGrid.setShipSelected(ShipType.FOUR);
+                    break;
+
+                case "image_view_ship_size_5":
+                    chooseModeGrid.setShipSelected(ShipType.FIVE);
+                    break;
+            }
         } else {
             mSelectedShip = null;
+            chooseModeGrid.deSelectShip();
         }
     }
 

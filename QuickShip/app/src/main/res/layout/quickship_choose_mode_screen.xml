@@ -109,6 +109,7 @@
                                         android:id="@+id/image_view_ship_size_2"
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
+                                        android:tag="image_view_ship_size_2"
                                         android:onClick="setChooseModeSelectedShip"/>
                                 </dev_t.cs161.quickship.quickShipChooseModeLinearLayout>
 
@@ -124,6 +125,7 @@
                                         android:id="@+id/image_view_ship_size_4"
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
+                                        android:tag="image_view_ship_size_4"
                                         android:onClick="setChooseModeSelectedShip"/>
                                 </dev_t.cs161.quickship.quickShipChooseModeLinearLayout>
                             </LinearLayout>
@@ -146,6 +148,7 @@
                                         android:id="@+id/image_view_ship_size_3_a"
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
+                                        android:tag="image_view_ship_size_3_a"
                                         android:onClick="setChooseModeSelectedShip"/>
                                 </dev_t.cs161.quickship.quickShipChooseModeLinearLayout>
 
@@ -161,6 +164,7 @@
                                         android:id="@+id/image_view_ship_size_3_b"
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
+                                        android:tag="image_view_ship_size_3_b"
                                         android:onClick="setChooseModeSelectedShip"/>
                                 </dev_t.cs161.quickship.quickShipChooseModeLinearLayout>
                             </LinearLayout>
@@ -177,7 +181,7 @@
                                     android:id="@+id/image_view_ship_size_5"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
-                                    android:adjustViewBounds="false"
+                                    android:tag="image_view_ship_size_5"
                                     android:onClick="setChooseModeSelectedShip"/>
                             </dev_t.cs161.quickship.quickShipChooseModeLinearLayout>
                         </LinearLayout>

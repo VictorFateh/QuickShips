@@ -61,6 +61,8 @@ public class quickShipViewChooseModeGrid extends View {
     private Orientation mCurrentOrientation;
     private FrameLayout.LayoutParams mTempShipSpotLayoutParam;
     private quickShipActivityMain mMainActivity;
+    private boolean mShipSelected;
+    private ShipType mShipSelectedShipType;
 
 
     public quickShipViewChooseModeGrid(quickShipActivityMain context, quickShipModel playerBoardData, FrameLayout chooseModeFrameLayout, ImageView tempShipSpot) {
@@ -167,14 +169,7 @@ public class quickShipViewChooseModeGrid extends View {
         boardGridSelectedStartY = boardGridFrameDividerY[0];
 
         mTempShipSpotLayoutParam = new FrameLayout.LayoutParams(0, 0);
-        mTempShipSpotLayoutParam.leftMargin = Math.round(boardGridSelectedStartX);
-        mTempShipSpotLayoutParam.topMargin = Math.round(boardGridSelectedStartY);
-        int tempHeight = Math.round(boardGridCellHeight);
-        int tempWidth = Math.round(3*boardGridCellHeight);
-        mTempShipSpotLayoutParam.height = tempHeight;
-        mTempShipSpotLayoutParam.width = tempWidth;
-        mTempShipSpot.setLayoutParams(mTempShipSpotLayoutParam);
-        mTempShipSpot.setImageBitmap(mMainActivity.scaleDownDrawableImage(R.drawable.ship_size3_a_horizontal, tempHeight, tempWidth));
+        mShipSelected = false;
     }
 
     @Override
@@ -209,6 +204,7 @@ public class quickShipViewChooseModeGrid extends View {
             case MotionEvent.ACTION_MOVE:
                 break;
             case MotionEvent.ACTION_UP:
+                held = false;
                 endX = event.getX();
                 endY = event.getY();
                 if (endX >= boardGridFrameStartX && endX <= boardGridFrameEndX && endY >= boardGridFrameStartY && endY <= boardGridFrameEndY && abs(endX - initialX) < 5 && abs(endY - initialY) < 5) {
@@ -216,15 +212,16 @@ public class quickShipViewChooseModeGrid extends View {
                     if (selectedIndex != currentIndex) {
                         currentIndex = selectedIndex;
                         //Log.d("debug", "Index: " + currentIndex);
-                        calculateSelectedRect(currentIndex);
-                        setTempShipVisibility(View.VISIBLE);
+                        if (mShipSelected) {
+                            calculateSelectedRect(currentIndex);
+                            setTempShipVisibility(View.VISIBLE);
+                        }
                     } else {
                         setTempShipVisibility(View.INVISIBLE);
                     }
                 } else {
                     setTempShipVisibility(View.INVISIBLE);
                 }
-                held = false;
                 break;
             case MotionEvent.ACTION_CANCEL:
                 break;
@@ -293,34 +290,126 @@ public class quickShipViewChooseModeGrid extends View {
     public void setOrientation() {
         if (mCurrentOrientation.equals(Orientation.HORIZONTAL)) {
             mCurrentOrientation = Orientation.VERTICAL;
-        }
-        else {
+        } else {
             mCurrentOrientation = Orientation.HORIZONTAL;
+        }
+        if (mShipSelected) {
+            setTempShipVisibility(VISIBLE);
         }
     }
 
     public void setTempShipVisibility(int visible) {
+        int tempHeight;
+        int tempWidth;
         if (visible == View.VISIBLE) {
             mTempShipSpotLayoutParam.leftMargin = Math.round(boardGridSelectedStartX);
             mTempShipSpotLayoutParam.topMargin = Math.round(boardGridSelectedStartY);
             if (mCurrentOrientation.equals(Orientation.VERTICAL)) {
-                int tempHeight = Math.round(3*boardGridCellHeight);
-                int tempWidth = Math.round(boardGridCellHeight);
-                mTempShipSpotLayoutParam.height = tempHeight;
-                mTempShipSpotLayoutParam.width = tempWidth;
-                mTempShipSpot.setLayoutParams(mTempShipSpotLayoutParam);
-                mTempShipSpot.setImageBitmap(mMainActivity.scaleDownDrawableImage(R.drawable.ship_size3_a_vertical, tempHeight, tempWidth));
-            }
-            else {
-                int tempHeight = Math.round(boardGridCellHeight);
-                int tempWidth = Math.round(3*boardGridCellHeight);
-                mTempShipSpotLayoutParam.height = tempHeight;
-                mTempShipSpotLayoutParam.width = tempWidth;
-                mTempShipSpot.setLayoutParams(mTempShipSpotLayoutParam);
-                mTempShipSpot.setImageBitmap(mMainActivity.scaleDownDrawableImage(R.drawable.ship_size3_a_horizontal, tempHeight, tempWidth));
+                switch (mShipSelectedShipType) {
+                    case TWO:
+                        tempHeight = Math.round(2 * boardGridCellHeight);
+                        tempWidth = Math.round(boardGridCellHeight);
+                        mTempShipSpotLayoutParam.height = tempHeight;
+                        mTempShipSpotLayoutParam.width = tempWidth;
+                        mTempShipSpot.setLayoutParams(mTempShipSpotLayoutParam);
+                        mTempShipSpot.setImageBitmap(mMainActivity.scaleDownDrawableImage(R.drawable.ship_size2_vertical, tempHeight, tempWidth));
+                        break;
+
+                    case THREE_A:
+                        tempHeight = Math.round(3 * boardGridCellHeight);
+                        tempWidth = Math.round(boardGridCellHeight);
+                        mTempShipSpotLayoutParam.height = tempHeight;
+                        mTempShipSpotLayoutParam.width = tempWidth;
+                        mTempShipSpot.setLayoutParams(mTempShipSpotLayoutParam);
+                        mTempShipSpot.setImageBitmap(mMainActivity.scaleDownDrawableImage(R.drawable.ship_size3_a_vertical, tempHeight, tempWidth));
+                        break;
+
+                    case THREE_B:
+                        tempHeight = Math.round(3 * boardGridCellHeight);
+                        tempWidth = Math.round(boardGridCellHeight);
+                        mTempShipSpotLayoutParam.height = tempHeight;
+                        mTempShipSpotLayoutParam.width = tempWidth;
+                        mTempShipSpot.setLayoutParams(mTempShipSpotLayoutParam);
+                        mTempShipSpot.setImageBitmap(mMainActivity.scaleDownDrawableImage(R.drawable.ship_size3_b_vertical, tempHeight, tempWidth));
+                        break;
+
+                    case FOUR:
+                        tempHeight = Math.round(4 * boardGridCellHeight);
+                        tempWidth = Math.round(boardGridCellHeight);
+                        mTempShipSpotLayoutParam.height = tempHeight;
+                        mTempShipSpotLayoutParam.width = tempWidth;
+                        mTempShipSpot.setLayoutParams(mTempShipSpotLayoutParam);
+                        mTempShipSpot.setImageBitmap(mMainActivity.scaleDownDrawableImage(R.drawable.ship_size4_vertical, tempHeight, tempWidth));
+                        break;
+
+                    case FIVE:
+                        tempHeight = Math.round(5 * boardGridCellHeight);
+                        tempWidth = Math.round(boardGridCellHeight);
+                        mTempShipSpotLayoutParam.height = tempHeight;
+                        mTempShipSpotLayoutParam.width = tempWidth;
+                        mTempShipSpot.setLayoutParams(mTempShipSpotLayoutParam);
+                        mTempShipSpot.setImageBitmap(mMainActivity.scaleDownDrawableImage(R.drawable.ship_size5_vertical, tempHeight, tempWidth));
+                        break;
+                }
+            } else {
+                switch (mShipSelectedShipType) {
+                    case TWO:
+                        tempHeight = Math.round(boardGridCellHeight);
+                        tempWidth = Math.round(2 * boardGridCellHeight);
+                        mTempShipSpotLayoutParam.height = tempHeight;
+                        mTempShipSpotLayoutParam.width = tempWidth;
+                        mTempShipSpot.setLayoutParams(mTempShipSpotLayoutParam);
+                        mTempShipSpot.setImageBitmap(mMainActivity.scaleDownDrawableImage(R.drawable.ship_size2_horizontal, tempHeight, tempWidth));
+                        break;
+
+                    case THREE_A:
+                        tempHeight = Math.round(boardGridCellHeight);
+                        tempWidth = Math.round(3 * boardGridCellHeight);
+                        mTempShipSpotLayoutParam.height = tempHeight;
+                        mTempShipSpotLayoutParam.width = tempWidth;
+                        mTempShipSpot.setLayoutParams(mTempShipSpotLayoutParam);
+                        mTempShipSpot.setImageBitmap(mMainActivity.scaleDownDrawableImage(R.drawable.ship_size3_a_horizontal, tempHeight, tempWidth));
+                        break;
+
+                    case THREE_B:
+                        tempHeight = Math.round(boardGridCellHeight);
+                        tempWidth = Math.round(3 * boardGridCellHeight);
+                        mTempShipSpotLayoutParam.height = tempHeight;
+                        mTempShipSpotLayoutParam.width = tempWidth;
+                        mTempShipSpot.setLayoutParams(mTempShipSpotLayoutParam);
+                        mTempShipSpot.setImageBitmap(mMainActivity.scaleDownDrawableImage(R.drawable.ship_size3_b_horizontal, tempHeight, tempWidth));
+                        break;
+
+                    case FOUR:
+                        tempHeight = Math.round(boardGridCellHeight);
+                        tempWidth = Math.round(4 * boardGridCellHeight);
+                        mTempShipSpotLayoutParam.height = tempHeight;
+                        mTempShipSpotLayoutParam.width = tempWidth;
+                        mTempShipSpot.setLayoutParams(mTempShipSpotLayoutParam);
+                        mTempShipSpot.setImageBitmap(mMainActivity.scaleDownDrawableImage(R.drawable.ship_size4_horizontal, tempHeight, tempWidth));
+                        break;
+
+                    case FIVE:
+                        tempHeight = Math.round(boardGridCellHeight);
+                        tempWidth = Math.round(5 * boardGridCellHeight);
+                        mTempShipSpotLayoutParam.height = tempHeight;
+                        mTempShipSpotLayoutParam.width = tempWidth;
+                        mTempShipSpot.setLayoutParams(mTempShipSpotLayoutParam);
+                        mTempShipSpot.setImageBitmap(mMainActivity.scaleDownDrawableImage(R.drawable.ship_size5_horizontal, tempHeight, tempWidth));
+                        break;
+                }
             }
         }
         mTempShipSpot.setVisibility(visible);
+    }
+
+    public void setShipSelected(ShipType shipType) {
+        mShipSelectedShipType = shipType;
+        mShipSelected = true;
+    }
+
+    public void deSelectShip() {
+        mShipSelected = false;
     }
 
     public static boolean isBetween(float x, float lower, float upper) {
