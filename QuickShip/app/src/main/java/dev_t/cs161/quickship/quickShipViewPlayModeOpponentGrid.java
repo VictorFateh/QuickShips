@@ -27,8 +27,6 @@ public class quickShipViewPlayModeOpponentGrid extends View {
     private Float boardGridFrameStartY;
     private Float boardGridFrameEndX;
     private Float boardGridFrameEndY;
-    private Paint boardGridFrameBorderPaint;
-    private int boardGridFrameBorderStrokeWidth;
     private Float boardGridCellWidth;
     private Float boardGridCellHeight;
     private Paint boardGridLinePaint;
@@ -77,11 +75,6 @@ public class quickShipViewPlayModeOpponentGrid extends View {
         boardGridFramePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         boardGridFramePaint.setStyle(Paint.Style.FILL);
         boardGridFramePaint.setColor(mMainActivity.getResources().getColor(R.color.play_mode_opponent_grid));
-        boardGridFrameBorderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        boardGridFrameBorderPaint.setStyle(Paint.Style.STROKE);
-        boardGridFrameBorderStrokeWidth = 15;
-        boardGridFrameBorderPaint.setStrokeWidth(boardGridFrameBorderStrokeWidth);
-        boardGridFrameBorderPaint.setColor(Color.BLACK);
 
         boardGridLinePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         boardGridLinePaint.setStyle(Paint.Style.STROKE);
@@ -153,8 +146,6 @@ public class quickShipViewPlayModeOpponentGrid extends View {
         if (boardGridSelectedStartX != null && boardGridSelectedEndX != null && boardGridSelectedStartY != null && boardGridSelectedEndY != null) {
             canvas.drawRect(boardGridSelectedStartX, boardGridSelectedStartY, boardGridSelectedEndX, boardGridSelectedEndY, boardGridSelectedPaint);
         }
-
-        canvas.drawRect(boardGridFrameStartX, boardGridFrameStartY, boardGridFrameEndX, boardGridFrameEndY, boardGridFrameBorderPaint);
     }
 
     @Override

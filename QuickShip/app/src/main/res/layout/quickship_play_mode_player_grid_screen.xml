@@ -1,42 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<dev_t.cs161.quickship.quickShipLayoutPlayModePlayer
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/quickship_play_mode_player"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:id="@+id/quickship_play_mode_player"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
 
-    <LinearLayout
-        android:id="@+id/play_mode_player_top_linear"
+    <dev_t.cs161.quickship.quickShipLayoutPlayModePlayer
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="10"
-        android:orientation="horizontal">
-
-        <FrameLayout
-            android:id="@+id/play_mode_player_top_frame"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/play_mode_player_top">
-        </FrameLayout>
-    </LinearLayout>
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="16">
+        android:orientation="vertical">
 
         <LinearLayout
+            android:id="@+id/play_mode_player_top_linear"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_weight="10"
+            android:orientation="horizontal">
+
+            <FrameLayout
+                android:id="@+id/play_mode_player_top_frame"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/play_mode_player_top">
+            </FrameLayout>
+        </LinearLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="16">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/play_mode_player_bottom"
-                android:orientation="horizontal">
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/play_mode_player_bottom"
+                    android:orientation="horizontal">
+                </LinearLayout>
             </LinearLayout>
-        </LinearLayout>
+
+        </FrameLayout>
+    </dev_t.cs161.quickship.quickShipLayoutPlayModePlayer>
+
+    <FrameLayout
+        android:id="@+id/play_mode_player_top_frame_border"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
     </FrameLayout>
-</dev_t.cs161.quickship.quickShipLayoutPlayModePlayer>
+</FrameLayout>

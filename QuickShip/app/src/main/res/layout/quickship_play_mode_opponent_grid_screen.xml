@@ -1,50 +1,61 @@
-<dev_t.cs161.quickship.quickShipLayoutPlayModeOpponent
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/quickship_play_mode_opponent"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:id="@+id/quickship_play_mode_opponent"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
 
-    <LinearLayout
-        android:id="@+id/play_mode_opponent_top_linear"
+    <dev_t.cs161.quickship.quickShipLayoutPlayModeOpponent
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="10"
-        android:orientation="horizontal">
-
-        <FrameLayout
-            android:id="@+id/play_mode_opponent_top_frame"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/play_mode_oppponent_top">
-        </FrameLayout>
-    </LinearLayout>
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="16">
+        android:orientation="vertical">
 
         <LinearLayout
+            android:id="@+id/play_mode_opponent_top_linear"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_weight="10"
+            android:orientation="horizontal">
+
+            <FrameLayout
+                android:id="@+id/play_mode_opponent_top_frame"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/play_mode_oppponent_top">
+            </FrameLayout>
+        </LinearLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="16">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/play_mode_oppponent_bottom"
-                android:gravity="center"
-                android:orientation="horizontal">
+                android:orientation="vertical">
 
-                <Button
-                    android:id="@+id/play_mode_fire_btn"
-                    android:layout_width="150dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="top"
-                    android:layout_marginTop="10dp"
-                    android:text="@string/play_mode_fire_btn"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/play_mode_oppponent_bottom"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/play_mode_fire_btn"
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="top"
+                        android:layout_marginTop="10dp"
+                        android:text="@string/play_mode_fire_btn"/>
+                </LinearLayout>
             </LinearLayout>
-        </LinearLayout>
+        </FrameLayout>
+
+    </dev_t.cs161.quickship.quickShipLayoutPlayModeOpponent>
+
+    <FrameLayout
+        android:id="@+id/play_mode_opponent_top_frame_border"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
     </FrameLayout>
-</dev_t.cs161.quickship.quickShipLayoutPlayModeOpponent>
+</FrameLayout>
