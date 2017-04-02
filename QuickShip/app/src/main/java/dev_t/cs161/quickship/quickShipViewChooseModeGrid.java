@@ -21,7 +21,6 @@ import static java.lang.Math.abs;
 public class quickShipViewChooseModeGrid extends View {
 
     private Point screen = new Point();
-    private Context mContext;
     private volatile boolean held;
     private volatile Float initialX, initialY;
     private volatile Float endX, endY;
@@ -64,11 +63,12 @@ public class quickShipViewChooseModeGrid extends View {
     private ImageView mTempShipSpot;
     private Orientation mCurrentOrientation;
     private FrameLayout.LayoutParams mTempShipSpotLayoutParam;
+    private quickShipActivityMain mMainActivity;
 
 
-    public quickShipViewChooseModeGrid(Context context, quickShipModel playerBoardData, FrameLayout chooseModeFrameLayout, ImageView tempShipSpot) {
+    public quickShipViewChooseModeGrid(quickShipActivityMain context, quickShipModel playerBoardData, FrameLayout chooseModeFrameLayout, ImageView tempShipSpot) {
         super(context);
-        mContext = context;
+        mMainActivity = (quickShipActivityMain) context;
         mGameModel = playerBoardData;
         mChooseModeFrameLayout = chooseModeFrameLayout;
         mTempShipSpot = tempShipSpot;
@@ -111,7 +111,7 @@ public class quickShipViewChooseModeGrid extends View {
 
         boardGridFramePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         boardGridFramePaint.setStyle(Paint.Style.FILL);
-        boardGridFramePaint.setColor(mContext.getResources().getColor(R.color.choose_mode_grid));
+        boardGridFramePaint.setColor(mMainActivity.getResources().getColor(R.color.choose_mode_grid));
         boardGridFrameBorderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         boardGridFrameBorderPaint.setStyle(Paint.Style.STROKE);
         boardGridFrameBorderStrokeWidth = 15;
@@ -122,11 +122,11 @@ public class quickShipViewChooseModeGrid extends View {
         boardGridLinePaint.setStyle(Paint.Style.STROKE);
         boardGridLinePaintStrokeWidth = 1;
         boardGridLinePaint.setStrokeWidth(boardGridLinePaintStrokeWidth);
-        boardGridLinePaint.setColor(mContext.getResources().getColor(R.color.choose_mode_grid_line));
+        boardGridLinePaint.setColor(mMainActivity.getResources().getColor(R.color.choose_mode_grid_line));
 
         boardGridSelectedPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         boardGridSelectedPaint.setStyle(Paint.Style.FILL);
-        boardGridSelectedPaint.setColor(mContext.getResources().getColor(R.color.choose_mode_cell_selected));
+        boardGridSelectedPaint.setColor(mMainActivity.getResources().getColor(R.color.choose_mode_cell_selected));
         boardGridFrameDividerX = new Float[11];
         boardGridFrameDividerY = new Float[11];
         mCurrentOrientation = Orientation.VERTICAL;
@@ -172,11 +172,12 @@ public class quickShipViewChooseModeGrid extends View {
         mTempShipSpotLayoutParam = new FrameLayout.LayoutParams(0, 0);
         mTempShipSpotLayoutParam.leftMargin = Math.round(boardGridSelectedStartX);
         mTempShipSpotLayoutParam.topMargin = Math.round(boardGridSelectedStartY);
-        mTempShipSpotLayoutParam.height = Math.round(3*boardGridCellHeight);
-        mTempShipSpotLayoutParam.width = Math.round(boardGridCellHeight);
+        mTempShipSpotLayoutParam.height = Math.round(boardGridCellHeight);
+        mTempShipSpotLayoutParam.width = Math.round(3*boardGridCellHeight);
         mTempShipSpot.setLayoutParams(mTempShipSpotLayoutParam);
-        mTempShipSpot.setAdjustViewBounds(true);
-        mTempShipSpot.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        mTempShipSpot.setImageResource(R.drawable.ship_size3_a_horizontal);
+        //mTempShipSpot.setAdjustViewBounds(true);
+        //mTempShipSpot.setScaleType(ImageView.ScaleType.FIT_CENTER);
     }
 
     @Override
@@ -309,17 +310,17 @@ public class quickShipViewChooseModeGrid extends View {
                 mTempShipSpotLayoutParam.height = Math.round(3*boardGridCellHeight);
                 mTempShipSpotLayoutParam.width = Math.round(boardGridCellHeight);
                 mTempShipSpot.setLayoutParams(mTempShipSpotLayoutParam);
-                mTempShipSpot.setRotation(0);
-                mTempShipSpot.setAdjustViewBounds(true);
-                mTempShipSpot.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                mTempShipSpot.setImageResource(R.drawable.ship_size3_a_vertical);
+                //mTempShipSpot.setAdjustViewBounds(true);
+                //mTempShipSpot.setScaleType(ImageView.ScaleType.FIT_CENTER);
             }
             else {
                 mTempShipSpotLayoutParam.height = Math.round(boardGridCellHeight);
                 mTempShipSpotLayoutParam.width = Math.round(3*boardGridCellHeight);
                 mTempShipSpot.setLayoutParams(mTempShipSpotLayoutParam);
-                mTempShipSpot.setRotation(270);
-                mTempShipSpot.setAdjustViewBounds(true);
-                mTempShipSpot.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                mTempShipSpot.setImageResource(R.drawable.ship_size3_a_horizontal);
+                //mTempShipSpot.setAdjustViewBounds(true);
+                //mTempShipSpot.setScaleType(ImageView.ScaleType.FIT_CENTER);
             }
         }
         mTempShipSpot.setVisibility(visible);
@@ -327,5 +328,11 @@ public class quickShipViewChooseModeGrid extends View {
 
     public static boolean isBetween(float x, float lower, float upper) {
         return lower <= x && x < upper;
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        super.onLayout(changed, l, t, r, b);
+        mMainActivity.loadChooseModeBitmaps();
     }
 }

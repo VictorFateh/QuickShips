@@ -4,7 +4,6 @@
     <item>
         <bitmap
             android:gravity="center"
-            android:src="@drawable/ship_size3_b"/>
+            android:src="@drawable/ship_size2_vertical"/>
     </item>
-
 </layer-list>

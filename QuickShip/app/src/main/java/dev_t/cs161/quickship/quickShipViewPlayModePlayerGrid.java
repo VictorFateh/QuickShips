@@ -15,7 +15,6 @@ import static java.lang.Math.abs;
 public class quickShipViewPlayModePlayerGrid extends View {
 
     private Point screen = new Point();
-    private Context mContext;
     private volatile boolean held;
     private volatile Float initialX, initialY;
     private volatile Float endX, endY;
@@ -55,9 +54,8 @@ public class quickShipViewPlayModePlayerGrid extends View {
     private quickShipActivityMain mMainActivity;
 
 
-    public quickShipViewPlayModePlayerGrid(Context context, quickShipModel gameModel) {
+    public quickShipViewPlayModePlayerGrid(quickShipActivityMain context, quickShipModel gameModel) {
         super(context);
-        mContext = context;
         mMainActivity = (quickShipActivityMain) context;
         mGameModel = gameModel;
         Display display = ((Activity) context).getWindowManager().getDefaultDisplay();
@@ -77,7 +75,7 @@ public class quickShipViewPlayModePlayerGrid extends View {
 
         boardGridFramePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         boardGridFramePaint.setStyle(Paint.Style.FILL);
-        boardGridFramePaint.setColor(mContext.getResources().getColor(R.color.play_mode_player_grid));
+        boardGridFramePaint.setColor(mMainActivity.getResources().getColor(R.color.play_mode_player_grid));
         boardGridFrameBorderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         boardGridFrameBorderPaint.setStyle(Paint.Style.STROKE);
         boardGridFrameBorderStrokeWidth = 15;
@@ -88,11 +86,11 @@ public class quickShipViewPlayModePlayerGrid extends View {
         boardGridLinePaint.setStyle(Paint.Style.STROKE);
         boardGridLinePaintStrokeWidth = 1;
         boardGridLinePaint.setStrokeWidth(boardGridLinePaintStrokeWidth);
-        boardGridLinePaint.setColor(mContext.getResources().getColor(R.color.play_mode_player_grid_line));
+        boardGridLinePaint.setColor(mMainActivity.getResources().getColor(R.color.play_mode_player_grid_line));
 
         boardGridSelectedPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         boardGridSelectedPaint.setStyle(Paint.Style.FILL);
-        boardGridSelectedPaint.setColor(mContext.getResources().getColor(R.color.play_mode_player_cell_selected));
+        boardGridSelectedPaint.setColor(mMainActivity.getResources().getColor(R.color.play_mode_player_cell_selected));
         boardGridFrameDividerX = new Float[11];
         boardGridFrameDividerY = new Float[11];
     }

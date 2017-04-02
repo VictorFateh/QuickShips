@@ -1,8 +1,12 @@
 package dev_t.cs161.quickship;
 
 import android.app.Activity;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
@@ -39,10 +43,20 @@ public class quickShipActivityMain extends Activity implements Runnable {
     private FrameLayout mChooseModeFrameLayout;
     private ImageView mSelectedShip;
     private ImageView mShipSize2;
+    private int mShipSize2width;
+    private int mShipSize2height;
     private ImageView mShipSize3a;
+    private int mShipSize3awidth;
+    private int mShipSize3aheight;
     private ImageView mShipSize3b;
+    private int mShipSize3bwidth;
+    private int mShipSize3bheight;
     private ImageView mShipSize4;
+    private int mShipSize4width;
+    private int mShipSize4height;
     private ImageView mShipSize5;
+    private int mShipSize5width;
+    private int mShipSize5height;
     private ImageView mTempShipSpot;
 
     @Override
@@ -124,18 +138,32 @@ public class quickShipActivityMain extends Activity implements Runnable {
             }
         });
 
-        mShipSize2 = (ImageView) findViewById(R.id.linear_layout_ship_size_2);
-        mShipSize3a = (ImageView) findViewById(R.id.linear_layout_ship_size_3_a);
-        mShipSize3b = (ImageView) findViewById(R.id.linear_layout_ship_size_3_b);
-        mShipSize4 = (ImageView) findViewById(R.id.linear_layout_ship_size_4);
-        mShipSize5 = (ImageView) findViewById(R.id.linear_layout_ship_size_5);
-
         mainScreenViewFlipper = (ViewFlipper) findViewById(R.id.main_screen_view_flipper);
         playModeFlipper = (ViewFlipper) findViewById(R.id.play_mode_view_flipper);
 
         chooseModeInitializeView();
         playModeInitializeView();
         launchStartScreen();
+    }
+
+    // This is required to avoid out of memory issues from loading large images
+    public void loadChooseModeBitmaps() {
+        mShipSize2 = (ImageView) findViewById(R.id.image_view_ship_size_2);
+        mShipSize3a = (ImageView) findViewById(R.id.image_view_ship_size_3_a);
+        mShipSize3b = (ImageView) findViewById(R.id.image_view_ship_size_3_b);
+        mShipSize4 = (ImageView) findViewById(R.id.image_view_ship_size_4);
+        mShipSize5 = (ImageView) findViewById(R.id.image_view_ship_size_5);
+
+        int layoutheight;
+        int layoutwidth;
+        Bitmap tempBitmap;
+
+        LinearLayout tempLayout = (LinearLayout) findViewById(R.id.linear_layout_ship_size_2_parent);
+
+        layoutheight = tempLayout.getHeight();
+        layoutwidth = tempLayout.getWidth();
+        Log.d("debug", "Width: " + layoutheight + " Height: " + layoutwidth);
+        mShipSize2.setImageBitmap(decodeFile(R.id.image_view_ship_size_2, layoutheight, layoutwidth));
     }
 
     public void setPlayModeFireBtnStatus(boolean status) {
@@ -294,14 +322,35 @@ public class quickShipActivityMain extends Activity implements Runnable {
         if (mSelectedShip == null || (selectedShip != null && !mSelectedShip.equals(selectedShip))) {
             selectedShip.setBackgroundColor(getResources().getColor(R.color.choose_mode_ship_selected));
             mSelectedShip = (ImageView) selectedShip;
-        }
-        else {
+        } else {
             mSelectedShip = null;
         }
     }
 
     public void setRotation(View button) {
         chooseModeGrid.setOrientation();
+    }
+
+    private Bitmap decodeFile(int res, int width, int height) {
+        Bitmap b = null;
+
+        //Decode image size
+        BitmapFactory.Options o = new BitmapFactory.Options();
+        o.inJustDecodeBounds = true;
+
+        BitmapFactory.decodeResource(getResources(), res, o);
+
+        int scale = 1;
+        if (o.outHeight > height || o.outWidth > width) {
+            scale = (int) Math.pow(2, (int) Math.ceil(Math.log(height / (double) Math.max(o.outHeight, o.outWidth)) / Math.log(0.5)));
+        }
+
+        //Decode with inSampleSize
+        BitmapFactory.Options o2 = new BitmapFactory.Options();
+        o2.inSampleSize = scale;
+        b = BitmapFactory.decodeResource(getResources(), res, o2);
+
+        return b;
     }
 
     @Override
