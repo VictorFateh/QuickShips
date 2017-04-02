@@ -7,9 +7,12 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 
 import java.util.ArrayList;
 
@@ -53,17 +56,22 @@ public class quickShipViewChooseModeGrid extends View {
     private Float mTitleHeight;
     private Float mTitleX;
     private Float mTitleY;
-    private quickShipModel mplayerBoardData;
+    private quickShipModel mGameModel;
     private quickShipModelBoard mTemporaryBoard;
     private ArrayList<quickShipModelBoardSlot> shipList;
     private quickShipModelBoardSlot currentSelectedPiece;
+    private FrameLayout mChooseModeFrameLayout;
+    private ImageView mTempShipSpot;
+    private Orientation mCurrentOrientation;
+    private FrameLayout.LayoutParams mTempShipSpotLayoutParam;
 
 
-    public quickShipViewChooseModeGrid(Context context, quickShipModel playerBoardData) {
+    public quickShipViewChooseModeGrid(Context context, quickShipModel playerBoardData, FrameLayout chooseModeFrameLayout, ImageView tempShipSpot) {
         super(context);
         mContext = context;
-        mplayerBoardData = playerBoardData;
-        mTemporaryBoard = new quickShipModelBoard();
+        mGameModel = playerBoardData;
+        mChooseModeFrameLayout = chooseModeFrameLayout;
+        mTempShipSpot = tempShipSpot;
         Display display = ((Activity) context).getWindowManager().getDefaultDisplay();
         display.getSize(screen);
         initializeValues();
@@ -72,26 +80,26 @@ public class quickShipViewChooseModeGrid extends View {
 
     public void initializeValues() {
         shipList = new ArrayList<>();
-        quickShipModelBoardSlot piece1 = new quickShipModelBoardSlot();
-        piece1.setShipType(ShipType.TWO);
-        piece1.setAnchor(true);
-        quickShipModelBoardSlot piece2 = new quickShipModelBoardSlot();
-        piece2.setShipType(ShipType.THREE_A);
-        piece2.setAnchor(true);
-        quickShipModelBoardSlot piece3 = new quickShipModelBoardSlot();
-        piece3.setShipType(ShipType.THREE_B);
-        piece3.setAnchor(true);
-        quickShipModelBoardSlot piece4 = new quickShipModelBoardSlot();
-        piece4.setShipType(ShipType.FOUR);
-        piece4.setAnchor(true);
-        quickShipModelBoardSlot piece5 = new quickShipModelBoardSlot();
-        piece5.setShipType(ShipType.FIVE);
-        piece5.setAnchor(true);
-        shipList.add(piece1);
-        shipList.add(piece2);
-        shipList.add(piece3);
-        shipList.add(piece4);
-        shipList.add(piece5);
+        quickShipModelBoardSlot shipSize2 = new quickShipModelBoardSlot();
+        shipSize2.setShipType(ShipType.TWO);
+        shipSize2.setAnchor(true);
+        quickShipModelBoardSlot shipSize3a = new quickShipModelBoardSlot();
+        shipSize3a.setShipType(ShipType.THREE_A);
+        shipSize3a.setAnchor(true);
+        quickShipModelBoardSlot shipSize3b = new quickShipModelBoardSlot();
+        shipSize3b.setShipType(ShipType.THREE_B);
+        shipSize3b.setAnchor(true);
+        quickShipModelBoardSlot shipSize4 = new quickShipModelBoardSlot();
+        shipSize4.setShipType(ShipType.FOUR);
+        shipSize4.setAnchor(true);
+        quickShipModelBoardSlot shipSize5 = new quickShipModelBoardSlot();
+        shipSize5.setShipType(ShipType.FIVE);
+        shipSize5.setAnchor(true);
+        shipList.add(shipSize2);
+        shipList.add(shipSize3a);
+        shipList.add(shipSize3b);
+        shipList.add(shipSize4);
+        shipList.add(shipSize5);
 
         mTitle = getContext().getResources().getString(R.string.choose_mode_grid_title);
         held = true;
@@ -121,6 +129,7 @@ public class quickShipViewChooseModeGrid extends View {
         boardGridSelectedPaint.setColor(mContext.getResources().getColor(R.color.choose_mode_cell_selected));
         boardGridFrameDividerX = new Float[11];
         boardGridFrameDividerY = new Float[11];
+        mCurrentOrientation = Orientation.VERTICAL;
     }
 
     public void calculateBoardGUIPositions() {
@@ -156,6 +165,18 @@ public class quickShipViewChooseModeGrid extends View {
             boardGridFrameDividerY[i] = tempDividerY;
             tempDividerY = tempDividerY + boardGridCellHeight;
         }
+
+        boardGridSelectedStartX = boardGridFrameDividerX[0];
+        boardGridSelectedStartY = boardGridFrameDividerY[0];
+
+        mTempShipSpotLayoutParam = new FrameLayout.LayoutParams(0, 0);
+        mTempShipSpotLayoutParam.leftMargin = Math.round(boardGridSelectedStartX);
+        mTempShipSpotLayoutParam.topMargin = Math.round(boardGridSelectedStartY);
+        mTempShipSpotLayoutParam.height = Math.round(3*boardGridCellHeight);
+        mTempShipSpotLayoutParam.width = Math.round(boardGridCellHeight);
+        mTempShipSpot.setLayoutParams(mTempShipSpotLayoutParam);
+        mTempShipSpot.setAdjustViewBounds(true);
+        mTempShipSpot.setScaleType(ImageView.ScaleType.FIT_CENTER);
     }
 
     @Override
@@ -173,10 +194,6 @@ public class quickShipViewChooseModeGrid extends View {
         for (int i = 0; i < 9; i++) {
             canvas.drawLine(boardGridFrameStartX, verticalY, boardGridFrameEndX, verticalY, boardGridLinePaint);
             verticalY = verticalY + boardGridCellHeight;
-        }
-
-        if (boardGridSelectedStartX != null && boardGridSelectedEndX != null && boardGridSelectedStartY != null && boardGridSelectedEndY != null) {
-            canvas.drawRect(boardGridSelectedStartX, boardGridSelectedStartY, boardGridSelectedEndX, boardGridSelectedEndY, boardGridSelectedPaint);
         }
 
         canvas.drawRect(boardGridFrameStartX, boardGridFrameStartY, boardGridFrameEndX, boardGridFrameEndY, boardGridFrameBorderPaint);
@@ -200,13 +217,14 @@ public class quickShipViewChooseModeGrid extends View {
                     selectedIndex = calculateCellTouched(initialX, initialY);
                     if (selectedIndex != currentIndex) {
                         currentIndex = selectedIndex;
-                        Log.d("debug", "Index: " + currentIndex);
+                        //Log.d("debug", "Index: " + currentIndex);
                         calculateSelectedRect(currentIndex);
+                        setTempShipVisibility(View.VISIBLE);
                     } else {
-                        deSelectCell();
+                        setTempShipVisibility(View.INVISIBLE);
                     }
                 } else {
-                    deSelectCell();
+                    setTempShipVisibility(View.INVISIBLE);
                 }
                 held = false;
                 break;
@@ -228,6 +246,10 @@ public class quickShipViewChooseModeGrid extends View {
         boardGridSelectedEndX = boardGridFrameDividerX[xIndex + 1];
         boardGridSelectedStartY = boardGridFrameDividerY[yIndex];
         boardGridSelectedEndY = boardGridFrameDividerY[yIndex + 1];
+        Log.d("debug", "StartX:" + boardGridSelectedStartX + "\n");
+        Log.d("debug", "EndX:" + boardGridSelectedEndX + "\n");
+        Log.d("debug", "StartY:" + boardGridSelectedStartY + "\n");
+        Log.d("debug", "EndY:" + boardGridSelectedEndY + "\n");
     }
 
     public int calculateCellTouched(float x, float y) {
@@ -268,6 +290,39 @@ public class quickShipViewChooseModeGrid extends View {
         boardGridSelectedStartY = null;
         boardGridSelectedEndX = null;
         boardGridSelectedEndY = null;
+    }
+
+    public void setOrientation() {
+        if (mCurrentOrientation.equals(Orientation.HORIZONTAL)) {
+            mCurrentOrientation = Orientation.VERTICAL;
+        }
+        else {
+            mCurrentOrientation = Orientation.HORIZONTAL;
+        }
+    }
+
+    public void setTempShipVisibility(int visible) {
+        if (visible == View.VISIBLE) {
+            mTempShipSpotLayoutParam.leftMargin = Math.round(boardGridSelectedStartX);
+            mTempShipSpotLayoutParam.topMargin = Math.round(boardGridSelectedStartY);
+            if (mCurrentOrientation.equals(Orientation.VERTICAL)) {
+                mTempShipSpotLayoutParam.height = Math.round(3*boardGridCellHeight);
+                mTempShipSpotLayoutParam.width = Math.round(boardGridCellHeight);
+                mTempShipSpot.setLayoutParams(mTempShipSpotLayoutParam);
+                mTempShipSpot.setRotation(0);
+                mTempShipSpot.setAdjustViewBounds(true);
+                mTempShipSpot.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            }
+            else {
+                mTempShipSpotLayoutParam.height = Math.round(boardGridCellHeight);
+                mTempShipSpotLayoutParam.width = Math.round(3*boardGridCellHeight);
+                mTempShipSpot.setLayoutParams(mTempShipSpotLayoutParam);
+                mTempShipSpot.setRotation(270);
+                mTempShipSpot.setAdjustViewBounds(true);
+                mTempShipSpot.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            }
+        }
+        mTempShipSpot.setVisibility(visible);
     }
 
     public static boolean isBetween(float x, float lower, float upper) {

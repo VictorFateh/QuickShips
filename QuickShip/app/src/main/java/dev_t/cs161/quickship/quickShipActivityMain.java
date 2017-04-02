@@ -36,12 +36,14 @@ public class quickShipActivityMain extends Activity implements Runnable {
     private Button mOpponentGridBtn;
     private Button mPlayModeOptionsBtn;
     private Button startGame;
+    private FrameLayout mChooseModeFrameLayout;
     private ImageView mSelectedShip;
     private ImageView mShipSize2;
     private ImageView mShipSize3a;
     private ImageView mShipSize3b;
     private ImageView mShipSize4;
     private ImageView mShipSize5;
+    private ImageView mTempShipSpot;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +70,8 @@ public class quickShipActivityMain extends Activity implements Runnable {
     public void initializeView() {
         setContentView(R.layout.quickship_main_screen);
         mActivityMain = this;
+        mChooseModeFrameLayout = (FrameLayout) findViewById(R.id.choose_mode);
+        mTempShipSpot = (ImageView) findViewById(R.id.temp_ship_spot);
         mPlayModeFireBtn = (Button) findViewById(R.id.play_mode_fire_btn);
         mPlayModeFireBtn.setEnabled(false);
 
@@ -141,7 +145,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
     public void chooseModeInitializeView() {
         LinearLayout topLinear = (LinearLayout) findViewById(R.id.choose_mode_top_linear);
         FrameLayout topFrame = (FrameLayout) findViewById(R.id.choose_mode_top_frame);
-        chooseModeGrid = new quickShipViewChooseModeGrid(this, mGameModel);
+        chooseModeGrid = new quickShipViewChooseModeGrid(this, mGameModel, mChooseModeFrameLayout, mTempShipSpot);
         topFrame.getLayoutParams().height = Math.round(screenWidth);
         topFrame.addView(chooseModeGrid);
         LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Math.round(screenWidth));
@@ -294,6 +298,10 @@ public class quickShipActivityMain extends Activity implements Runnable {
         else {
             mSelectedShip = null;
         }
+    }
+
+    public void setRotation(View button) {
+        chooseModeGrid.setOrientation();
     }
 
     @Override
