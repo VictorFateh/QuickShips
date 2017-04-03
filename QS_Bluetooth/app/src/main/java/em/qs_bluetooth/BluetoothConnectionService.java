@@ -265,12 +265,18 @@ public class BluetoothConnectionService {
                 // Read from the InputStream
                 try {
                     bytes = mmInStream.read(buffer);
-                    String incomingMessage = new String(buffer, 0, bytes);
-                    Log.d(TAG, "InputStream: " + incomingMessage);
+
+                    //String incomingMessage = new String(buffer, 0, bytes);
+                    //Log.d(TAG, "InputStream: " + incomingMessage);
 
                     //Send input to MAIN Activity
+                    quickShipBluetoothPacketsToBeSent dataPacket = ParcelableUtil.unmarshall(buffer,quickShipBluetoothPacketsToBeSent.CREATOR);
+                            //Intent incomingMessageIntent = new Intent("incomingMessage");
+                    //incomingMessageIntent.putExtra("theMsg", incomingMessage);
+                    //quickShipBluetoothPacketsToBeSent dataPacket = new quickShipBluetoothPacketsToBeSent(PacketType.CHAT, incomingMessage);
                     Intent incomingMessageIntent = new Intent("incomingMessage");
-                    incomingMessageIntent.putExtra("theMsg", incomingMessage);
+                    incomingMessageIntent.putExtra("theMsg", dataPacket);
+
                     LocalBroadcastManager.getInstance(mContext).sendBroadcast(incomingMessageIntent);
 
                 } catch (IOException e) {

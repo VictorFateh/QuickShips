@@ -15,49 +15,37 @@
         android:textColor="#000"
         android:layout_weight="1" />
 
-    <ListView
-        android:id="@+id/lv_newDevices"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"/>
+
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <Button
-            android:id="@+id/btn_connect"
+            android:id="@+id/btn_toggleBT"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Enable Bluetooth" />
 
-        <Button
-            android:id="@+id/btn_disconnect"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Disable Bluetooth" />
     </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_setName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Change Broadcast Name" />
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
     <Button
-        android:id="@+id/btn_hostGame"
+        android:id="@+id/btn_connect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Broadcast/Connect to Player" />
 
-    <Button
-        android:id="@+id/btn_joinGame"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Refresh Devices" />
 
-    <Button
-        android:id="@+id/btn_joinGameConnect"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Join Game" />
     </LinearLayout>
 
 
@@ -65,6 +53,9 @@
         android:id="@+id/et_msg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:inputType="text"
+        android:singleLine="true"
+        android:imeOptions="actionDone"
         android:hint="send message..." />
     <Button
         android:id="@+id/btn_sendMsg"
