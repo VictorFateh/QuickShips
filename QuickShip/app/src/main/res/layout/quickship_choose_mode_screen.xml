@@ -41,21 +41,26 @@
                     android:orientation="horizontal">
 
                     <Button
+                        android:id="@+id/choose_mode_rotate_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="top"
                         android:layout_weight="1"
+                        android:enabled="false"
                         android:onClick="setRotation"
                         android:text="@string/choose_mode_rotate_btn"/>
 
                     <Button
+                        android:id="@+id/choose_mode_place_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="top"
                         android:layout_weight="1"
+                        android:enabled="false"
                         android:text="@string/choose_mode_place_ship_btn"/>
 
                     <Button
+                        android:id="@+id/choose_mode_done_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="top"
@@ -102,15 +107,15 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:layout_weight="2"
-                                    android:tag="image_view_ship_size_2"
-                                    android:orientation="horizontal">
+                                    android:orientation="horizontal"
+                                    android:tag="image_view_ship_size_2">
 
                                     <ImageView
                                         android:id="@+id/image_view_ship_size_2"
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
-                                        android:tag="image_view_ship_size_2"
-                                        android:onClick="setChooseModeSelectedShip"/>
+                                        android:onClick="setChooseModeSelectedShip"
+                                        android:tag="image_view_ship_size_2"/>
                                 </dev_t.cs161.quickship.quickShipChooseModeLinearLayout>
 
                                 <dev_t.cs161.quickship.quickShipChooseModeLinearLayout
@@ -118,15 +123,15 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:layout_weight="1"
-                                    android:tag="image_view_ship_size_4"
-                                    android:orientation="horizontal">
+                                    android:orientation="horizontal"
+                                    android:tag="image_view_ship_size_4">
 
                                     <ImageView
                                         android:id="@+id/image_view_ship_size_4"
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
-                                        android:tag="image_view_ship_size_4"
-                                        android:onClick="setChooseModeSelectedShip"/>
+                                        android:onClick="setChooseModeSelectedShip"
+                                        android:tag="image_view_ship_size_4"/>
                                 </dev_t.cs161.quickship.quickShipChooseModeLinearLayout>
                             </LinearLayout>
 
@@ -141,15 +146,15 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:layout_weight="1"
-                                    android:tag="image_view_ship_size_3_a"
-                                    android:orientation="horizontal">
+                                    android:orientation="horizontal"
+                                    android:tag="image_view_ship_size_3_a">
 
                                     <ImageView
                                         android:id="@+id/image_view_ship_size_3_a"
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
-                                        android:tag="image_view_ship_size_3_a"
-                                        android:onClick="setChooseModeSelectedShip"/>
+                                        android:onClick="setChooseModeSelectedShip"
+                                        android:tag="image_view_ship_size_3_a"/>
                                 </dev_t.cs161.quickship.quickShipChooseModeLinearLayout>
 
                                 <dev_t.cs161.quickship.quickShipChooseModeLinearLayout
@@ -157,15 +162,15 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:layout_weight="1"
-                                    android:tag="image_view_ship_size_3_b"
-                                    android:orientation="horizontal">
+                                    android:orientation="horizontal"
+                                    android:tag="image_view_ship_size_3_b">
 
                                     <ImageView
                                         android:id="@+id/image_view_ship_size_3_b"
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
-                                        android:tag="image_view_ship_size_3_b"
-                                        android:onClick="setChooseModeSelectedShip"/>
+                                        android:onClick="setChooseModeSelectedShip"
+                                        android:tag="image_view_ship_size_3_b"/>
                                 </dev_t.cs161.quickship.quickShipChooseModeLinearLayout>
                             </LinearLayout>
 
@@ -174,15 +179,15 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:layout_weight="1"
-                                android:tag="image_view_ship_size_5"
-                                android:orientation="horizontal">
+                                android:orientation="horizontal"
+                                android:tag="image_view_ship_size_5">
 
                                 <ImageView
                                     android:id="@+id/image_view_ship_size_5"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
-                                    android:tag="image_view_ship_size_5"
-                                    android:onClick="setChooseModeSelectedShip"/>
+                                    android:onClick="setChooseModeSelectedShip"
+                                    android:tag="image_view_ship_size_5"/>
                             </dev_t.cs161.quickship.quickShipChooseModeLinearLayout>
                         </LinearLayout>
                     </LinearLayout>
@@ -209,6 +214,11 @@
         android:id="@+id/temp_ship_spot"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:src="@drawable/ship_size5_horizontal"
         android:visibility="invisible"/>
+
+    <FrameLayout
+        android:id="@+id/choose_mode_top_frame_border"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </FrameLayout>
 </FrameLayout>

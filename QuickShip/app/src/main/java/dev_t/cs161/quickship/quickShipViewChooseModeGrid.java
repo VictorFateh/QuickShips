@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
@@ -28,8 +29,6 @@ public class quickShipViewChooseModeGrid extends View {
     private Float boardGridFrameStartY;
     private Float boardGridFrameEndX;
     private Float boardGridFrameEndY;
-    private Paint boardGridFrameBorderPaint;
-    private int boardGridFrameBorderStrokeWidth;
     private Float boardGridCellWidth;
     private Float boardGridCellHeight;
     private Paint boardGridLinePaint;
@@ -63,7 +62,6 @@ public class quickShipViewChooseModeGrid extends View {
     private quickShipActivityMain mMainActivity;
     private boolean mShipSelected;
     private ShipType mShipSelectedShipType;
-
 
     public quickShipViewChooseModeGrid(quickShipActivityMain context, quickShipModel playerBoardData, FrameLayout chooseModeFrameLayout, ImageView tempShipSpot) {
         super(context);
@@ -111,11 +109,6 @@ public class quickShipViewChooseModeGrid extends View {
         boardGridFramePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         boardGridFramePaint.setStyle(Paint.Style.FILL);
         boardGridFramePaint.setColor(mMainActivity.getResources().getColor(R.color.choose_mode_grid));
-        boardGridFrameBorderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        boardGridFrameBorderPaint.setStyle(Paint.Style.STROKE);
-        boardGridFrameBorderStrokeWidth = 15;
-        boardGridFrameBorderPaint.setStrokeWidth(boardGridFrameBorderStrokeWidth);
-        boardGridFrameBorderPaint.setColor(Color.BLACK);
 
         boardGridLinePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         boardGridLinePaint.setStyle(Paint.Style.STROKE);
@@ -169,6 +162,7 @@ public class quickShipViewChooseModeGrid extends View {
         boardGridSelectedStartY = boardGridFrameDividerY[0];
 
         mTempShipSpotLayoutParam = new FrameLayout.LayoutParams(0, 0);
+        mTempShipSpot.setBackgroundColor(mMainActivity.getResources().getColor(R.color.choose_mode_ship_selected));
         mShipSelected = false;
     }
 
@@ -189,7 +183,6 @@ public class quickShipViewChooseModeGrid extends View {
             verticalY = verticalY + boardGridCellHeight;
         }
 
-        canvas.drawRect(boardGridFrameStartX, boardGridFrameStartY, boardGridFrameEndX, boardGridFrameEndY, boardGridFrameBorderPaint);
     }
 
     @Override
@@ -216,11 +209,7 @@ public class quickShipViewChooseModeGrid extends View {
                             calculateSelectedRect(currentIndex);
                             setTempShipVisibility(View.VISIBLE);
                         }
-                    } else {
-                        setTempShipVisibility(View.INVISIBLE);
                     }
-                } else {
-                    setTempShipVisibility(View.INVISIBLE);
                 }
                 break;
             case MotionEvent.ACTION_CANCEL:
@@ -241,10 +230,6 @@ public class quickShipViewChooseModeGrid extends View {
         boardGridSelectedEndX = boardGridFrameDividerX[xIndex + 1];
         boardGridSelectedStartY = boardGridFrameDividerY[yIndex];
         boardGridSelectedEndY = boardGridFrameDividerY[yIndex + 1];
-        Log.d("debug", "StartX:" + boardGridSelectedStartX + "\n");
-        Log.d("debug", "EndX:" + boardGridSelectedEndX + "\n");
-        Log.d("debug", "StartY:" + boardGridSelectedStartY + "\n");
-        Log.d("debug", "EndY:" + boardGridSelectedEndY + "\n");
     }
 
     public int calculateCellTouched(float x, float y) {
@@ -399,6 +384,8 @@ public class quickShipViewChooseModeGrid extends View {
                         break;
                 }
             }
+            mMainActivity.setChooseModeRotateBtnStatus(true);
+            mMainActivity.setChooseModePlaceBtnStatus(true);
         }
         mTempShipSpot.setVisibility(visible);
     }
@@ -410,6 +397,9 @@ public class quickShipViewChooseModeGrid extends View {
 
     public void deSelectShip() {
         mShipSelected = false;
+        mMainActivity.setChooseModeRotateBtnStatus(false);
+        mMainActivity.setChooseModePlaceBtnStatus(false);
+        setTempShipVisibility(View.INVISIBLE);
     }
 
     public static boolean isBetween(float x, float lower, float upper) {

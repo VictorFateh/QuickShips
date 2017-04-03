@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
@@ -41,6 +40,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
     private Button startGame;
     private FrameLayout mChooseModeFrameLayout;
     private ImageView mSelectedShip;
+    private ImageView mTempSelectedShip;
     private ImageView mShipSize2;
     private int mShipSize2width;
     private int mShipSize2height;
@@ -56,7 +56,9 @@ public class quickShipActivityMain extends Activity implements Runnable {
     private ImageView mShipSize5;
     private int mShipSize5width;
     private int mShipSize5height;
-    private ImageView mTempShipSpot;
+    private Button mRotateBtn;
+    private Button mPlaceBtn;
+    private Button mDoneBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +77,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
         startGame.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 newGame();
+                // Change to 1 to show the play mode screen instead
                 mainScreenViewFlipper.setDisplayedChild(2);
             }
         });
@@ -84,7 +87,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
         setContentView(R.layout.quickship_main_screen);
         mActivityMain = this;
         mChooseModeFrameLayout = (FrameLayout) findViewById(R.id.choose_mode);
-        mTempShipSpot = (ImageView) findViewById(R.id.temp_ship_spot);
+        mTempSelectedShip = (ImageView) findViewById(R.id.temp_ship_spot);
         mPlayModeFireBtn = (Button) findViewById(R.id.play_mode_fire_btn);
         mPlayModeFireBtn.setEnabled(false);
 
@@ -146,6 +149,10 @@ public class quickShipActivityMain extends Activity implements Runnable {
         mShipSize4 = (ImageView) findViewById(R.id.image_view_ship_size_4);
         mShipSize5 = (ImageView) findViewById(R.id.image_view_ship_size_5);
 
+        mRotateBtn = (Button) findViewById(R.id.choose_mode_rotate_button);
+        mPlaceBtn = (Button) findViewById(R.id.choose_mode_place_button);
+        mDoneBtn = (Button) findViewById(R.id.choose_mode_done_button);
+
         chooseModeInitializeView();
         playModeInitializeView();
         launchStartScreen();
@@ -181,12 +188,26 @@ public class quickShipActivityMain extends Activity implements Runnable {
         mPlayModeFireBtn.setEnabled(status);
     }
 
+    public void setChooseModeRotateBtnStatus(boolean status) {
+        mRotateBtn.setEnabled(status);
+    }
+
+    public void setChooseModePlaceBtnStatus(boolean status) {
+        mPlaceBtn.setEnabled(status);
+    }
+
+    public void setChooseModeDoneBtnStatus(boolean status) {
+        mDoneBtn.setEnabled(status);
+    }
+
     public void chooseModeInitializeView() {
         LinearLayout topLinear = (LinearLayout) findViewById(R.id.choose_mode_top_linear);
         FrameLayout topFrame = (FrameLayout) findViewById(R.id.choose_mode_top_frame);
-        chooseModeGrid = new quickShipViewChooseModeGrid(this, mGameModel, mChooseModeFrameLayout, mTempShipSpot);
+        chooseModeGrid = new quickShipViewChooseModeGrid(this, mGameModel, mChooseModeFrameLayout, mTempSelectedShip);
         topFrame.getLayoutParams().height = Math.round(screenWidth);
         topFrame.addView(chooseModeGrid);
+        FrameLayout topFrameBorder = (FrameLayout) findViewById(R.id.choose_mode_top_frame_border);
+        topFrameBorder.addView(new quickShipViewGridBorder(this));
         LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Math.round(screenWidth));
         topLinear.setLayoutParams(param);
     }
@@ -199,6 +220,8 @@ public class quickShipActivityMain extends Activity implements Runnable {
         topOpponentFrame.addView(playModeOpponentGrid);
         LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Math.round(screenWidth));
         topOpponentLinear.setLayoutParams(param);
+        FrameLayout topOpponentFrameBorder = (FrameLayout) findViewById(R.id.play_mode_opponent_top_frame_border);
+        topOpponentFrameBorder.addView(new quickShipViewGridBorder(this));
 
         LinearLayout topPlayerLinear = (LinearLayout) findViewById(R.id.play_mode_player_top_linear);
         FrameLayout topPlayerFrame = (FrameLayout) findViewById(R.id.play_mode_player_top_frame);
@@ -207,6 +230,8 @@ public class quickShipActivityMain extends Activity implements Runnable {
         topPlayerFrame.addView(playModePlayerGrid);
         LinearLayout.LayoutParams param2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Math.round(screenWidth));
         topPlayerLinear.setLayoutParams(param2);
+        FrameLayout topPlayerFrameBorder = (FrameLayout) findViewById(R.id.play_mode_player_top_frame_border);
+        topPlayerFrameBorder.addView(new quickShipViewGridBorder(this));
         playModeFlipper.setDisplayedChild(1);
     }
 
