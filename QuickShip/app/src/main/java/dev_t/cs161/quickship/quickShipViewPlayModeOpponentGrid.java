@@ -259,4 +259,13 @@ public class quickShipViewPlayModeOpponentGrid extends View {
     public static boolean isBetween(float x, float lower, float upper) {
         return lower <= x && x < upper;
     }
+
+    public boolean insideBoardGridBound(float x, float y) {
+        if (x < boardGridFrameStartX || x > boardGridFrameEndX || y < boardGridFrameStartY || y > boardGridFrameEndY) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
 }
