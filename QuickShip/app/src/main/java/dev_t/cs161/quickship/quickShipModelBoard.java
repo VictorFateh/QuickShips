@@ -2,6 +2,8 @@ package dev_t.cs161.quickship;
 
 import android.util.Log;
 
+import java.util.ArrayList;
+
 public class quickShipModelBoard {
 
     private String mPlayerID;
@@ -28,14 +30,6 @@ public class quickShipModelBoard {
                 Log.d("debug", "Gameslot(" + i + "): occupied.");
             } else {
                 Log.d("debug", "Gameslot(" + i + "): unoccupied.");
-            }
-        }
-    }
-
-    public void removeShip(int anchorIndex) {
-        for (int i = 0; i < 100; i++) {
-            if (completeBoard[i].getAnchorIndex() == anchorIndex) {
-                completeBoard[i] = new quickShipModelBoardSlot();
             }
         }
     }
@@ -122,19 +116,220 @@ public class quickShipModelBoard {
         completeBoard[index].setOccupied(occupied);
     }
 
-    public Direction getDirection(int index) {
-        return completeBoard[index].getDirection();
-    }
-
-    public void setDirection(int index, Direction direction) {
-        completeBoard[index].setDirection(direction);
-    }
-
     public ShipType getShipType(int index) {
         return completeBoard[index].getShipType();
     }
 
     public void setShipType(int index, ShipType shipType) {
         completeBoard[index].setShipType(shipType);
+    }
+
+    public ArrayList<quickShipModelBoardSlot> getAllAnchorShips() {
+        ArrayList<quickShipModelBoardSlot> tempShips = new ArrayList<>();
+        for (int i = 0; i < 100; i++) {
+            if (completeBoard[i].isAnchor()) {
+                tempShips.add(completeBoard[i]);
+            }
+        }
+        return tempShips;
+    }
+
+    public void removeShip(int anchorIndex) {
+        for (int i = 0; i < 100; i++) {
+            if (completeBoard[i].getAnchorIndex() == anchorIndex) {
+                completeBoard[i] = new quickShipModelBoardSlot();
+            }
+        }
+    }
+
+    public void addShip(int anchorIndex, ShipType shipType, Orientation orientation) {
+        completeBoard[anchorIndex] = new quickShipModelBoardSlot(anchorIndex, shipType, orientation);
+        if (orientation.equals(Orientation.VERTICAL)) {
+            switch (shipType) {
+                case TWO:
+                    completeBoard[anchorIndex + 10] = new quickShipModelBoardSlot(anchorIndex, shipType);
+                    break;
+
+                case THREE_A:
+                    completeBoard[anchorIndex + 10] = new quickShipModelBoardSlot(anchorIndex, shipType);
+                    completeBoard[anchorIndex + 20] = new quickShipModelBoardSlot(anchorIndex, shipType);
+                    break;
+
+                case THREE_B:
+                    completeBoard[anchorIndex + 10] = new quickShipModelBoardSlot(anchorIndex, shipType);
+                    completeBoard[anchorIndex + 20] = new quickShipModelBoardSlot(anchorIndex, shipType);
+                    break;
+
+                case FOUR:
+                    completeBoard[anchorIndex + 10] = new quickShipModelBoardSlot(anchorIndex, shipType);
+                    completeBoard[anchorIndex + 20] = new quickShipModelBoardSlot(anchorIndex, shipType);
+                    completeBoard[anchorIndex + 30] = new quickShipModelBoardSlot(anchorIndex, shipType);
+                    break;
+
+                case FIVE:
+                    completeBoard[anchorIndex + 10] = new quickShipModelBoardSlot(anchorIndex, shipType);
+                    completeBoard[anchorIndex + 20] = new quickShipModelBoardSlot(anchorIndex, shipType);
+                    completeBoard[anchorIndex + 30] = new quickShipModelBoardSlot(anchorIndex, shipType);
+                    completeBoard[anchorIndex + 40] = new quickShipModelBoardSlot(anchorIndex, shipType);
+                    break;
+            }
+        } else if (orientation.equals(Orientation.HORIZONTAL)) {
+            switch (shipType) {
+                case TWO:
+                    completeBoard[anchorIndex + 1] = new quickShipModelBoardSlot(anchorIndex, shipType);
+                    break;
+
+                case THREE_A:
+                    completeBoard[anchorIndex + 1] = new quickShipModelBoardSlot(anchorIndex, shipType);
+                    completeBoard[anchorIndex + 2] = new quickShipModelBoardSlot(anchorIndex, shipType);
+                    break;
+
+                case THREE_B:
+                    completeBoard[anchorIndex + 1] = new quickShipModelBoardSlot(anchorIndex, shipType);
+                    completeBoard[anchorIndex + 2] = new quickShipModelBoardSlot(anchorIndex, shipType);
+                    break;
+
+                case FOUR:
+                    completeBoard[anchorIndex + 1] = new quickShipModelBoardSlot(anchorIndex, shipType);
+                    completeBoard[anchorIndex + 2] = new quickShipModelBoardSlot(anchorIndex, shipType);
+                    completeBoard[anchorIndex + 3] = new quickShipModelBoardSlot(anchorIndex, shipType);
+                    break;
+
+                case FIVE:
+                    completeBoard[anchorIndex + 1] = new quickShipModelBoardSlot(anchorIndex, shipType);
+                    completeBoard[anchorIndex + 2] = new quickShipModelBoardSlot(anchorIndex, shipType);
+                    completeBoard[anchorIndex + 3] = new quickShipModelBoardSlot(anchorIndex, shipType);
+                    completeBoard[anchorIndex + 4] = new quickShipModelBoardSlot(anchorIndex, shipType);
+                    break;
+            }
+        }
+    }
+
+    public int chooseModeSelectedShip(ShipType shipType) {
+        for (int i = 0; i < 100; i++) {
+            if (completeBoard[i].isAnchor() && completeBoard[i].getShipType().equals(shipType)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public quickShipModelBoardSlot getShipSlotAtIndex(int index) {
+        return completeBoard[index];
+    }
+
+    public boolean isCollisionExist(int index, ShipType shipType, Orientation orientation) {
+        if (orientation.equals(Orientation.VERTICAL)) {
+            int index2 = index / 10;
+            int yIndex = index2 % 10;
+            //Log.d("DEBUG", "yIndex: " + yIndex);
+            switch (shipType) {
+                case TWO:
+                    //Log.d("DEBUG", "checking: " + index + ", " + (index + 10));
+                    if (completeBoard[index].isOccupied() || (yIndex + 1 < 10 && completeBoard[index + 10].isOccupied())) {
+                        return true;
+                    }
+                    break;
+
+                case THREE_A:
+                    //Log.d("DEBUG", "checking: " + index + ", " + (index + 10) + ", " + (index + 20));
+                    if (completeBoard[index].isOccupied() || (yIndex + 1 < 10 && completeBoard[index + 10].isOccupied()) || (yIndex + 2 < 10 && completeBoard[index + 20].isOccupied())) {
+                        return true;
+                    }
+                    break;
+
+                case THREE_B:
+                    //Log.d("DEBUG", "checking: " + index + ", " + (index + 10) + ", " + (index + 20));
+                    if (completeBoard[index].isOccupied() || (yIndex + 1 < 10 && completeBoard[index + 10].isOccupied()) || (yIndex + 2 < 10 && completeBoard[index + 20].isOccupied())) {
+                        return true;
+                    }
+                    break;
+
+                case FOUR:
+                    //Log.d("DEBUG", "checking: " + index + ", " + (index + 10) + ", " + (index + 20) + ", " + (index + 30));
+                    if (completeBoard[index].isOccupied() || (yIndex + 1 < 10 && completeBoard[index + 10].isOccupied()) || (yIndex + 2 < 10 && completeBoard[index + 20].isOccupied()) || (yIndex + 3 < 10 && completeBoard[index + 30].isOccupied())) {
+                        return true;
+                    }
+                    break;
+
+                case FIVE:
+                    //Log.d("DEBUG", "checking: " + index + ", " + (index + 10) + ", " + (index + 20) + ", " + (index + 30) + ", " + (index + 40));
+                    if (completeBoard[index].isOccupied() || (yIndex + 1 < 10 && completeBoard[index + 10].isOccupied()) || (yIndex + 2 < 10 && completeBoard[index + 20].isOccupied()) || (yIndex + 3 < 10 && completeBoard[index + 30].isOccupied()) || (yIndex + 4 < 10 && completeBoard[index + 40].isOccupied())) {
+                        return true;
+                    }
+                    break;
+            }
+        } else if (orientation.equals(Orientation.HORIZONTAL)) {
+            int xIndex = index % 10;
+            //Log.d("DEBUG", "xIndex: "+xIndex);
+            switch (shipType) {
+                case TWO:
+                    //Log.d("DEBUG", "checking: "+index+", "+(index+1));
+                    if (completeBoard[index].isOccupied() || (xIndex + 1 < 10 && completeBoard[index + 1].isOccupied())) {
+                        return true;
+                    }
+                    break;
+
+                case THREE_A:
+                    //Log.d("DEBUG", "checking: "+index+", "+(index+1)+", "+(index+2));
+                    if (completeBoard[index].isOccupied() || (xIndex + 1 < 10 && completeBoard[index + 1].isOccupied()) || (xIndex + 2 < 10 && completeBoard[index + 2].isOccupied())) {
+                        return true;
+                    }
+                    break;
+
+                case THREE_B:
+                    //Log.d("DEBUG", "checking: "+index+", "+(index+1)+", "+(index+2));
+                    if (completeBoard[index].isOccupied() || (xIndex + 1 < 10 && completeBoard[index + 1].isOccupied()) || (xIndex + 2 < 10 && completeBoard[index + 2].isOccupied())) {
+                        return true;
+                    }
+                    break;
+
+                case FOUR:
+                    //Log.d("DEBUG", "checking: "+index+", "+(index+1)+", "+(index+2)+", "+(index+3));
+                    if (completeBoard[index].isOccupied() || (xIndex + 1 < 10 && completeBoard[index + 1].isOccupied()) || (xIndex + 2 < 10 && completeBoard[index + 2].isOccupied()) || (xIndex + 3 < 10 && completeBoard[index + 3].isOccupied())) {
+                        return true;
+                    }
+                    break;
+
+                case FIVE:
+                    //Log.d("DEBUG", "checking: "+index+", "+(index+1)+", "+(index+2)+", "+(index+3)+", "+(index+4));
+                    if (completeBoard[index].isOccupied() || (xIndex + 1 < 10 && completeBoard[index + 1].isOccupied()) || (xIndex + 2 < 10 && completeBoard[index + 2].isOccupied()) || (xIndex + 3 < 10 && completeBoard[index + 3].isOccupied()) || (xIndex + 4 < 10 && completeBoard[index + 4].isOccupied())) {
+                        return true;
+                    }
+                    break;
+            }
+        }
+        return false;
+    }
+
+    public boolean checkAllPlayerShipPlaces() {
+        boolean size2exist = false;
+        boolean size3aexist = false;
+        boolean size3bexist = false;
+        boolean size4exist = false;
+        boolean size5exist = false;
+        for (int i = 0; i < 100; i++) {
+            if (completeBoard[i].isAnchor() && completeBoard[i].getShipType().equals(ShipType.TWO)) {
+                size2exist = true;
+            }
+            if (completeBoard[i].isAnchor() && completeBoard[i].getShipType().equals(ShipType.THREE_A)) {
+                size3aexist = true;
+            }
+            if (completeBoard[i].isAnchor() && completeBoard[i].getShipType().equals(ShipType.THREE_B)) {
+                size3bexist = true;
+            }
+            if (completeBoard[i].isAnchor() && completeBoard[i].getShipType().equals(ShipType.FOUR)) {
+                size4exist = true;
+            }
+            if (completeBoard[i].isAnchor() && completeBoard[i].getShipType().equals(ShipType.FIVE)) {
+                size5exist = true;
+            }
+        }
+        if (size2exist && size3aexist && size3bexist && size4exist && size5exist) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 }

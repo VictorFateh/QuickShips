@@ -57,6 +57,7 @@
                         android:layout_gravity="top"
                         android:layout_weight="1"
                         android:enabled="false"
+                        android:onClick="placeButton"
                         android:text="@string/choose_mode_place_ship_btn"/>
 
                     <Button
@@ -66,6 +67,7 @@
                         android:layout_gravity="top"
                         android:layout_weight="1"
                         android:enabled="false"
+                        android:onClick="doneButton"
                         android:text="@string/choose_mode_done_btn"/>
                 </LinearLayout>
 

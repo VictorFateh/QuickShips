@@ -204,6 +204,17 @@ public class quickShipViewPlayModeOpponentGrid extends View {
         boardGridSelectedEndY = boardGridFrameDividerY[yIndex + 1];
     }
 
+    // Returns an array where array[0] = x, array[1] = y
+    public float[] getIndexXYCoord(int index) {
+        int xIndex = index % 10;
+        index = index / 10;
+        int yIndex = index % 10;
+        float[] returnArray = new float[2];
+        returnArray[0] = boardGridFrameDividerX[xIndex];
+        returnArray[0] = boardGridFrameDividerY[yIndex];
+        return returnArray;
+    }
+
     public int calculateCellTouched(float x, float y) {
         int index = 0;
         for (int i = 0; i < 10; i++) {

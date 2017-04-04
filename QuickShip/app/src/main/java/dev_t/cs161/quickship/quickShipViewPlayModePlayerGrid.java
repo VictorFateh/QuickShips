@@ -2,10 +2,12 @@ package dev_t.cs161.quickship;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.RectF;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
@@ -145,7 +147,18 @@ public class quickShipViewPlayModePlayerGrid extends View {
         if (boardGridSelectedStartX != null && boardGridSelectedEndX != null && boardGridSelectedStartY != null && boardGridSelectedEndY != null) {
             canvas.drawRect(boardGridSelectedStartX, boardGridSelectedStartY, boardGridSelectedEndX, boardGridSelectedEndY, boardGridSelectedPaint);
         }
-
+        for (int i = 0; i < 100; i++) {
+            if (mGameModel.getPlayerGameBoard().isAnchor(i)) {
+                quickShipModelBoardSlot anchorShip = mGameModel.getPlayerGameBoard().getShipSlotAtIndex(i);
+                Bitmap tempBitmap = getGenerateBitmap(anchorShip.getShipType(), anchorShip.getOrientation());
+                float[] tempXYcoord = getIndexXYCanvasBox(anchorShip.getAnchorIndex(), anchorShip.getShipType(), anchorShip.getOrientation());
+                Paint paint = new Paint();
+                paint.setAntiAlias(true);
+                paint.setFilterBitmap(true);
+                paint.setDither(true);
+                canvas.drawBitmap(tempBitmap, null, new RectF(tempXYcoord[0], tempXYcoord[1], tempXYcoord[2], tempXYcoord[3]), paint);
+            }
+        }
     }
 
     @Override
@@ -179,6 +192,144 @@ public class quickShipViewPlayModePlayerGrid extends View {
         return true;
     }
 
+    public Bitmap getGenerateBitmap(ShipType shipType, Orientation orientation) {
+        int tempHeight;
+        int tempWidth;
+        Bitmap returnBitmap = null;
+        if (orientation.equals(Orientation.VERTICAL)) {
+            switch (shipType) {
+                case TWO:
+                    tempHeight = Math.round(2 * boardGridCellHeight);
+                    tempWidth = Math.round(boardGridCellHeight);
+                    returnBitmap = mMainActivity.scaleDownDrawableImage(R.drawable.ship_size2_vertical, tempHeight, tempWidth);
+                    break;
+
+                case THREE_A:
+                    tempHeight = Math.round(3 * boardGridCellHeight);
+                    tempWidth = Math.round(boardGridCellHeight);
+                    returnBitmap = mMainActivity.scaleDownDrawableImage(R.drawable.ship_size3_a_vertical, tempHeight, tempWidth);
+                    break;
+
+                case THREE_B:
+                    tempHeight = Math.round(3 * boardGridCellHeight);
+                    tempWidth = Math.round(boardGridCellHeight);
+                    returnBitmap = mMainActivity.scaleDownDrawableImage(R.drawable.ship_size3_b_vertical, tempHeight, tempWidth);
+                    break;
+
+                case FOUR:
+                    tempHeight = Math.round(4 * boardGridCellHeight);
+                    tempWidth = Math.round(boardGridCellHeight);
+                    returnBitmap = mMainActivity.scaleDownDrawableImage(R.drawable.ship_size4_vertical, tempHeight, tempWidth);
+                    break;
+
+                case FIVE:
+                    tempHeight = Math.round(5 * boardGridCellHeight);
+                    tempWidth = Math.round(boardGridCellHeight);
+                    returnBitmap = mMainActivity.scaleDownDrawableImage(R.drawable.ship_size5_vertical, tempHeight, tempWidth);
+                    break;
+            }
+        } else {
+            switch (shipType) {
+                case TWO:
+                    tempHeight = Math.round(boardGridCellHeight);
+                    tempWidth = Math.round(2 * boardGridCellHeight);
+                    returnBitmap = mMainActivity.scaleDownDrawableImage(R.drawable.ship_size2_horizontal, tempHeight, tempWidth);
+                    break;
+
+                case THREE_A:
+                    tempHeight = Math.round(boardGridCellHeight);
+                    tempWidth = Math.round(3 * boardGridCellHeight);
+                    returnBitmap = mMainActivity.scaleDownDrawableImage(R.drawable.ship_size3_a_horizontal, tempHeight, tempWidth);
+                    break;
+
+                case THREE_B:
+                    tempHeight = Math.round(boardGridCellHeight);
+                    tempWidth = Math.round(3 * boardGridCellHeight);
+                    returnBitmap = mMainActivity.scaleDownDrawableImage(R.drawable.ship_size3_b_horizontal, tempHeight, tempWidth);
+                    break;
+
+                case FOUR:
+                    tempHeight = Math.round(boardGridCellHeight);
+                    tempWidth = Math.round(4 * boardGridCellHeight);
+                    returnBitmap = mMainActivity.scaleDownDrawableImage(R.drawable.ship_size4_horizontal, tempHeight, tempWidth);
+                    break;
+
+                case FIVE:
+                    tempHeight = Math.round(boardGridCellHeight);
+                    tempWidth = Math.round(5 * boardGridCellHeight);
+                    returnBitmap = mMainActivity.scaleDownDrawableImage(R.drawable.ship_size5_horizontal, tempHeight, tempWidth);
+                    break;
+            }
+        }
+        return returnBitmap;
+    }
+
+    // Returns an array where array[0] = startingX, array[1] = startingY, array[2] = endingX, array[4] = endingY
+    public float[] getIndexXYCanvasBox(int index, ShipType shipType, Orientation orientation) {
+        int xIndex = index % 10;
+        index = index / 10;
+        int yIndex = index % 10;
+        float[] returnArray = new float[4];
+        returnArray[0] = boardGridFrameDividerX[xIndex];
+        returnArray[1] = boardGridFrameDividerY[yIndex];
+        if (orientation.equals(Orientation.VERTICAL)) {
+            switch (shipType) {
+                case TWO:
+                    returnArray[2] = boardGridFrameDividerX[xIndex + 1];
+                    returnArray[3] = boardGridFrameDividerY[yIndex + 2];
+                    break;
+
+                case THREE_A:
+                    returnArray[2] = boardGridFrameDividerX[xIndex + 1];
+                    returnArray[3] = boardGridFrameDividerY[yIndex + 3];
+                    break;
+
+                case THREE_B:
+                    returnArray[2] = boardGridFrameDividerX[xIndex + 1];
+                    returnArray[3] = boardGridFrameDividerY[yIndex + 3];
+                    break;
+
+                case FOUR:
+                    returnArray[2] = boardGridFrameDividerX[xIndex + 1];
+                    returnArray[3] = boardGridFrameDividerY[yIndex + 4];
+                    break;
+
+                case FIVE:
+                    returnArray[2] = boardGridFrameDividerX[xIndex + 1];
+                    returnArray[3] = boardGridFrameDividerY[yIndex + 5];
+                    break;
+            }
+        } else {
+            switch (shipType) {
+                case TWO:
+                    returnArray[2] = boardGridFrameDividerX[xIndex + 2];
+                    returnArray[3] = boardGridFrameDividerY[yIndex + 1];
+                    break;
+
+                case THREE_A:
+                    returnArray[2] = boardGridFrameDividerX[xIndex + 3];
+                    returnArray[3] = boardGridFrameDividerY[yIndex + 1];
+                    break;
+
+                case THREE_B:
+                    returnArray[2] = boardGridFrameDividerX[xIndex + 3];
+                    returnArray[3] = boardGridFrameDividerY[yIndex + 1];
+                    break;
+
+                case FOUR:
+                    returnArray[2] = boardGridFrameDividerX[xIndex + 4];
+                    returnArray[3] = boardGridFrameDividerY[yIndex + 1];
+                    break;
+
+                case FIVE:
+                    returnArray[2] = boardGridFrameDividerX[xIndex + 5];
+                    returnArray[3] = boardGridFrameDividerY[yIndex + 1];
+                    break;
+            }
+        }
+        return returnArray;
+    }
+
     public void calculateSelectedRect(int index) {
         int xIndex = index % 10;
         index = index / 10;
@@ -187,6 +338,17 @@ public class quickShipViewPlayModePlayerGrid extends View {
         boardGridSelectedEndX = boardGridFrameDividerX[xIndex + 1];
         boardGridSelectedStartY = boardGridFrameDividerY[yIndex];
         boardGridSelectedEndY = boardGridFrameDividerY[yIndex + 1];
+    }
+
+    // Returns an array where array[0] = x, array[1] = y
+    public float[] getIndexXYCoord(int index) {
+        int xIndex = index % 10;
+        index = index / 10;
+        int yIndex = index % 10;
+        float[] returnArray = new float[2];
+        returnArray[0] = boardGridFrameDividerX[xIndex];
+        returnArray[0] = boardGridFrameDividerY[yIndex];
+        return returnArray;
     }
 
     public int calculateCellTouched(float x, float y) {

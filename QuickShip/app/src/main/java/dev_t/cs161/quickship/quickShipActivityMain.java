@@ -153,8 +153,6 @@ public class quickShipActivityMain extends Activity implements Runnable {
         mPlaceBtn = (Button) findViewById(R.id.choose_mode_place_button);
         mDoneBtn = (Button) findViewById(R.id.choose_mode_done_button);
 
-        chooseModeInitializeView();
-        playModeInitializeView();
         launchStartScreen();
     }
 
@@ -295,6 +293,8 @@ public class quickShipActivityMain extends Activity implements Runnable {
 
     public void newGame() {
         mGameModel = new quickShipModel();
+        chooseModeInitializeView();
+        playModeInitializeView();
         running = true;
     }
 
@@ -384,6 +384,21 @@ public class quickShipActivityMain extends Activity implements Runnable {
             mSelectedShip = null;
             chooseModeGrid.deSelectShip();
         }
+    }
+
+    public void placeButton(View button) {
+        mShipSize2.setBackgroundColor(0);
+        mShipSize3a.setBackgroundColor(0);
+        mShipSize3b.setBackgroundColor(0);
+        mShipSize4.setBackgroundColor(0);
+        mShipSize5.setBackgroundColor(0);
+        mSelectedShip = null;
+        chooseModeGrid.deSelectShip();
+    }
+
+    public void doneButton(View button) {
+        mainScreenViewFlipper.setDisplayedChild(1);
+        reinitializeUI();
     }
 
     public void setRotation(View button) {

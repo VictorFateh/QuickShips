@@ -6,38 +6,34 @@ public class quickShipModelBoardSlot {
     private boolean isHit;
     private boolean isOccupied;
     private boolean isAnchor;
-    private boolean isSet;
     private Orientation mOrientation;
-    private Direction mDirection;
     private ShipType mShipType;
     private int mAnchorIndex;
-    private String mShipID;
 
     public quickShipModelBoardSlot() {
         setHit(false);
         setOccupied(false);
         setAnchor(false);
-        setSet(false);
         setAnchorIndex(-1);
-        setOrientation(Orientation.HORIZONTAL);
     }
 
-    public quickShipModelBoardSlot(boolean isAnchor) {
+    // For anchor spots
+    public quickShipModelBoardSlot(int anchorIndex, ShipType shipType, Orientation orientation) {
         setHit(false);
-        setOccupied(false);
-        setAnchor(isAnchor);
-        setSet(false);
-        setAnchorIndex(-1);
-        setOrientation(Orientation.HORIZONTAL);
-        mShipID = UUID.randomUUID().toString();
+        setAnchor(true);
+        setOccupied(true);
+        setAnchorIndex(anchorIndex);
+        setShipType(shipType);
+        setOrientation(orientation);
     }
 
-    public String getShipID() {
-        return mShipID;
-    }
-
-    public void setShipID(String shipID) {
-        mShipID = shipID;
+    // For child of anchor spots
+    public quickShipModelBoardSlot(int anchorIndex, ShipType shipType) {
+        setHit(false);
+        setAnchor(false);
+        setOccupied(true);
+        setAnchorIndex(anchorIndex);
+        setShipType(shipType);
     }
 
     public int getAnchorIndex() {
@@ -46,14 +42,6 @@ public class quickShipModelBoardSlot {
 
     public void setAnchorIndex(int anchorIndex) {
         mAnchorIndex = anchorIndex;
-    }
-
-    public boolean isSet() {
-        return isSet;
-    }
-
-    public void setSet(boolean set) {
-        isSet = set;
     }
 
     public Orientation getOrientation() {
@@ -86,14 +74,6 @@ public class quickShipModelBoardSlot {
 
     public void setOccupied(boolean occupied) {
         isOccupied = occupied;
-    }
-
-    public Direction getDirection() {
-        return mDirection;
-    }
-
-    public void setDirection(Direction direction) {
-        mDirection = direction;
     }
 
     public ShipType getShipType() {
