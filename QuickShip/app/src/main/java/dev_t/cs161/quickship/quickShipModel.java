@@ -25,14 +25,15 @@ public class quickShipModel {
         mTurnCount = 0;
     }
 
-    public quickShipModelBoard getPlayerGameBoard() {
-        return mPlayerGameBoard;
-    }
-
     public void setPlayerGameBoard(String playerID, quickShipModelBoard playerGameBoard) {
         mPlayerGameBoard = playerGameBoard;
 
     }
+
+    public quickShipModelBoard getPlayerGameBoard() {
+        return mPlayerGameBoard;
+    }
+
 
     public void setPlayerGameBoard(quickShipModelBoard playerGameBoard) {
         mPlayerGameBoard = playerGameBoard;

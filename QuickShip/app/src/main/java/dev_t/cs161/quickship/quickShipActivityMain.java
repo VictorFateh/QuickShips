@@ -398,6 +398,9 @@ public class quickShipActivityMain extends Activity implements Runnable {
 
     public void doneButton(View button) {
         mainScreenViewFlipper.setDisplayedChild(1);
+        // temporary setting the opponent board to what we set in choose mode for the player
+        // used for testing since we don't have bluetooth yet
+        mGameModel.setOpponentGameBoard(mGameModel.getPlayerGameBoard());
         reinitializeUI();
     }
 
