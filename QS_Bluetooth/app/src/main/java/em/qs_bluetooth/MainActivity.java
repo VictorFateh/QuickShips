@@ -455,7 +455,7 @@ public class MainActivity extends AppCompatActivity{
 
 
                 mBTDevices.add(device);
-                Log.d("Discovered Device: ", device.getName().toString());
+                Log.d("Discovered Device: ", ""+device.getName());
                 mDeviceListAdapter = new DeviceListAdapter(context, R.layout.device_adapter_view, mBTDevices);
                 lv_devices.setAdapter(mDeviceListAdapter);
 
