@@ -4,6 +4,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
@@ -23,13 +25,15 @@ public class quickShipViewGridBorder extends View {
     private Float boardGridFrameEndX;
     private Float boardGridFrameEndY;
     private Paint boardGridFrameBorderPaint;
-    private int boardGridFrameBorderStrokeWidth;
+    private Float boardGridFrameBorderStrokeWidth;
     private Float boardGridFrameMargin;
     private Paint titlePaint;
     private Float mTitleHeight;
+    private quickShipActivityMain mContext;
 
     public quickShipViewGridBorder(quickShipActivityMain context) {
         super(context);
+        mContext = context;
         Display display = context.getWindowManager().getDefaultDisplay();
         display.getSize(screen);
         calculateBoardGUIPositions();
@@ -38,7 +42,9 @@ public class quickShipViewGridBorder extends View {
     public void calculateBoardGUIPositions() {
         boardGridFrameBorderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         boardGridFrameBorderPaint.setStyle(Paint.Style.STROKE);
-        boardGridFrameBorderStrokeWidth = 15;
+        int dpSize =  2;
+        DisplayMetrics dm = mContext.getResources().getDisplayMetrics() ;
+        boardGridFrameBorderStrokeWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpSize, dm);
         boardGridFrameBorderPaint.setStrokeWidth(boardGridFrameBorderStrokeWidth);
         boardGridFrameBorderPaint.setColor(Color.BLACK);
 

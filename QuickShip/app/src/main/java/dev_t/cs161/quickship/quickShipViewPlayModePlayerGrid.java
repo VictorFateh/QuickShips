@@ -8,6 +8,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.RectF;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
@@ -31,7 +33,7 @@ public class quickShipViewPlayModePlayerGrid extends View {
     private Float boardGridCellWidth;
     private Float boardGridCellHeight;
     private Paint boardGridLinePaint;
-    private int boardGridLinePaintStrokeWidth;
+    private Float boardGridLinePaintStrokeWidth;
     private Float boardGridFrameDividerX[];
     private Float boardGridFrameDividerY[];
     private int currentIndex;
@@ -79,7 +81,9 @@ public class quickShipViewPlayModePlayerGrid extends View {
 
         boardGridLinePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         boardGridLinePaint.setStyle(Paint.Style.STROKE);
-        boardGridLinePaintStrokeWidth = 1;
+        int dpSize =  1;
+        DisplayMetrics dm = mMainActivity.getResources().getDisplayMetrics() ;
+        boardGridLinePaintStrokeWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpSize, dm);
         boardGridLinePaint.setStrokeWidth(boardGridLinePaintStrokeWidth);
         boardGridLinePaint.setColor(mMainActivity.getResources().getColor(R.color.play_mode_player_grid_line));
 
