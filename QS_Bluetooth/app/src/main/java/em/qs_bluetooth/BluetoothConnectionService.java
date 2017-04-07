@@ -255,7 +255,7 @@ public class BluetoothConnectionService {
             x.putExtra("theMsg", sendStatus);
             LocalBroadcastManager.getInstance(mContext).sendBroadcast( x );
             */
-            Intent x = new Intent("incomingMessage");
+            Intent x = new Intent("quickShipCargo");
             //String sendStatus = mmDevice.getName() + " Joined The Game!";
             x.putExtra("joinedLobby", true);
             LocalBroadcastManager.getInstance(mContext).sendBroadcast( x );
@@ -270,14 +270,14 @@ public class BluetoothConnectionService {
                     //Log.d(TAG, "InputStream: " + incomingMessage);
 
                     //Send input to MAIN Activity
-                    quickShipBluetoothPacketsToBeSent dataPacket = ParcelableUtil.unmarshall(buffer,quickShipBluetoothPacketsToBeSent.CREATOR);
+                    quickShipBluetoothPacketsToBeSent dataPackage = ParcelableUtil.unmarshall(buffer,quickShipBluetoothPacketsToBeSent.CREATOR);
                             //Intent incomingMessageIntent = new Intent("incomingMessage");
                     //incomingMessageIntent.putExtra("theMsg", incomingMessage);
                     //quickShipBluetoothPacketsToBeSent dataPacket = new quickShipBluetoothPacketsToBeSent(PacketType.CHAT, incomingMessage);
-                    Intent incomingMessageIntent = new Intent("incomingMessage");
-                    incomingMessageIntent.putExtra("theMsg", dataPacket);
+                    Intent quickShipCargo = new Intent("quickShipCargo");
+                    quickShipCargo.putExtra("quickShipPackage", dataPackage);
 
-                    LocalBroadcastManager.getInstance(mContext).sendBroadcast(incomingMessageIntent);
+                    LocalBroadcastManager.getInstance(mContext).sendBroadcast(quickShipCargo);
 
                 } catch (IOException e) {
                     Log.e(TAG, "write: Error reading Input Stream. " + e.getMessage() );
