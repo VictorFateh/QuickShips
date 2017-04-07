@@ -449,7 +449,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
 
         //Decode with inSampleSize
         BitmapFactory.Options o2 = new BitmapFactory.Options();
-        //o2.inScaled = false;
+        o2.inScaled = true;
         o2.inSampleSize = inSampleSize;
         b = BitmapFactory.decodeResource(getResources(), res, o2);
 
