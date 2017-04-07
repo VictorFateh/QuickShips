@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
@@ -73,7 +75,10 @@ public class quickShipActivityMain extends Activity implements Runnable {
 
     public void launchStartScreen() {
         mainScreenViewFlipper.setDisplayedChild(0);
-        startGame = (Button) findViewById(R.id.start_game_btn);
+        FrameLayout quickship_background = (FrameLayout) findViewById(R.id.quickship_background);
+        BitmapDrawable background = new BitmapDrawable(scaleDownDrawableImage(R.drawable.ocean_top, Math.round(screenHeight), Math.round(screenWidth)));
+        quickship_background.setBackgroundDrawable(background);
+                startGame = (Button) findViewById(R.id.start_game_btn);
         startGame.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 newGame();
@@ -178,6 +183,16 @@ public class quickShipActivityMain extends Activity implements Runnable {
 
             case "image_view_ship_size_5":
                 mShipSize5.setImageBitmap(scaleDownDrawableImage(R.drawable.ship_size5_horizontal, layoutHeight, layoutWidth));
+                break;
+
+            case "splash_screen_parent":
+                ImageView quickship_logo_img = (ImageView) findViewById(R.id.quickship_logo_img);
+                quickship_logo_img.setImageBitmap(scaleDownDrawableImage(R.drawable.quickship_splashscreen, layoutHeight, layoutWidth));
+                break;
+
+            case "team_logo_parent":
+                ImageView company_logo = (ImageView) findViewById(R.id.company_logo);
+                company_logo.setImageBitmap(scaleDownDrawableImage(R.drawable.company_logo_black, layoutHeight, layoutWidth));
                 break;
         }
     }
