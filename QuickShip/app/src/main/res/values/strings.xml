@@ -1,15 +1,18 @@
 <resources>
     <string name="app_name">QuickShip</string>
-    <string name="play_mode_switch_mode_btn">Switch Board</string>
-    <string name="play_mode_fire_btn">Fire!</string>
+    <string name="splash_screen_connect_btn">Start Game</string>
+    <string name="splash_screen_player_name_input_box_hint">player name</string>
+
     <string name="choose_mode_rotate_btn">Rotate</string>
     <string name="choose_mode_place_ship_btn">Place</string>
     <string name="choose_mode_done_btn">Done</string>
     <string name="choose_mode_grid_title">Place your ships</string>
     <string name="choose_mode_choose_ship_title">Choose Ship</string>
     <string name="choose_mode_send_chat_message">Send</string>
+    <string name="choose_mode_chat_message_input_box_hint">message</string>
 
-
+    <string name="play_mode_switch_mode_btn">Switch Board</string>
+    <string name="play_mode_fire_btn">Fire!</string>
     <string name="play_mode_grid_player_title">Your Board</string>
     <string name="play_mode_grid_opponent_title">Enemy Board</string>
     <string name="play_mode_player_grid_btn">Your Board</string>

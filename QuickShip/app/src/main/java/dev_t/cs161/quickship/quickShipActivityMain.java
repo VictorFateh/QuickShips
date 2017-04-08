@@ -1,20 +1,24 @@
 package dev_t.cs161.quickship;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Display;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 public class quickShipActivityMain extends Activity implements Runnable {
@@ -41,26 +45,19 @@ public class quickShipActivityMain extends Activity implements Runnable {
     private Button mPlayModeOptionsBtn;
     private Button startGame;
     private FrameLayout mChooseModeFrameLayout;
+    private FrameLayout mSplashScreenFrameLayout;
     private ImageView mSelectedShip;
     private ImageView mTempSelectedShip;
     private ImageView mShipSize2;
-    private int mShipSize2width;
-    private int mShipSize2height;
     private ImageView mShipSize3a;
-    private int mShipSize3awidth;
-    private int mShipSize3aheight;
     private ImageView mShipSize3b;
-    private int mShipSize3bwidth;
-    private int mShipSize3bheight;
     private ImageView mShipSize4;
-    private int mShipSize4width;
-    private int mShipSize4height;
     private ImageView mShipSize5;
-    private int mShipSize5width;
-    private int mShipSize5height;
     private Button mRotateBtn;
     private Button mPlaceBtn;
     private Button mDoneBtn;
+    private EditText mSplashScreenPlayerName;
+    private String mPlayerName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,16 +71,29 @@ public class quickShipActivityMain extends Activity implements Runnable {
     }
 
     public void launchStartScreen() {
+        SharedPreferences preferences = getSharedPreferences("quickShipSettings", MODE_PRIVATE);
+        mPlayerName = preferences.getString("playerName", "Player1");
+        mSplashScreenPlayerName.setText(mPlayerName);
         mainScreenViewFlipper.setDisplayedChild(0);
-        FrameLayout quickship_background = (FrameLayout) findViewById(R.id.quickship_background);
         BitmapDrawable background = new BitmapDrawable(scaleDownDrawableImage(R.drawable.ocean_top, Math.round(screenHeight), Math.round(screenWidth)));
-        quickship_background.setBackgroundDrawable(background);
-                startGame = (Button) findViewById(R.id.start_game_btn);
+        mSplashScreenFrameLayout.setBackgroundDrawable(background);
+        startGame = (Button) findViewById(R.id.start_game_btn);
         startGame.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                newGame();
-                // Change to 1 to show the play mode screen instead
-                mainScreenViewFlipper.setDisplayedChild(2);
+                String playerNameCheck = mSplashScreenPlayerName.getText().toString();
+                if (playerNameCheck.matches("")) {
+                    Toast.makeText(mActivityMain, "Please enter a player name", Toast.LENGTH_SHORT).show();
+                    return;
+                } else {
+                    if (!playerNameCheck.equals(mPlayerName)) {
+                        SharedPreferences preferences = getSharedPreferences("quickShipSettings", MODE_PRIVATE);
+                        SharedPreferences.Editor editor = preferences.edit();
+                        editor.putString("playerName", playerNameCheck);
+                        editor.commit();
+                    }
+                    newGame();
+                    mainScreenViewFlipper.setDisplayedChild(2);
+                }
             }
         });
     }
@@ -91,7 +101,22 @@ public class quickShipActivityMain extends Activity implements Runnable {
     public void initializeView() {
         setContentView(R.layout.quickship_main_screen);
         mActivityMain = this;
+
+        mSplashScreenPlayerName = (EditText) findViewById(R.id.splash_screen_player_name);
+        mSplashScreenPlayerName.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+                    InputMethodManager inputManager = (InputMethodManager) mActivityMain.getSystemService(mActivityMain.INPUT_METHOD_SERVICE);
+                    inputManager.hideSoftInputFromWindow(mActivityMain.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                }
+                return false;
+            }
+        });
+
+
         mChooseModeFrameLayout = (FrameLayout) findViewById(R.id.choose_mode);
+        mSplashScreenFrameLayout = (FrameLayout) findViewById(R.id.splash_screen);
         mTempSelectedShip = (ImageView) findViewById(R.id.temp_ship_spot);
         mPlayModeFireBtn = (Button) findViewById(R.id.play_mode_fire_btn);
         mPlayModeFireBtn.setEnabled(false);

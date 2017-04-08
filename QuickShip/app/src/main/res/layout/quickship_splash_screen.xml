@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/quickship_background"
+    android:id="@+id/splash_screen"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -14,10 +14,10 @@
             android:id="@+id/quickship_logo_parent"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_weight="4"
             android:gravity="center"
-            android:tag="splash_screen_parent"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:tag="splash_screen_parent">
 
             <ImageView
                 android:id="@+id/quickship_logo_img"
@@ -28,7 +28,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="2"
+            android:layout_weight="5"
             android:gravity="center_horizontal"
             android:orientation="vertical">
 
@@ -36,16 +36,40 @@
                 android:id="@+id/start_game_btn_parent"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_weight="2"
                 android:gravity="center"
-                android:orientation="horizontal">
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:layout_width="0px"
+                    android:layout_height="0px"/>
+
+                <EditText
+                    android:id="@+id/splash_screen_player_name"
+                    android:layout_width="220dp"
+                    android:layout_height="50dp"
+                    android:background="@color/choose_mode_chat_message"
+                    android:textSize="25sp"
+                    android:hint="@string/splash_screen_player_name_input_box_hint"
+                    android:includeFontPadding="false"
+                    android:inputType="textPersonName"
+                    android:lineSpacingExtra="0dp"
+                    android:paddingBottom="0dp"
+                    android:paddingLeft="10dp"
+                    android:paddingTop="0dp"
+                    android:layout_marginBottom="10dp"
+                    android:singleLine="true"
+                    android:textColor="@color/splash_screen_player_name_text"
+                    android:textColorHint="@color/splash_screen_player_name_hint"/>
 
                 <Button
                     android:id="@+id/start_game_btn"
-                    android:layout_width="wrap_content"
+                    android:layout_width="220dp"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif"
-                    android:text="Start Game"
+                    android:text="@string/splash_screen_connect_btn"
                     android:textAllCaps="true"
                     android:textAppearance="@android:style/TextAppearance.Widget.TextView"
                     android:textSize="30sp"/>
@@ -56,9 +80,9 @@
                 android:id="@+id/company_logo_parent"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:tag="team_logo_parent"
-                android:orientation="horizontal">
+                android:layout_weight="4"
+                android:orientation="horizontal"
+                android:tag="team_logo_parent">
 
                 <ImageView
                     android:id="@+id/company_logo"
