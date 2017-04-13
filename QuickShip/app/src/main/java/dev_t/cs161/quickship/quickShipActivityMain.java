@@ -1,25 +1,43 @@
 package dev_t.cs161.quickship;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
+
+import java.util.ArrayList;
+import java.util.Random;
+import java.util.UUID;
 
 public class quickShipActivityMain extends Activity implements Runnable {
 
@@ -58,6 +76,14 @@ public class quickShipActivityMain extends Activity implements Runnable {
     private Button mDoneBtn;
     private EditText mSplashScreenPlayerName;
     private String mPlayerName;
+    private BluetoothAdapter btAdapter;
+    private StringBuilder messages;
+    private ArrayList<BluetoothDevice> mBTDevices = new ArrayList<>();
+    private BluetoothConnectionService mBluetoothConnection;
+    private DeviceListAdapter mDeviceListAdapter;
+    private BluetoothDevice mBTDevice;
+    private ListView lv_devices;
+    private static final UUID MY_UUID_INSECURE = UUID.randomUUID();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,8 +117,30 @@ public class quickShipActivityMain extends Activity implements Runnable {
                         editor.putString("playerName", playerNameCheck);
                         editor.commit();
                     }
-                    newGame();
-                    mainScreenViewFlipper.setDisplayedChild(2);
+
+                    if (!btAdapter.isEnabled()) {
+                        toast_displayMessage("Attempting to enable Bluetooth...");
+
+                        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+
+                        IntentFilter BlueToothfilter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
+                        registerReceiver(mReceiver, BlueToothfilter);
+
+                        int REQUEST_ENABLE_BT = 1;
+                        startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+                    }
+                    Toast.makeText(mActivityMain, "Listing Nearby Devices...", Toast.LENGTH_SHORT).show();
+
+                    Intent discoverableIntent =
+                            new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+                    discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
+
+                    IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
+                    registerReceiver(mReceiver, filter);
+
+                    startActivity(discoverableIntent);
+
+                    func_alertDisplayBTDevices();
                 }
             }
         });
@@ -182,6 +230,10 @@ public class quickShipActivityMain extends Activity implements Runnable {
         mRotateBtn = (Button) findViewById(R.id.choose_mode_rotate_button);
         mPlaceBtn = (Button) findViewById(R.id.choose_mode_place_button);
         mDoneBtn = (Button) findViewById(R.id.choose_mode_done_button);
+
+        messages = new StringBuilder();
+        lv_devices = new ListView(this);
+        LocalBroadcastManager.getInstance(this).registerReceiver(quickShipDock, new IntentFilter("quickShipCargo"));
 
         launchStartScreen();
     }
@@ -332,7 +384,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
     }
 
     public void newGame() {
-        mGameModel = new quickShipModel();
+        mGameModel = new quickShipModel(mPlayerName);
         chooseModeInitializeView();
         playModeInitializeView();
         running = true;
@@ -437,10 +489,11 @@ public class quickShipActivityMain extends Activity implements Runnable {
     }
 
     public void doneButton(View button) {
-        mainScreenViewFlipper.setDisplayedChild(1);
         // temporary setting the opponent board to what we set in choose mode for the player
         // used for testing since we don't have bluetooth yet
         mGameModel.setOpponentGameBoard(mGameModel.getPlayerGameBoard());
+
+        mainScreenViewFlipper.setDisplayedChild(2);
         reinitializeUI();
     }
 
@@ -479,6 +532,205 @@ public class quickShipActivityMain extends Activity implements Runnable {
         b = BitmapFactory.decodeResource(getResources(), res, o2);
 
         return b;
+    }
+
+    private void toast_displayMessage(String message) {
+        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
+    private final BroadcastReceiver quickShipDock = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getExtras().getParcelable("quickShipPackage") != null) {
+                quickShipBluetoothPacketsToBeSent data = intent.getExtras().getParcelable("quickShipPackage");
+                String text = data.getChatMessage();
+                messages.append(text + "\n");
+            } else if (intent.getBooleanExtra("joinedLobby", false)) {
+                //TODO Display User who has joined
+
+            }
+        }
+    };
+
+    // Create a BroadcastReceiver for ACTION_FOUND.
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            // Check if bluetooth has been toggled on or off
+            if (action.equals(btAdapter.ACTION_STATE_CHANGED)) {
+                final int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, btAdapter.ERROR);
+                switch (state) {
+                    case BluetoothAdapter.STATE_OFF:
+                        toast_displayMessage("Bluetooth Off.");
+                        break;
+                    case BluetoothAdapter.STATE_TURNING_OFF:
+                        toast_displayMessage("Bluetooth Turning Off...");
+                        break;
+                    case BluetoothAdapter.STATE_ON:
+                        String name = btAdapter.getName();
+                        String mac = btAdapter.getAddress();
+                        toast_displayMessage("Bluetooth On.\nDevice name: " + name + "\nDevice MAC: " + mac);
+                        break;
+                    case BluetoothAdapter.STATE_TURNING_ON:
+                        toast_displayMessage("Bluetooth Turning On...");
+                        break;
+                }
+            }
+
+            // Hosting Game pressed; discoverability enabled
+            if (action.equals(btAdapter.ACTION_SCAN_MODE_CHANGED)) {
+                int mode = intent.getIntExtra(BluetoothAdapter.EXTRA_SCAN_MODE, btAdapter.ERROR);
+                switch (mode) {
+                    case BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE:
+                        String message = "Discoverability Enabled.\nDevice name: " + btAdapter.getName() + "\nDevice MAC: " + btAdapter.getAddress();
+                        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+                        break;
+                    case BluetoothAdapter.SCAN_MODE_CONNECTABLE:
+                        break;
+                    case BluetoothAdapter.SCAN_MODE_NONE:
+                        break;
+                    case BluetoothAdapter.STATE_CONNECTING:
+                        toast_displayMessage("Connecting...");
+                        break;
+                    case BluetoothAdapter.STATE_CONNECTED:
+                        toast_displayMessage("Connected.");
+                        break;
+                }
+            }
+
+            // Discover Devices pressed; Discovering Devices enabled
+            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                // Discovery has found a device. Get the BluetoothDevice
+                // object and its info from the Intent.
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                mBTDevices.add(device);
+                Log.d("Discovered Device: ", "" + device.getName());
+                mDeviceListAdapter = new DeviceListAdapter(context, R.layout.quickship_device_adapter_view, mBTDevices);
+                lv_devices.setAdapter(mDeviceListAdapter);
+                lv_devices.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                        btAdapter.cancelDiscovery();
+                        String deviceName = mBTDevices.get(i).getName();
+                        String deviceMAC = mBTDevices.get(i).getAddress();
+                        //dialog.dismiss();
+                        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                            toast_displayMessage("Attempting to bond with...\n" + deviceName + "\n" + deviceMAC);
+                            mBTDevices.get(i).createBond();
+                            mBTDevice = mBTDevices.get(i);
+                            mBluetoothConnection = new BluetoothConnectionService(mActivityMain);
+                            startConnection();
+                        }
+                    }
+                });
+            }
+
+            // Discovered device Item pressed; Pairing devices
+            if (action.equals(BluetoothDevice.ACTION_BOND_STATE_CHANGED)) {
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+
+                // case1: bonded already
+                if (device.getBondState() == BluetoothDevice.BOND_BONDED) {
+                    toast_displayMessage("Connection Established!");
+                    mBTDevice = device; // device it is paired with
+                    // Make new game. Show choose mode screen
+                    newGame();
+                    mainScreenViewFlipper.setDisplayedChild(1);
+                }
+
+                // case 2: creating a bond
+                if (device.getBondState() == BluetoothDevice.BOND_BONDING) {
+                    toast_displayMessage("Devices Bonding...");
+                }
+
+                // case 3: disconnecting a bond
+                if (device.getBondState() == BluetoothDevice.BOND_NONE) {
+                    toast_displayMessage("Device Bond Disconnected.");
+                }
+
+            }
+        }
+    };
+
+    private void startConnection() {
+        startBTConnection(mBTDevice, MY_UUID_INSECURE);
+    }
+
+    private void startBTConnection(BluetoothDevice device, UUID uuid) {
+        mBluetoothConnection.startClient(device, uuid);
+    }
+
+    private void func_alertDisplayBTDevices() {
+        final AlertDialog.Builder ad_setName = new AlertDialog.Builder(mActivityMain);
+        ad_setName.setTitle("Nearby Bluetooth Devices");
+        ad_setName.setMessage("Select a Device...");
+        //final ListView lv_devices = new ListView(MainActivity.this);
+        lv_devices.setAdapter(mDeviceListAdapter);
+
+        ad_setName.setView(lv_devices);
+        ad_setName.setCancelable(true);
+        ad_setName.setPositiveButton("Refresh", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                if (btAdapter.isDiscovering())
+                    btAdapter.cancelDiscovery();
+
+                toast_displayMessage("Refreshing...");
+
+                //Clear mBTDevices for fresh scan
+                mBTDevices.clear();
+
+                // Lollipop+ may need extra manual permissions check
+                //checkBTPermissions();
+
+                btAdapter.startDiscovery();
+                ((ViewGroup) lv_devices.getParent()).removeView(lv_devices);
+                IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+                registerReceiver(mReceiver, filter);
+
+                func_alertDisplayBTDevices();
+            }
+        });
+        ad_setName.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                ((ViewGroup) lv_devices.getParent()).removeView(lv_devices);
+                dialogInterface.cancel();
+            }
+        });
+
+        final AlertDialog dialog = ad_setName.create();
+        dialog.show();
+        lv_devices.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                btAdapter.cancelDiscovery();
+                String deviceName = mBTDevices.get(i).getName();
+                String deviceMAC = mBTDevices.get(i).getAddress();
+                //dialog.dismiss();
+                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                    toast_displayMessage("Attempting to bond with...\n" + deviceName + "\n" + deviceMAC);
+
+                    mBTDevices.get(i).createBond();
+
+                    mBTDevice = mBTDevices.get(i);
+                    mBluetoothConnection = new BluetoothConnectionService(mActivityMain);
+                    startConnection();
+                }
+
+                dialog.dismiss();
+            }
+        });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (btAdapter != null)
+            btAdapter.cancelDiscovery();
+        // Don't forget to unregister the ACTION_FOUND receiver.
+        if (mReceiver != null)
+            unregisterReceiver(mReceiver);
     }
 
     @Override

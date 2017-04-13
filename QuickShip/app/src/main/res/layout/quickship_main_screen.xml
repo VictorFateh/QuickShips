@@ -12,9 +12,9 @@
             layout="@layout/quickship_splash_screen"/>
 
         <include
-            layout="@layout/quickship_play_mode"/>
+            layout="@layout/quickship_choose_mode_screen"/>
 
         <include
-            layout="@layout/quickship_choose_mode_screen"/>
+            layout="@layout/quickship_play_mode"/>
     </ViewFlipper>
 </FrameLayout>

@@ -2,7 +2,6 @@ package dev_t.cs161.quickship;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-
 /**
  * Created by trinhnguyen on 3/30/17.
  */

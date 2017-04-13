@@ -7,6 +7,7 @@ import java.util.ArrayList;
 public class quickShipModelBoard {
 
     private String mPlayerID;
+    private String mPlayerName;
     private quickShipModelBoardSlot[] completeBoard;
 
     public quickShipModelBoard() {
@@ -18,10 +19,28 @@ public class quickShipModelBoard {
 
     public quickShipModelBoard(String playerID) {
         mPlayerID = playerID;
+        mPlayerName = "Player";
         completeBoard = new quickShipModelBoardSlot[100];
         for (int i = 0; i < 100; i++) {
             completeBoard[i] = new quickShipModelBoardSlot();
         }
+    }
+
+    public quickShipModelBoard(String playerID, String playerName) {
+        mPlayerID = playerID;
+        mPlayerName = playerName;
+        completeBoard = new quickShipModelBoardSlot[100];
+        for (int i = 0; i < 100; i++) {
+            completeBoard[i] = new quickShipModelBoardSlot();
+        }
+    }
+
+    public String getPlayerName() {
+        return mPlayerName;
+    }
+
+    public void setPlayerName(String playerName) {
+        this.mPlayerName = playerName;
     }
 
     public void printBoard_debug() {
