@@ -73,6 +73,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
     private Button mRotateBtn;
     private Button mPlaceBtn;
     private Button mDoneBtn;
+    private Button mBluetoothEnableButton;
     private EditText mSplashScreenPlayerName;
     private String mPlayerName;
     private BluetoothAdapter btAdapter;
@@ -85,6 +86,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
     private ListView mDevicesListView;
     private TextView mChooseModeChatMessageLog;
     private static final UUID MY_UUID_INSECURE = UUID.randomUUID();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -184,6 +186,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
         mChooseModeChatMessageLog = (TextView) findViewById(R.id.edit_text_chat_log);
 
         startGame = (Button) findViewById(R.id.start_game_btn);
+        mBluetoothEnableButton = (Button) findViewById(R.id.splash_creen_bluetooth_btn);
 
         blueToothInitializeObjects();
 
@@ -204,6 +207,19 @@ public class quickShipActivityMain extends Activity implements Runnable {
                                           // Temporary show the chooes mode even though there's no bluetooth
                                           newGame();
                                           mainScreenViewFlipper.setDisplayedChild(1);
+                                      }
+                                  });
+            alertDialog.show();
+        } else if (!btAdapter.isEnabled()) {
+            startGame.setEnabled(false);
+            mBluetoothEnableButton.setVisibility(View.VISIBLE);
+            AlertDialog alertDialog = new AlertDialog.Builder(mActivityMain).create();
+            alertDialog.setTitle("Bluetooth Required");
+            alertDialog.setMessage("You must enable Bluetooth to play the game.");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                                  new DialogInterface.OnClickListener() {
+                                      public void onClick(DialogInterface dialog, int which) {
+                                          dialog.dismiss();
                                       }
                                   });
             alertDialog.show();
@@ -231,19 +247,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
                     Toast.makeText(mActivityMain, "Please enter a player name", Toast.LENGTH_SHORT).show();
                     return;
                 } else {
-                    if (!btAdapter.isEnabled()) {
-                        toast_displayMessage("Attempting to enable Bluetooth...");
-
-                        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-
-                        IntentFilter BlueToothfilter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
-                        registerReceiver(mReceiver, BlueToothfilter);
-
-                        int REQUEST_ENABLE_BT = 1;
-                        startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-                    } else {
-                        startBTListViewDialog();
-                    }
+                    startBTListViewDialog();
                 }
             }
         });
@@ -531,6 +535,18 @@ public class quickShipActivityMain extends Activity implements Runnable {
         reinitializeUI();
     }
 
+    public void enableBluetooth(View button) {
+        toast_displayMessage("Attempting to enable Bluetooth...");
+
+        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+
+        IntentFilter BlueToothfilter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
+        registerReceiver(mReceiver, BlueToothfilter);
+
+        int REQUEST_ENABLE_BT = 1;
+        startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+    }
+
     public void setRotation(View button) {
         chooseModeGrid.setOrientation();
     }
@@ -596,15 +612,30 @@ public class quickShipActivityMain extends Activity implements Runnable {
                 switch (state) {
                     case BluetoothAdapter.STATE_OFF:
                         toast_displayMessage("Bluetooth Off.");
+                        startGame.setEnabled(false);
+                        mBluetoothEnableButton.setVisibility(View.VISIBLE);
+                        AlertDialog alertDialog = new AlertDialog.Builder(mActivityMain).create();
+                        alertDialog.setTitle("Bluetooth Required");
+                        alertDialog.setMessage("You must enable Bluetooth to player the game.");
+                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                                              new DialogInterface.OnClickListener() {
+                                                  public void onClick(DialogInterface dialog, int which) {
+                                                      dialog.dismiss();
+                                                  }
+                                              });
+                        alertDialog.show();
                         break;
                     case BluetoothAdapter.STATE_TURNING_OFF:
                         toast_displayMessage("Bluetooth Turning Off...");
+                        startGame.setEnabled(false);
+                        mBluetoothEnableButton.setVisibility(View.VISIBLE);
                         break;
                     case BluetoothAdapter.STATE_ON:
                         String name = btAdapter.getName();
                         String mac = btAdapter.getAddress();
                         toast_displayMessage("Bluetooth On.\nDevice name: " + name + "\nDevice MAC: " + mac);
-                        startBTListViewDialog();
+                        startGame.setEnabled(true);
+                        mBluetoothEnableButton.setVisibility(View.INVISIBLE);
                         break;
                     case BluetoothAdapter.STATE_TURNING_ON:
                         toast_displayMessage("Bluetooth Turning On...");
@@ -648,7 +679,6 @@ public class quickShipActivityMain extends Activity implements Runnable {
                         btAdapter.cancelDiscovery();
                         String deviceName = mBTDevices.get(i).getName();
                         String deviceMAC = mBTDevices.get(i).getAddress();
-                        //dialog.dismiss();
                         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR2) {
                             toast_displayMessage("Attempting to bond with...\n" + deviceName + "\n" + deviceMAC);
                             mBTDevices.get(i).createBond();

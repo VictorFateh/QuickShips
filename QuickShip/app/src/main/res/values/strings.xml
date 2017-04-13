@@ -2,6 +2,7 @@
     <string name="app_name">QuickShip</string>
     <string name="splash_screen_connect_btn">Start Game</string>
     <string name="splash_screen_player_name_input_box_hint">player name</string>
+    <string name="splash_screen_bluetooth_btn">Enable Bluetooth</string>
 
     <string name="choose_mode_rotate_btn">Rotate</string>
     <string name="choose_mode_place_ship_btn">Place</string>
