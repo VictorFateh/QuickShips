@@ -616,7 +616,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
                         mBluetoothEnableButton.setVisibility(View.VISIBLE);
                         AlertDialog alertDialog = new AlertDialog.Builder(mActivityMain).create();
                         alertDialog.setTitle("Bluetooth Required");
-                        alertDialog.setMessage("You must enable Bluetooth to player the game.");
+                        alertDialog.setMessage("You must enable Bluetooth to play the game.");
                         alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                                               new DialogInterface.OnClickListener() {
                                                   public void onClick(DialogInterface dialog, int which) {
