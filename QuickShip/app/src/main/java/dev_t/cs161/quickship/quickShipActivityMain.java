@@ -83,7 +83,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
     private BluetoothConnectionService mBluetoothConnection;
     private DeviceListAdapter mDeviceListAdapter;
     private BluetoothDevice mBTDevice;
-    private ListView lv_devices;
+    private ListView mDevicesListView;
     private TextView mChooseModeChatMessageLog;
     private static final UUID MY_UUID_INSECURE = UUID.randomUUID();
 
@@ -112,25 +112,38 @@ public class quickShipActivityMain extends Activity implements Runnable {
                     Toast.makeText(mActivityMain, "Please enter a player name", Toast.LENGTH_SHORT).show();
                     return;
                 } else {
-                    if (!playerNameCheck.equals(mPlayerName)) {
-                        SharedPreferences preferences = getSharedPreferences("quickShipSettings", MODE_PRIVATE);
-                        SharedPreferences.Editor editor = preferences.edit();
-                        editor.putString("playerName", playerNameCheck);
-                        editor.commit();
+                    if (!btAdapter.isEnabled()) {
+                        toast_displayMessage("Attempting to enable Bluetooth...");
+
+                        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+
+                        IntentFilter BlueToothfilter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
+                        registerReceiver(mReceiver, BlueToothfilter);
+
+                        int REQUEST_ENABLE_BT = 1;
+                        startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
                     }
+                    if (btAdapter.isEnabled()) {
+                        if (!playerNameCheck.equals(mPlayerName)) {
+                            SharedPreferences preferences = getSharedPreferences("quickShipSettings", MODE_PRIVATE);
+                            SharedPreferences.Editor editor = preferences.edit();
+                            editor.putString("playerName", playerNameCheck);
+                            editor.commit();
+                        }
 
-                    Toast.makeText(mActivityMain, "Listing Nearby Devices...", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mActivityMain, "Listing Nearby Devices...", Toast.LENGTH_SHORT).show();
 
-                    Intent discoverableIntent =
-                            new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-                    discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
+                        Intent discoverableIntent =
+                                new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+                        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
 
-                    IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
-                    registerReceiver(mReceiver, filter);
+                        IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
+                        registerReceiver(mReceiver, filter);
 
-                    startActivity(discoverableIntent);
+                        startActivity(discoverableIntent);
 
-                    func_alertDisplayBTDevices();
+                        func_alertDisplayBTDevices();
+                    }
                 }
             }
         });
@@ -234,20 +247,22 @@ public class quickShipActivityMain extends Activity implements Runnable {
         btAdapter = BluetoothAdapter.getDefaultAdapter();
         if (btAdapter == null) {
             startGame.setEnabled(false);
-            toast_displayMessage("Device does NOT support Bluetooth.");
-        } else if (!btAdapter.isEnabled()) {
-            toast_displayMessage("Attempting to enable Bluetooth...");
-
-            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-
-            IntentFilter BlueToothfilter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
-            registerReceiver(mReceiver, BlueToothfilter);
-
-            int REQUEST_ENABLE_BT = 1;
-            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+            AlertDialog alertDialog = new AlertDialog.Builder(mActivityMain).create();
+            alertDialog.setTitle("Unsupported Game");
+            alertDialog.setMessage("Device does NOT support Bluetooth");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                                  new DialogInterface.OnClickListener() {
+                                      public void onClick(DialogInterface dialog, int which) {
+                                          dialog.dismiss();
+                                          // Temporary show the chooes mode even though there's no bluetooth
+                                          newGame();
+                                          mainScreenViewFlipper.setDisplayedChild(1);
+                                      }
+                                  });
+            alertDialog.show();
         }
         messages = new StringBuilder();
-        lv_devices = new ListView(this);
+        mDevicesListView = new ListView(this);
         LocalBroadcastManager.getInstance(this).registerReceiver(quickShipDock, new IntentFilter("quickShipCargo"));
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
         registerReceiver(mReceiver, filter);
@@ -621,8 +636,8 @@ public class quickShipActivityMain extends Activity implements Runnable {
                 mBTDevices.add(device);
                 Log.d("Discovered Device: ", "" + device.getName());
                 mDeviceListAdapter = new DeviceListAdapter(context, R.layout.quickship_device_adapter_view, mBTDevices);
-                lv_devices.setAdapter(mDeviceListAdapter);
-                lv_devices.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                mDevicesListView.setAdapter(mDeviceListAdapter);
+                mDevicesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                         btAdapter.cancelDiscovery();
@@ -680,9 +695,9 @@ public class quickShipActivityMain extends Activity implements Runnable {
         ad_setName.setTitle("Nearby Bluetooth Devices");
         ad_setName.setMessage("Select a Device...");
         //final ListView lv_devices = new ListView(MainActivity.this);
-        lv_devices.setAdapter(mDeviceListAdapter);
+        mDevicesListView.setAdapter(mDeviceListAdapter);
 
-        ad_setName.setView(lv_devices);
+        ad_setName.setView(mDevicesListView);
         ad_setName.setCancelable(true);
         ad_setName.setPositiveButton("Refresh", new DialogInterface.OnClickListener() {
             @Override
@@ -699,7 +714,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
                 //checkBTPermissions();
 
                 btAdapter.startDiscovery();
-                ((ViewGroup) lv_devices.getParent()).removeView(lv_devices);
+                ((ViewGroup) mDevicesListView.getParent()).removeView(mDevicesListView);
                 IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
                 registerReceiver(mReceiver, filter);
 
@@ -709,14 +724,14 @@ public class quickShipActivityMain extends Activity implements Runnable {
         ad_setName.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                ((ViewGroup) lv_devices.getParent()).removeView(lv_devices);
+                ((ViewGroup) mDevicesListView.getParent()).removeView(mDevicesListView);
                 dialogInterface.cancel();
             }
         });
 
         final AlertDialog dialog = ad_setName.create();
         dialog.show();
-        lv_devices.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mDevicesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 btAdapter.cancelDiscovery();
