@@ -98,57 +98,6 @@ public class quickShipActivityMain extends Activity implements Runnable {
         initializeView();
     }
 
-    public void launchStartScreen() {
-        SharedPreferences preferences = getSharedPreferences("quickShipSettings", MODE_PRIVATE);
-        mPlayerName = preferences.getString("playerName", "Player1");
-        mSplashScreenPlayerName.setText(mPlayerName);
-        mainScreenViewFlipper.setDisplayedChild(0);
-        BitmapDrawable background = new BitmapDrawable(scaleDownDrawableImage(R.drawable.ocean_top, Math.round(screenHeight), Math.round(screenWidth)));
-        mSplashScreenFrameLayout.setBackgroundDrawable(background);
-        startGame.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                String playerNameCheck = mSplashScreenPlayerName.getText().toString();
-                if (playerNameCheck.matches("")) {
-                    Toast.makeText(mActivityMain, "Please enter a player name", Toast.LENGTH_SHORT).show();
-                    return;
-                } else {
-                    if (!btAdapter.isEnabled()) {
-                        toast_displayMessage("Attempting to enable Bluetooth...");
-
-                        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-
-                        IntentFilter BlueToothfilter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
-                        registerReceiver(mReceiver, BlueToothfilter);
-
-                        int REQUEST_ENABLE_BT = 1;
-                        startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-                    }
-                    if (btAdapter.isEnabled()) {
-                        if (!playerNameCheck.equals(mPlayerName)) {
-                            SharedPreferences preferences = getSharedPreferences("quickShipSettings", MODE_PRIVATE);
-                            SharedPreferences.Editor editor = preferences.edit();
-                            editor.putString("playerName", playerNameCheck);
-                            editor.commit();
-                        }
-
-                        Toast.makeText(mActivityMain, "Listing Nearby Devices...", Toast.LENGTH_SHORT).show();
-
-                        Intent discoverableIntent =
-                                new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-                        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
-
-                        IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
-                        registerReceiver(mReceiver, filter);
-
-                        startActivity(discoverableIntent);
-
-                        func_alertDisplayBTDevices();
-                    }
-                }
-            }
-        });
-    }
-
     public void initializeView() {
         setContentView(R.layout.quickship_main_screen);
         mActivityMain = this;
@@ -263,9 +212,62 @@ public class quickShipActivityMain extends Activity implements Runnable {
         }
         messages = new StringBuilder();
         mDevicesListView = new ListView(this);
-        LocalBroadcastManager.getInstance(this).registerReceiver(quickShipDock, new IntentFilter("quickShipCargo"));
+        // Used for receiving quickship parcelables
+        registerReceiver(quickShipDock, new IntentFilter("quickShipCargo"));
+        // Used for initial connection of devices
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
         registerReceiver(mReceiver, filter);
+    }
+
+    public void launchStartScreen() {
+        SharedPreferences preferences = getSharedPreferences("quickShipSettings", MODE_PRIVATE);
+        mPlayerName = preferences.getString("playerName", "Player1");
+        mSplashScreenPlayerName.setText(mPlayerName);
+        mainScreenViewFlipper.setDisplayedChild(0);
+        BitmapDrawable background = new BitmapDrawable(scaleDownDrawableImage(R.drawable.ocean_top, Math.round(screenHeight), Math.round(screenWidth)));
+        mSplashScreenFrameLayout.setBackgroundDrawable(background);
+        startGame.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                String playerNameCheck = mSplashScreenPlayerName.getText().toString();
+                if (playerNameCheck.matches("")) {
+                    Toast.makeText(mActivityMain, "Please enter a player name", Toast.LENGTH_SHORT).show();
+                    return;
+                } else {
+                    if (!btAdapter.isEnabled()) {
+                        toast_displayMessage("Attempting to enable Bluetooth...");
+
+                        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+
+                        IntentFilter BlueToothfilter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
+                        registerReceiver(mReceiver, BlueToothfilter);
+
+                        int REQUEST_ENABLE_BT = 1;
+                        startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+                    }
+                    else {
+                        if (!playerNameCheck.equals(mPlayerName)) {
+                            SharedPreferences preferences = getSharedPreferences("quickShipSettings", MODE_PRIVATE);
+                            SharedPreferences.Editor editor = preferences.edit();
+                            editor.putString("playerName", playerNameCheck);
+                            editor.commit();
+                        }
+
+                        Toast.makeText(mActivityMain, "Listing Nearby Devices...", Toast.LENGTH_SHORT).show();
+
+                        Intent discoverableIntent =
+                                new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+                        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
+
+                        IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
+                        registerReceiver(mReceiver, filter);
+
+                        startActivity(discoverableIntent);
+
+                        func_alertDisplayBTDevices();
+                    }
+                }
+            }
+        });
     }
 
     // This is required to avoid out of memory issues from loading large images
