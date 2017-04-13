@@ -32,6 +32,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
@@ -83,6 +84,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
     private DeviceListAdapter mDeviceListAdapter;
     private BluetoothDevice mBTDevice;
     private ListView lv_devices;
+    private TextView mChooseModeChatMessageLog;
     private static final UUID MY_UUID_INSECURE = UUID.randomUUID();
 
     @Override
@@ -103,7 +105,6 @@ public class quickShipActivityMain extends Activity implements Runnable {
         mainScreenViewFlipper.setDisplayedChild(0);
         BitmapDrawable background = new BitmapDrawable(scaleDownDrawableImage(R.drawable.ocean_top, Math.round(screenHeight), Math.round(screenWidth)));
         mSplashScreenFrameLayout.setBackgroundDrawable(background);
-        startGame = (Button) findViewById(R.id.start_game_btn);
         startGame.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 String playerNameCheck = mSplashScreenPlayerName.getText().toString();
@@ -118,17 +119,6 @@ public class quickShipActivityMain extends Activity implements Runnable {
                         editor.commit();
                     }
 
-                    if (!btAdapter.isEnabled()) {
-                        toast_displayMessage("Attempting to enable Bluetooth...");
-
-                        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-
-                        IntentFilter BlueToothfilter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
-                        registerReceiver(mReceiver, BlueToothfilter);
-
-                        int REQUEST_ENABLE_BT = 1;
-                        startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-                    }
                     Toast.makeText(mActivityMain, "Listing Nearby Devices...", Toast.LENGTH_SHORT).show();
 
                     Intent discoverableIntent =
@@ -231,11 +221,36 @@ public class quickShipActivityMain extends Activity implements Runnable {
         mPlaceBtn = (Button) findViewById(R.id.choose_mode_place_button);
         mDoneBtn = (Button) findViewById(R.id.choose_mode_done_button);
 
+        mChooseModeChatMessageLog = (TextView) findViewById(R.id.edit_text_chat_log);
+
+        startGame = (Button) findViewById(R.id.start_game_btn);
+
+        blueToothInitializeObjects();
+
+        launchStartScreen();
+    }
+
+    public void blueToothInitializeObjects() {
+        btAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (btAdapter == null) {
+            startGame.setEnabled(false);
+            toast_displayMessage("Device does NOT support Bluetooth.");
+        } else if (!btAdapter.isEnabled()) {
+            toast_displayMessage("Attempting to enable Bluetooth...");
+
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+
+            IntentFilter BlueToothfilter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
+            registerReceiver(mReceiver, BlueToothfilter);
+
+            int REQUEST_ENABLE_BT = 1;
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+        }
         messages = new StringBuilder();
         lv_devices = new ListView(this);
         LocalBroadcastManager.getInstance(this).registerReceiver(quickShipDock, new IntentFilter("quickShipCargo"));
-
-        launchStartScreen();
+        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
+        registerReceiver(mReceiver, filter);
     }
 
     // This is required to avoid out of memory issues from loading large images
