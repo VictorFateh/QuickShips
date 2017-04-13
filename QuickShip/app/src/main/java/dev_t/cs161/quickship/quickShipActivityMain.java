@@ -15,7 +15,6 @@ import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Display;
@@ -37,7 +36,6 @@ import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import java.util.ArrayList;
-import java.util.Random;
 import java.util.UUID;
 
 public class quickShipActivityMain extends Activity implements Runnable {
@@ -83,10 +81,10 @@ public class quickShipActivityMain extends Activity implements Runnable {
     private BluetoothConnectionService mBluetoothConnection;
     private DeviceListAdapter mDeviceListAdapter;
     private BluetoothDevice mBTDevice;
+    private AlertDialog mBTListViewDialog;
     private ListView mDevicesListView;
     private TextView mChooseModeChatMessageLog;
     private static final UUID MY_UUID_INSECURE = UUID.randomUUID();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -243,31 +241,35 @@ public class quickShipActivityMain extends Activity implements Runnable {
 
                         int REQUEST_ENABLE_BT = 1;
                         startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-                    }
-                    else {
-                        if (!playerNameCheck.equals(mPlayerName)) {
-                            SharedPreferences preferences = getSharedPreferences("quickShipSettings", MODE_PRIVATE);
-                            SharedPreferences.Editor editor = preferences.edit();
-                            editor.putString("playerName", playerNameCheck);
-                            editor.commit();
-                        }
-
-                        Toast.makeText(mActivityMain, "Listing Nearby Devices...", Toast.LENGTH_SHORT).show();
-
-                        Intent discoverableIntent =
-                                new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-                        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
-
-                        IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
-                        registerReceiver(mReceiver, filter);
-
-                        startActivity(discoverableIntent);
-
-                        func_alertDisplayBTDevices();
+                    } else {
+                        startBTListViewDialog();
                     }
                 }
             }
         });
+    }
+
+    public void startBTListViewDialog() {
+        String playerNameCheck = mSplashScreenPlayerName.getText().toString();
+        if (!playerNameCheck.equals(mPlayerName)) {
+            SharedPreferences preferences = getSharedPreferences("quickShipSettings", MODE_PRIVATE);
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putString("playerName", playerNameCheck);
+            editor.commit();
+        }
+
+        Toast.makeText(mActivityMain, "Listing Nearby Devices...", Toast.LENGTH_SHORT).show();
+
+        Intent discoverableIntent =
+                new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
+
+        IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
+        registerReceiver(mReceiver, filter);
+
+        startActivity(discoverableIntent);
+
+        func_alertDisplayBTDevices();
     }
 
     // This is required to avoid out of memory issues from loading large images
@@ -602,6 +604,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
                         String name = btAdapter.getName();
                         String mac = btAdapter.getAddress();
                         toast_displayMessage("Bluetooth On.\nDevice name: " + name + "\nDevice MAC: " + mac);
+                        startBTListViewDialog();
                         break;
                     case BluetoothAdapter.STATE_TURNING_ON:
                         toast_displayMessage("Bluetooth Turning On...");
@@ -665,6 +668,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
                 if (device.getBondState() == BluetoothDevice.BOND_BONDED) {
                     toast_displayMessage("Connection Established!");
                     mBTDevice = device; // device it is paired with
+                    mBTListViewDialog.dismiss();
                     // Make new game. Show choose mode screen
                     newGame();
                     mainScreenViewFlipper.setDisplayedChild(1);
@@ -731,8 +735,8 @@ public class quickShipActivityMain extends Activity implements Runnable {
             }
         });
 
-        final AlertDialog dialog = ad_setName.create();
-        dialog.show();
+        mBTListViewDialog = ad_setName.create();
+        mBTListViewDialog.show();
         mDevicesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -750,7 +754,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
                     startConnection();
                 }
 
-                dialog.dismiss();
+                mBTListViewDialog.dismiss();
             }
         });
     }
