@@ -7,11 +7,13 @@
         android:id="@+id/tvDeviceName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingLeft="25dp"
         android:textSize="15sp" />
 
     <TextView
         android:id="@+id/tvDeviceAddress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingLeft="25dp"
         android:textSize="15sp" />
 </LinearLayout>

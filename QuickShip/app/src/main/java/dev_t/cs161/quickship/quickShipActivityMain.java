@@ -238,7 +238,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
         registerReceiver(quickShipDock, new IntentFilter("quickShipCargo"));
         // Used for initial connection of devices
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
-        registerReceiver(mReceiver, filter);
+        registerReceiver(mBtReceiver, filter);
     }
 
     public void launchStartScreen() {
@@ -281,7 +281,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
         discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
 
         IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
-        registerReceiver(mReceiver, filter);
+        registerReceiver(mBtReceiver, filter);
 
         startActivity(discoverableIntent);
 
@@ -553,7 +553,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
         Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
 
         IntentFilter BlueToothfilter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
-        registerReceiver(mReceiver, BlueToothfilter);
+        registerReceiver(mBtReceiver, BlueToothfilter);
 
         int REQUEST_ENABLE_BT = 1;
         startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
@@ -615,11 +615,57 @@ public class quickShipActivityMain extends Activity implements Runnable {
     };
 
     // Create a BroadcastReceiver for ACTION_FOUND.
-    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver mBtReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
+
+            // Start Game pressed; Discovering Devices
+            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                // Discovery has found a device. Get the BluetoothDevice
+                // object and its info from the Intent.
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                mBTDevices.add(device);
+                Log.d("Discovered Device: ", "" + device.getName());
+                mDeviceListAdapter = new DeviceListAdapter(context, R.layout.quickship_device_adapter_view, mBTDevices);
+                mDevicesListView.setAdapter(mDeviceListAdapter);
+                mDevicesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                        btAdapter.cancelDiscovery();
+                        String deviceName = mBTDevices.get(i).getName();
+                        String deviceMAC = mBTDevices.get(i).getAddress();
+                        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                            toast_displayMessage("Attempting to bond with...\n" + deviceName + "\n" + deviceMAC);
+                            mBTDevices.get(i).createBond();
+                            mBTDevice = mBTDevices.get(i);
+                            mBluetoothConnection = new BluetoothConnectionService(mActivityMain);
+                            startConnection();
+                        }
+                    }
+                });
+            }
+            // Discoverability enabled
+            else if (action.equals(btAdapter.ACTION_SCAN_MODE_CHANGED)) {
+                int mode = intent.getIntExtra(BluetoothAdapter.EXTRA_SCAN_MODE, btAdapter.ERROR);
+                switch (mode) {
+                    case BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE:
+                        String message = "Discoverability Enabled.\nDevice name: " + btAdapter.getName() + "\nDevice MAC: " + btAdapter.getAddress();
+                        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+                        break;
+                    case BluetoothAdapter.SCAN_MODE_CONNECTABLE:
+                        break;
+                    case BluetoothAdapter.SCAN_MODE_NONE:
+                        break;
+                    case BluetoothAdapter.STATE_CONNECTING:
+                        toast_displayMessage("Connecting...");
+                        break;
+                    case BluetoothAdapter.STATE_CONNECTED:
+                        toast_displayMessage("Connected.");
+                        break;
+                }
+            }
             // Check if bluetooth has been toggled on or off
-            if (action.equals(btAdapter.ACTION_STATE_CHANGED)) {
+            else if (action.equals(btAdapter.ACTION_STATE_CHANGED)) {
                 final int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, btAdapter.ERROR);
                 switch (state) {
                     case BluetoothAdapter.STATE_OFF:
@@ -656,56 +702,8 @@ public class quickShipActivityMain extends Activity implements Runnable {
                         break;
                 }
             }
-
-            // Hosting Game pressed; discoverability enabled
-            if (action.equals(btAdapter.ACTION_SCAN_MODE_CHANGED)) {
-                int mode = intent.getIntExtra(BluetoothAdapter.EXTRA_SCAN_MODE, btAdapter.ERROR);
-                switch (mode) {
-                    case BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE:
-                        String message = "Discoverability Enabled.\nDevice name: " + btAdapter.getName() + "\nDevice MAC: " + btAdapter.getAddress();
-                        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
-                        break;
-                    case BluetoothAdapter.SCAN_MODE_CONNECTABLE:
-                        break;
-                    case BluetoothAdapter.SCAN_MODE_NONE:
-                        break;
-                    case BluetoothAdapter.STATE_CONNECTING:
-                        toast_displayMessage("Connecting...");
-                        break;
-                    case BluetoothAdapter.STATE_CONNECTED:
-                        toast_displayMessage("Connected.");
-                        break;
-                }
-            }
-
-            // Discover Devices pressed; Discovering Devices enabled
-            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                // Discovery has found a device. Get the BluetoothDevice
-                // object and its info from the Intent.
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                mBTDevices.add(device);
-                Log.d("Discovered Device: ", "" + device.getName());
-                mDeviceListAdapter = new DeviceListAdapter(context, R.layout.quickship_device_adapter_view, mBTDevices);
-                mDevicesListView.setAdapter(mDeviceListAdapter);
-                mDevicesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                        btAdapter.cancelDiscovery();
-                        String deviceName = mBTDevices.get(i).getName();
-                        String deviceMAC = mBTDevices.get(i).getAddress();
-                        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                            toast_displayMessage("Attempting to bond with...\n" + deviceName + "\n" + deviceMAC);
-                            mBTDevices.get(i).createBond();
-                            mBTDevice = mBTDevices.get(i);
-                            mBluetoothConnection = new BluetoothConnectionService(mActivityMain);
-                            startConnection();
-                        }
-                    }
-                });
-            }
-
             // Discovered device Item pressed; Pairing devices
-            if (action.equals(BluetoothDevice.ACTION_BOND_STATE_CHANGED)) {
+            else if (action.equals(BluetoothDevice.ACTION_BOND_STATE_CHANGED)) {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
 
                 // case1: bonded already
@@ -729,6 +727,8 @@ public class quickShipActivityMain extends Activity implements Runnable {
                 }
 
             }
+
+
         }
     };
 
@@ -741,15 +741,18 @@ public class quickShipActivityMain extends Activity implements Runnable {
     }
 
     private void func_alertDisplayBTDevices() {
-        final AlertDialog.Builder ad_setName = new AlertDialog.Builder(mActivityMain);
-        ad_setName.setTitle("Nearby Bluetooth Devices");
-        ad_setName.setMessage("Select a Device...");
-        //final ListView lv_devices = new ListView(MainActivity.this);
-        mDevicesListView.setAdapter(mDeviceListAdapter);
+        if ( ! btAdapter.isDiscovering())
+            btAdapter.startDiscovery();
+        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        registerReceiver(mBtReceiver, filter);
 
-        ad_setName.setView(mDevicesListView);
-        ad_setName.setCancelable(true);
-        ad_setName.setPositiveButton("Refresh", new DialogInterface.OnClickListener() {
+        final AlertDialog.Builder alertDisplayBTDevices = new AlertDialog.Builder(mActivityMain);
+        alertDisplayBTDevices.setTitle("Nearby Bluetooth Devices");
+        alertDisplayBTDevices.setMessage("Select a Device...");
+        mDevicesListView.setAdapter(mDeviceListAdapter);
+        alertDisplayBTDevices.setView(mDevicesListView);
+        alertDisplayBTDevices.setCancelable(true);
+        alertDisplayBTDevices.setPositiveButton("Refresh", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 if (btAdapter.isDiscovering())
@@ -765,13 +768,13 @@ public class quickShipActivityMain extends Activity implements Runnable {
 
                 btAdapter.startDiscovery();
                 ((ViewGroup) mDevicesListView.getParent()).removeView(mDevicesListView);
-                IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-                registerReceiver(mReceiver, filter);
+                //IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+                //registerReceiver(mBtReceiver, filter);
 
                 func_alertDisplayBTDevices();
             }
         });
-        ad_setName.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        alertDisplayBTDevices.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 ((ViewGroup) mDevicesListView.getParent()).removeView(mDevicesListView);
@@ -779,7 +782,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
             }
         });
 
-        mBTListViewDialog = ad_setName.create();
+        mBTListViewDialog = alertDisplayBTDevices.create();
         mBTListViewDialog.show();
         mDevicesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -809,8 +812,8 @@ public class quickShipActivityMain extends Activity implements Runnable {
         if (btAdapter != null)
             btAdapter.cancelDiscovery();
         // Don't forget to unregister the ACTION_FOUND receiver.
-        if (mReceiver != null)
-            unregisterReceiver(mReceiver);
+        if (mBtReceiver != null)
+            unregisterReceiver(mBtReceiver);
     }
 
     @Override
