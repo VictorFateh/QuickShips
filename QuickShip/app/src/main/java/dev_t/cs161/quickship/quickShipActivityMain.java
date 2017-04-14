@@ -15,6 +15,7 @@ import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Display;
@@ -85,7 +86,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
     private AlertDialog mBTListViewDialog;
     private ListView mDevicesListView;
     private TextView mChooseModeChatMessageLog;
-    private static final UUID MY_UUID_INSECURE = UUID.randomUUID();
+    private static final UUID MY_UUID_INSECURE = UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -235,7 +236,8 @@ public class quickShipActivityMain extends Activity implements Runnable {
         messages = new StringBuilder();
         mDevicesListView = new ListView(this);
         // Used for receiving quickship parcelables
-        registerReceiver(quickShipDock, new IntentFilter("quickShipCargo"));
+        //registerReceiver(quickShipDock, new IntentFilter("quickShipCargo"));
+        LocalBroadcastManager.getInstance(this).registerReceiver(quickShipDock, new IntentFilter("quickShipCargo"));
         // Used for initial connection of devices
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
         registerReceiver(mBtReceiver, filter);
@@ -610,6 +612,10 @@ public class quickShipActivityMain extends Activity implements Runnable {
             } else if (intent.getBooleanExtra("joinedLobby", false)) {
                 //TODO Display User who has joined
                 //TODO CHANGE GAME STATE TO LOBBY
+                Log.d("MainActivity ->", "JoinedLobby triggered.");
+                mBTListViewDialog.dismiss();
+                newGame();
+                mainScreenViewFlipper.setDisplayedChild(1);
             }
         }
     };
@@ -710,10 +716,10 @@ public class quickShipActivityMain extends Activity implements Runnable {
                 if (device.getBondState() == BluetoothDevice.BOND_BONDED) {
                     toast_displayMessage("Connection Established!");
                     mBTDevice = device; // device it is paired with
-                    mBTListViewDialog.dismiss();
+                    //mBTListViewDialog.dismiss();
                     // Make new game. Show choose mode screen
-                    newGame();
-                    mainScreenViewFlipper.setDisplayedChild(1);
+                    //newGame();
+                    //mainScreenViewFlipper.setDisplayedChild(1);
                 }
 
                 // case 2: creating a bond
@@ -746,13 +752,13 @@ public class quickShipActivityMain extends Activity implements Runnable {
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         registerReceiver(mBtReceiver, filter);
 
-        final AlertDialog.Builder alertDisplayBTDevices = new AlertDialog.Builder(mActivityMain);
-        alertDisplayBTDevices.setTitle("Nearby Bluetooth Devices");
-        alertDisplayBTDevices.setMessage("Select a Device...");
+        final AlertDialog.Builder ad_displayBTDevices = new AlertDialog.Builder(mActivityMain);
+        ad_displayBTDevices.setTitle("Nearby Bluetooth Devices");
+        ad_displayBTDevices.setMessage("Select a Device...");
         mDevicesListView.setAdapter(mDeviceListAdapter);
-        alertDisplayBTDevices.setView(mDevicesListView);
-        alertDisplayBTDevices.setCancelable(true);
-        alertDisplayBTDevices.setPositiveButton("Refresh", new DialogInterface.OnClickListener() {
+        ad_displayBTDevices.setView(mDevicesListView);
+        ad_displayBTDevices.setCancelable(true);
+        ad_displayBTDevices.setPositiveButton("Refresh", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 if (btAdapter.isDiscovering())
@@ -774,7 +780,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
                 func_alertDisplayBTDevices();
             }
         });
-        alertDisplayBTDevices.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        ad_displayBTDevices.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 ((ViewGroup) mDevicesListView.getParent()).removeView(mDevicesListView);
@@ -782,7 +788,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
             }
         });
 
-        mBTListViewDialog = alertDisplayBTDevices.create();
+        mBTListViewDialog = ad_displayBTDevices.create();
         mBTListViewDialog.show();
         mDevicesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -790,9 +796,9 @@ public class quickShipActivityMain extends Activity implements Runnable {
                 btAdapter.cancelDiscovery();
                 String deviceName = mBTDevices.get(i).getName();
                 String deviceMAC = mBTDevices.get(i).getAddress();
-                //dialog.dismiss();
+
                 if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                    toast_displayMessage("Attempting to bond with...\n" + deviceName + "\n" + deviceMAC);
+                    toast_displayMessage("Attempting to connect with...\n" + deviceName + "\n" + deviceMAC);
 
                     mBTDevices.get(i).createBond();
 
