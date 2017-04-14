@@ -109,6 +109,12 @@ public class quickShipActivityMain extends Activity implements Runnable {
                 if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
                     InputMethodManager inputManager = (InputMethodManager) mActivityMain.getSystemService(mActivityMain.INPUT_METHOD_SERVICE);
                     inputManager.hideSoftInputFromWindow(mActivityMain.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                    String newName = mSplashScreenPlayerName.getText().toString();//em
+                    if ( ! newName.isEmpty()) {//em
+                        if (btAdapter.setName(newName))//em
+                            Toast.makeText(mActivityMain, "Player Name set to " + newName, Toast.LENGTH_LONG).show();//em
+                    }//em
+                    return true;//em
                 }
                 return false;
             }
@@ -197,6 +203,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
         btAdapter = BluetoothAdapter.getDefaultAdapter();
         if (btAdapter == null) {
             startGame.setEnabled(false);
+            mSplashScreenPlayerName.setVisibility(View.INVISIBLE);//em
             AlertDialog alertDialog = new AlertDialog.Builder(mActivityMain).create();
             alertDialog.setTitle("Unsupported Game");
             alertDialog.setMessage("Device does NOT support Bluetooth");
@@ -210,8 +217,9 @@ public class quickShipActivityMain extends Activity implements Runnable {
                                       }
                                   });
             alertDialog.show();
-        } else if (!btAdapter.isEnabled()) {
+        } else if ( ! btAdapter.isEnabled() ) {
             startGame.setEnabled(false);
+            mSplashScreenPlayerName.setVisibility(View.INVISIBLE);//em
             mBluetoothEnableButton.setVisibility(View.VISIBLE);
             AlertDialog alertDialog = new AlertDialog.Builder(mActivityMain).create();
             alertDialog.setTitle("Bluetooth Required");
@@ -235,7 +243,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
 
     public void launchStartScreen() {
         SharedPreferences preferences = getSharedPreferences("quickShipSettings", MODE_PRIVATE);
-        mPlayerName = preferences.getString("playerName", "Player1");
+        mPlayerName = preferences.getString("playerName", "");//em
         mSplashScreenPlayerName.setText(mPlayerName);
         mainScreenViewFlipper.setDisplayedChild(0);
         BitmapDrawable background = new BitmapDrawable(scaleDownDrawableImage(R.drawable.ocean_top, Math.round(screenHeight), Math.round(screenWidth)));
@@ -247,6 +255,10 @@ public class quickShipActivityMain extends Activity implements Runnable {
                     Toast.makeText(mActivityMain, "Please enter a player name", Toast.LENGTH_SHORT).show();
                     return;
                 } else {
+                    if ( ! playerNameCheck.matches(btAdapter.getName())) {
+                        if (btAdapter.setName(playerNameCheck))
+                            Toast.makeText(mActivityMain, "Player Name set to " + playerNameCheck, Toast.LENGTH_LONG).show();
+                    }
                     startBTListViewDialog();
                 }
             }
@@ -262,7 +274,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
             editor.commit();
         }
 
-        Toast.makeText(mActivityMain, "Listing Nearby Devices...", Toast.LENGTH_SHORT).show();
+        Toast.makeText(mActivityMain, "Find Nearby Devices?", Toast.LENGTH_SHORT).show();
 
         Intent discoverableIntent =
                 new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
@@ -597,7 +609,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
                 messages.append(text + "\n");
             } else if (intent.getBooleanExtra("joinedLobby", false)) {
                 //TODO Display User who has joined
-
+                //TODO CHANGE GAME STATE TO LOBBY
             }
         }
     };
@@ -613,6 +625,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
                     case BluetoothAdapter.STATE_OFF:
                         toast_displayMessage("Bluetooth Off.");
                         startGame.setEnabled(false);
+                        mSplashScreenPlayerName.setVisibility(View.INVISIBLE);//em
                         mBluetoothEnableButton.setVisibility(View.VISIBLE);
                         AlertDialog alertDialog = new AlertDialog.Builder(mActivityMain).create();
                         alertDialog.setTitle("Bluetooth Required");
@@ -633,8 +646,9 @@ public class quickShipActivityMain extends Activity implements Runnable {
                     case BluetoothAdapter.STATE_ON:
                         String name = btAdapter.getName();
                         String mac = btAdapter.getAddress();
-                        toast_displayMessage("Bluetooth On.\nDevice name: " + name + "\nDevice MAC: " + mac);
+                        Toast.makeText(mActivityMain, "Bluetooth On.\nDevice name: " + name + "\nDevice MAC: " + mac, Toast.LENGTH_LONG).show();
                         startGame.setEnabled(true);
+                        mSplashScreenPlayerName.setVisibility(View.VISIBLE);//em
                         mBluetoothEnableButton.setVisibility(View.INVISIBLE);
                         break;
                     case BluetoothAdapter.STATE_TURNING_ON:
