@@ -86,6 +86,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
     private AlertDialog mBTListViewDialog;
     private ListView mDevicesListView;
     private TextView mChooseModeChatMessageLog;
+    private EditText mEditTextChatMessageLog;
     private static final UUID MY_UUID_INSECURE = UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
 
     @Override
@@ -191,6 +192,26 @@ public class quickShipActivityMain extends Activity implements Runnable {
         mDoneBtn = (Button) findViewById(R.id.choose_mode_done_button);
 
         mChooseModeChatMessageLog = (TextView) findViewById(R.id.edit_text_chat_log);
+        mEditTextChatMessageLog = (EditText) findViewById(R.id.edit_text_send_message);
+        mEditTextChatMessageLog.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+                    InputMethodManager inputManager = (InputMethodManager) mActivityMain.getSystemService(mActivityMain.INPUT_METHOD_SERVICE);
+                    inputManager.hideSoftInputFromWindow(mActivityMain.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                    String full_msg = btAdapter.getName() + ": " + mEditTextChatMessageLog.getText().toString();
+                    messages.append(full_msg + "\n");
+                    mChooseModeChatMessageLog.setText(messages);
+
+                    quickShipBluetoothPacketsToBeSent data = new quickShipBluetoothPacketsToBeSent(PacketType.CHAT, full_msg);
+
+                    mBluetoothConnection.write(ParcelableUtil.marshall(data));
+                    mEditTextChatMessageLog.setText("");//clear message
+                    return true;//em
+                }
+                return false;
+            }
+        });
 
         startGame = (Button) findViewById(R.id.start_game_btn);
         mBluetoothEnableButton = (Button) findViewById(R.id.splash_creen_bluetooth_btn);
@@ -609,9 +630,9 @@ public class quickShipActivityMain extends Activity implements Runnable {
                 quickShipBluetoothPacketsToBeSent data = intent.getExtras().getParcelable("quickShipPackage");
                 String text = data.getChatMessage();
                 messages.append(text + "\n");
+                mChooseModeChatMessageLog.setText(messages);
             } else if (intent.getBooleanExtra("joinedLobby", false)) {
-                //TODO Display User who has joined
-                //TODO CHANGE GAME STATE TO LOBBY
+                //TODO Display when user has joined.
                 Log.d("MainActivity ->", "JoinedLobby triggered.");
                 mBTListViewDialog.dismiss();
                 newGame();

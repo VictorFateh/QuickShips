@@ -225,7 +225,7 @@
                                     android:background="@color/choose_mode_chat_box"
                                     android:padding="5dp"
 
-                                    android:text="Player 1: Hi there!"
+                                    android:text="Welcome to QuickShip Commander!"
                                     android:textColor="@color/choose_mode_choose_ship_title"/>
                             </LinearLayout>
 
@@ -265,10 +265,12 @@
                                     android:layout_height="match_parent"
                                     android:orientation="vertical">
 
+                                    <!--
                                     <Button
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:text="@string/choose_mode_send_chat_message"/>
+                                    -->
                                 </LinearLayout>
                             </LinearLayout>
                         </LinearLayout>
