@@ -259,19 +259,6 @@
                                         android:textColorHint="@color/choose_mode_chat_message_hint"
                                         android:textSize="20sp"/>
                                 </LinearLayout>
-
-                                <LinearLayout
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="match_parent"
-                                    android:orientation="vertical">
-
-                                    <!--
-                                    <Button
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="@string/choose_mode_send_chat_message"/>
-                                    -->
-                                </LinearLayout>
                             </LinearLayout>
                         </LinearLayout>
 

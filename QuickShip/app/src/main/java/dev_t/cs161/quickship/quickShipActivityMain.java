@@ -112,7 +112,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
                     InputMethodManager inputManager = (InputMethodManager) mActivityMain.getSystemService(mActivityMain.INPUT_METHOD_SERVICE);
                     inputManager.hideSoftInputFromWindow(mActivityMain.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                     String newName = mSplashScreenPlayerName.getText().toString();//em
-                    if ( ! newName.isEmpty()) {//em
+                    if (!newName.isEmpty()) {//em
                         if (btAdapter.setName(newName))//em
                             Toast.makeText(mActivityMain, "Player Name set to " + newName, Toast.LENGTH_LONG).show();//em
                     }//em
@@ -239,7 +239,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
                                       }
                                   });
             alertDialog.show();
-        } else if ( ! btAdapter.isEnabled() ) {
+        } else if (!btAdapter.isEnabled()) {
             startGame.setEnabled(false);
             mSplashScreenPlayerName.setVisibility(View.INVISIBLE);//em
             mBluetoothEnableButton.setVisibility(View.VISIBLE);
@@ -278,7 +278,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
                     Toast.makeText(mActivityMain, "Please enter a player name", Toast.LENGTH_SHORT).show();
                     return;
                 } else {
-                    if ( ! playerNameCheck.matches(btAdapter.getName())) {
+                    if (!playerNameCheck.matches(btAdapter.getName())) {
                         if (btAdapter.setName(playerNameCheck))
                             Toast.makeText(mActivityMain, "Player Name set to " + playerNameCheck, Toast.LENGTH_LONG).show();
                     }
@@ -638,9 +638,38 @@ public class quickShipActivityMain extends Activity implements Runnable {
         public void onReceive(Context context, Intent intent) {
             if (intent.getExtras().getParcelable("quickShipPackage") != null) {
                 quickShipBluetoothPacketsToBeSent data = intent.getExtras().getParcelable("quickShipPackage");
-                String text = data.getChatMessage();
-                messages.append(text + "\n");
-                mChooseModeChatMessageLog.setText(messages);
+                PacketType packetType = data.getPacketType();
+                switch (packetType) {
+                    case CHAT:
+                        String text = data.getChatMessage();
+                        messages.append(text + "\n");
+                        mChooseModeChatMessageLog.setText(messages);
+                        break;
+
+                    case SHIPS_PLACED:
+
+                        break;
+
+                    case MOVES:
+
+                        break;
+
+                    case TURN_DONE:
+
+                        break;
+
+                    case GAME_WON:
+
+                        break;
+
+                    case QUIT:
+
+                        break;
+
+                    case NAME_CHANGE:
+
+                        break;
+                }
             } else if (intent.getBooleanExtra("joinedLobby", false)) {
                 //TODO Display when user has joined.
                 Log.d("MainActivity ->", "JoinedLobby triggered.");
@@ -778,7 +807,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
     }
 
     private void func_alertDisplayBTDevices() {
-        if ( ! btAdapter.isDiscovering())
+        if (!btAdapter.isDiscovering())
             btAdapter.startDiscovery();
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         registerReceiver(mBtReceiver, filter);

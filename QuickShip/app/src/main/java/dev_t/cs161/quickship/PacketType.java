@@ -5,5 +5,5 @@ package dev_t.cs161.quickship;
  */
 
 public enum PacketType {
-    CHAT, SHIPS_PLACED, MOVES, TURN_DONE, GAME_WON, QUIT
+    CHAT, SHIPS_PLACED, MOVES, TURN_DONE, GAME_WON, QUIT, NAME_CHANGE
 }
