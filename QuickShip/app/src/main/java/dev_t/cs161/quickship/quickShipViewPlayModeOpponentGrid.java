@@ -169,6 +169,10 @@ public class quickShipViewPlayModeOpponentGrid extends View {
         float[] hitXY;
         float[] missXY;
 
+        mGameModel.getOpponentGameBoard().setOccupied(0, true);
+        mGameModel.getOpponentGameBoard().setOccupied(1, true);
+        mGameModel.getOpponentGameBoard().setOccupied(2, true);
+
         //Loop through enemy board and draw hits and misses
         //Hit slots have red circle drawn
         //Slots that have been hit but don't have ships have white circles
@@ -231,7 +235,7 @@ public class quickShipViewPlayModeOpponentGrid extends View {
                 } else {
                     if (endX >= boardGridFrameStartX && endX <= boardGridFrameEndX && endY >= boardGridFrameStartY && endY <= boardGridFrameEndY && abs(endX - initialX) < 5 && abs(endY - initialY) < 5) {
                         selectedIndex = calculateCellTouched(initialX, initialY);
-                        if(!mGameModel.getOpponentGameBoard().isHit(currentIndex)) {
+                        if(!mGameModel.getOpponentGameBoard().isHit(selectedIndex)) {
                             if (selectedIndex != currentIndex) {
                                 currentIndex = selectedIndex;
                                 Log.d("debug", "Index: " + currentIndex);

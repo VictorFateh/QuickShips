@@ -87,6 +87,8 @@ public class quickShipActivityMain extends Activity implements Runnable {
     private ListView mDevicesListView;
     private TextView mChooseModeChatMessageLog;
     private EditText mEditTextChatMessageLog;
+    private TextView mChooseModeChatMessageLogInGame;
+    private EditText mEditTextChatMessageLogInGame;
     private static final UUID MY_UUID_INSECURE = UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
 
     @Override
@@ -193,6 +195,11 @@ public class quickShipActivityMain extends Activity implements Runnable {
 
         mChooseModeChatMessageLog = (TextView) findViewById(R.id.edit_text_chat_log);
         mEditTextChatMessageLog = (EditText) findViewById(R.id.edit_text_send_message);
+
+        mChooseModeChatMessageLogInGame = (TextView) findViewById(R.id.edit_text_chat_log_in_game);
+        mEditTextChatMessageLogInGame = (EditText) findViewById(R.id.edit_text_send_message_in_game);
+
+        //Chat Box for Ship Placement Screen
         mEditTextChatMessageLog.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -203,6 +210,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
                     messages.append(full_msg + "\n");
                     mChooseModeChatMessageLog.setText(messages);
 
+
                     quickShipBluetoothPacketsToBeSent data = new quickShipBluetoothPacketsToBeSent(PacketType.CHAT, full_msg);
 
                     mBluetoothConnection.write(ParcelableUtil.marshall(data));
@@ -212,6 +220,30 @@ public class quickShipActivityMain extends Activity implements Runnable {
                 return false;
             }
         });
+
+        //Chat Box for Opponent screen
+        mEditTextChatMessageLogInGame.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+                    InputMethodManager inputManager = (InputMethodManager) mActivityMain.getSystemService(mActivityMain.INPUT_METHOD_SERVICE);
+                    inputManager.hideSoftInputFromWindow(mActivityMain.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                    String full_msg = btAdapter.getName() + ": " + mEditTextChatMessageLogInGame.getText().toString();
+                    messages.append(full_msg + "\n");
+                    mChooseModeChatMessageLogInGame.setText(messages);
+
+
+                    quickShipBluetoothPacketsToBeSent data = new quickShipBluetoothPacketsToBeSent(PacketType.CHAT, full_msg);
+
+                    mBluetoothConnection.write(ParcelableUtil.marshall(data));
+                    mEditTextChatMessageLogInGame.setText("");//clear message
+
+                    return true;
+                }
+                return false;
+            }
+        });
+        mEditTextChatMessageLogInGame.clearFocus();
 
         startGame = (Button) findViewById(R.id.start_game_btn);
         mBluetoothEnableButton = (Button) findViewById(R.id.splash_creen_bluetooth_btn);
