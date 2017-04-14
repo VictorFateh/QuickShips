@@ -173,15 +173,14 @@ public class quickShipViewPlayModeOpponentGrid extends View {
         //Hit slots have red circle drawn
         //Slots that have been hit but don't have ships have white circles
         for(int i = 0; i < 100; i++) {
-
             //If specific index is hit on opponents board paint it as hit
             if(mGameModel.getOpponentGameBoard().isHit(i) && mGameModel.getOpponentGameBoard().isOccupied(i)) {
-                hitXY = getIndexXYCoord(i);
+                hitXY = getIndexXYCoordCircle(i);
                 canvas.drawCircle(hitXY[0], hitXY[1], hitXY[2], boatHitPaint);
             }
             //If index was shot at but is not occupied, paint a missed white circle
             else if(mGameModel.getOpponentGameBoard().isHit(i) && !mGameModel.getOpponentGameBoard().isOccupied(i)) {
-                missXY = getIndexXYCoord(i);
+                missXY = getIndexXYCoordCircle(i);
                 canvas.drawCircle(missXY[0], missXY[1], missXY[2], boatMissPaint);
             }
         }
@@ -189,7 +188,7 @@ public class quickShipViewPlayModeOpponentGrid extends View {
     }
 
     //Returns Array for drawing circle in middle of grid
-    public float[] getIndexXYCoord(int index) {
+    public float[] getIndexXYCoordCircle(int index) {
         int xIndex = index % 10;
         index = index / 10;
         int yIndex = index % 10;
@@ -209,13 +208,6 @@ public class quickShipViewPlayModeOpponentGrid extends View {
         returnArray[2] = (boardGridFrameDividerX[xIndex + 1] - boardGridFrameDividerX[xIndex]) / 3;
 
         return returnArray;
-    }
-
-    public boolean checkPreviousHit(int index) {
-       if(mGameModel.getOpponentGameBoard().isHit(index)) {
-           return true;
-       }
-       return false;
     }
 
     @Override
@@ -239,7 +231,7 @@ public class quickShipViewPlayModeOpponentGrid extends View {
                 } else {
                     if (endX >= boardGridFrameStartX && endX <= boardGridFrameEndX && endY >= boardGridFrameStartY && endY <= boardGridFrameEndY && abs(endX - initialX) < 5 && abs(endY - initialY) < 5) {
                         selectedIndex = calculateCellTouched(initialX, initialY);
-                        if(!checkPreviousHit(selectedIndex)) {
+                        if(!mGameModel.getOpponentGameBoard().isHit(currentIndex)) {
                             if (selectedIndex != currentIndex) {
                                 currentIndex = selectedIndex;
                                 Log.d("debug", "Index: " + currentIndex);
