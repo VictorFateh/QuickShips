@@ -107,22 +107,22 @@ public class quickShipActivityMain extends Activity implements Runnable {
         mActivityMain = this;
 
         mSplashScreenPlayerName = (EditText) findViewById(R.id.splash_screen_player_name);
-        mSplashScreenPlayerName.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
-                    InputMethodManager inputManager = (InputMethodManager) mActivityMain.getSystemService(mActivityMain.INPUT_METHOD_SERVICE);
-                    inputManager.hideSoftInputFromWindow(mActivityMain.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-                    String newName = mSplashScreenPlayerName.getText().toString();//em
-                    if (!newName.isEmpty()) {//em
-                        if (btAdapter.setName(newName))//em
-                            Toast.makeText(mActivityMain, "Player Name set to " + newName, Toast.LENGTH_LONG).show();//em
-                    }//em
-                    return true;//em
-                }
-                return false;
-            }
-        });
+//        mSplashScreenPlayerName.setOnKeyListener(new View.OnKeyListener() {
+//            @Override
+//            public boolean onKey(View v, int keyCode, KeyEvent event) {
+//                if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+//                    InputMethodManager inputManager = (InputMethodManager) mActivityMain.getSystemService(mActivityMain.INPUT_METHOD_SERVICE);
+//                    inputManager.hideSoftInputFromWindow(mActivityMain.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+//                    String newName = mSplashScreenPlayerName.getText().toString();//em
+//                    if (!newName.isEmpty()) {//em
+//                        if (btAdapter.setName(newName))//em
+//                            Toast.makeText(mActivityMain, "Player Name set to " + newName, Toast.LENGTH_LONG).show();//em
+//                    }//em
+//                    return true;//em
+//                }
+//                return false;
+//            }
+//        });
 
 
         mChooseModeFrameLayout = (FrameLayout) findViewById(R.id.choose_mode);
@@ -210,8 +210,12 @@ public class quickShipActivityMain extends Activity implements Runnable {
                     messages.append(full_msg + "\n");
                     mChooseModeChatMessageLog.setText(messages);
 
+<<<<<<< Updated upstream
 
                     quickShipBluetoothPacketsToBeSent data = new quickShipBluetoothPacketsToBeSent(PacketType.CHAT, full_msg);
+=======
+                    quickShipBluetoothPacketsToBeSent data = new quickShipBluetoothPacketsToBeSent(0, full_msg);
+>>>>>>> Stashed changes
 
                     mBluetoothConnection.write(ParcelableUtil.marshall(data));
                     mEditTextChatMessageLog.setText("");//clear message
@@ -310,10 +314,6 @@ public class quickShipActivityMain extends Activity implements Runnable {
                     Toast.makeText(mActivityMain, "Please enter a player name", Toast.LENGTH_SHORT).show();
                     return;
                 } else {
-                    if (!playerNameCheck.matches(btAdapter.getName())) {
-                        if (btAdapter.setName(playerNameCheck))
-                            Toast.makeText(mActivityMain, "Player Name set to " + playerNameCheck, Toast.LENGTH_LONG).show();
-                    }
                     startBTListViewDialog();
                 }
             }
@@ -329,18 +329,20 @@ public class quickShipActivityMain extends Activity implements Runnable {
             editor.commit();
         }
 
-        Toast.makeText(mActivityMain, "Find Nearby Devices?", Toast.LENGTH_SHORT).show();
+        if (btAdapter.setName("QSBT_" + playerNameCheck)) {
+            Toast.makeText(mActivityMain, "Find Nearby Devices?", Toast.LENGTH_SHORT).show();
 
-        Intent discoverableIntent =
-                new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
+            Intent discoverableIntent =
+                    new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
 
-        IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
-        registerReceiver(mBtReceiver, filter);
+            IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
+            registerReceiver(mBtReceiver, filter);
 
-        startActivity(discoverableIntent);
+            startActivity(discoverableIntent);
 
-        func_alertDisplayBTDevices();
+            func_alertDisplayBTDevices();
+        }
     }
 
     // This is required to avoid out of memory issues from loading large images
@@ -594,8 +596,8 @@ public class quickShipActivityMain extends Activity implements Runnable {
     }
 
     public void doneButton(View button) {
-        quickShipBluetoothPacketsToBeSent data = new quickShipBluetoothPacketsToBeSent(PacketType.SHIPS_PLACED, mGameModel.getPlayerGameBoard());
-        mBluetoothConnection.write(ParcelableUtil.marshall(data));
+        //quickShipBluetoothPacketsToBeSent data = new quickShipBluetoothPacketsToBeSent(PacketType.SHIPS_PLACED, mGameModel.getPlayerGameBoard());
+        //mBluetoothConnection.write(ParcelableUtil.marshall(data));
         mainScreenViewFlipper.setDisplayedChild(2);
         reinitializeUI();
     }
@@ -668,37 +670,17 @@ public class quickShipActivityMain extends Activity implements Runnable {
         public void onReceive(Context context, Intent intent) {
             if (intent.getExtras().getParcelable("quickShipPackage") != null) {
                 quickShipBluetoothPacketsToBeSent data = intent.getExtras().getParcelable("quickShipPackage");
-                PacketType packetType = data.getPacketType();
+                toast_displayMessage("RECEIVED!");
+                //PacketType packetType = data.getPacketType();
+                Log.d("DEBUG", "" + data.getPacketType());
+                int packetType = data.getPacketType();
                 switch (packetType) {
-                    case CHAT:
+                    case 0:
                         String text = data.getChatMessage();
                         messages.append(text + "\n");
                         mChooseModeChatMessageLog.setText(messages);
                         break;
-
-                    case SHIPS_PLACED:
-                        mGameModel.setOpponentGameBoard(data.getModelBoard());
-                        toast_displayMessage("Opponent Data Transferred.");
-                        break;
-
-                    case MOVES:
-
-                        break;
-
-                    case TURN_DONE:
-
-                        break;
-
-                    case GAME_WON:
-
-                        break;
-
-                    case QUIT:
-
-                        break;
-
-                    case NAME_CHANGE:
-
+                    case 1:
                         break;
                 }
             } else if (intent.getBooleanExtra("joinedLobby", false)) {
@@ -721,7 +703,9 @@ public class quickShipActivityMain extends Activity implements Runnable {
                 // Discovery has found a device. Get the BluetoothDevice
                 // object and its info from the Intent.
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                mBTDevices.add(device);
+                if (device.getName().contains("QSBT")) {
+                    mBTDevices.add(device);
+                }
                 Log.d("Discovered Device: ", "" + device.getName());
                 mDeviceListAdapter = new DeviceListAdapter(context, R.layout.quickship_device_adapter_view, mBTDevices);
                 mDevicesListView.setAdapter(mDeviceListAdapter);
@@ -820,7 +804,16 @@ public class quickShipActivityMain extends Activity implements Runnable {
 
                 // case 3: disconnecting a bond
                 if (device.getBondState() == BluetoothDevice.BOND_NONE) {
-                    toast_displayMessage("Device Bond Disconnected.");
+                    AlertDialog alertDialog = new AlertDialog.Builder(mActivityMain).create();
+                    alertDialog.setTitle("Disconnect");
+                    alertDialog.setMessage("Device Disconnected");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                                          new DialogInterface.OnClickListener() {
+                                              public void onClick(DialogInterface dialog, int which) {
+                                                  dialog.dismiss();
+                                              }
+                                          });
+                    alertDialog.show();
                 }
 
             }

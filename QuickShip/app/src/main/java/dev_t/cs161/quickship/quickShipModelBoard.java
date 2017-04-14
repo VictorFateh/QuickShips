@@ -1,10 +1,12 @@
 package dev_t.cs161.quickship;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import java.util.ArrayList;
 
-public class quickShipModelBoard {
+public class quickShipModelBoard implements Parcelable {
 
     private String mPlayerID;
     private String mPlayerName;
@@ -34,6 +36,35 @@ public class quickShipModelBoard {
             completeBoard[i] = new quickShipModelBoardSlot();
         }
     }
+
+    protected quickShipModelBoard(Parcel in) {
+        mPlayerID = in.readString();
+        mPlayerName = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(mPlayerID);
+        dest.writeString(mPlayerName);
+        dest.writeTypedArray(completeBoard, flags);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<quickShipModelBoard> CREATOR = new Creator<quickShipModelBoard>() {
+        @Override
+        public quickShipModelBoard createFromParcel(Parcel in) {
+            return new quickShipModelBoard(in);
+        }
+
+        @Override
+        public quickShipModelBoard[] newArray(int size) {
+            return new quickShipModelBoard[size];
+        }
+    };
 
     public String getPlayerName() {
         return mPlayerName;
@@ -351,4 +382,5 @@ public class quickShipModelBoard {
             return false;
         }
     }
+
 }

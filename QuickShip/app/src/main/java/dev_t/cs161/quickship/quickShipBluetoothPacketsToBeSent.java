@@ -7,55 +7,75 @@ import android.os.Parcelable;
  */
 
 public class quickShipBluetoothPacketsToBeSent implements Parcelable {
-    private PacketType packetType;
+    private int packetType;
     private String playerID;
     private String chatMessage;
     private int movesChosen;
     private boolean turnDone;
     private String emojiType;
     private boolean shipsPlaced;
-    private quickShipModelBoard mModelBoard;
-    // Packet Types List: CHAT, SHIPS_PLACED, MOVES, TURN_DONE, GAME_WON, QUIT, NAME_CHANGE
+    static final int CHAT = 0;
+    static final int SHIPS_PLACED = 1;
+    static final int MOVES = 2;
+    static final int TURN_DONE = 3;
+    static final int GAME_WON = 4;
+    static final int QUIT = 5;
+    static final int NAME_CHANGE = 6;
 
-    // packetType should be: CHAT
-    public quickShipBluetoothPacketsToBeSent(PacketType packetType, String chatMessage) {
+    public quickShipBluetoothPacketsToBeSent(int packetType, String chatMessage) {
         this.packetType = packetType;
         this.chatMessage = chatMessage;
     }
 
-    // packetType should be: SHIPS_PLACED
-    public quickShipBluetoothPacketsToBeSent(PacketType packetType, quickShipModelBoard modelBoard) {
-        this.packetType = packetType;
-        this.mModelBoard = modelBoard;
-    }
-
-    // packetType should be: MOVES
-    public quickShipBluetoothPacketsToBeSent(PacketType packetType, String playerID, int movesChosen, String emojiType) {
+    public quickShipBluetoothPacketsToBeSent(int packetType, String playerID, int movesChosen, String emojiType) {
         this.packetType = packetType;
         this.playerID = playerID;
         this.movesChosen = movesChosen;
         this.emojiType = emojiType;
     }
 
-    // packetType should be statuses: TURN_DONE, GAME_WON, QUIT, NAME_CHANGE
-    public quickShipBluetoothPacketsToBeSent(PacketType packetType, boolean status) {
+    public quickShipBluetoothPacketsToBeSent(int packetType, boolean status) {
         this.packetType = packetType;
-        if (packetType.equals(PacketType.TURN_DONE)) {
+        if (packetType == TURN_DONE) {
             this.turnDone = status;
-        } else if (packetType.equals(PacketType.SHIPS_PLACED)) {
+        } else if (packetType == SHIPS_PLACED) {
             this.shipsPlaced = status;
         }
     }
 
-    public quickShipModelBoard getModelBoard() {
-        return mModelBoard;
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(packetType);
+        dest.writeString(playerID);
+        dest.writeString(chatMessage);
+        dest.writeInt(movesChosen);
+        dest.writeByte((byte) (turnDone ? 1 : 0));
+        dest.writeString(emojiType);
+        dest.writeByte((byte) (shipsPlaced ? 1 : 0));
     }
 
-    public PacketType getPacketType() {
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<quickShipBluetoothPacketsToBeSent> CREATOR = new Creator<quickShipBluetoothPacketsToBeSent>() {
+        @Override
+        public quickShipBluetoothPacketsToBeSent createFromParcel(Parcel in) {
+            return new quickShipBluetoothPacketsToBeSent(in);
+        }
+
+        @Override
+        public quickShipBluetoothPacketsToBeSent[] newArray(int size) {
+            return new quickShipBluetoothPacketsToBeSent[size];
+        }
+    };
+
+    public int getPacketType() {
         return packetType;
     }
 
-    public void setPacketType(PacketType packetType) {
+    public void setPacketType(int packetType) {
         this.packetType = packetType;
     }
 
@@ -116,30 +136,4 @@ public class quickShipBluetoothPacketsToBeSent implements Parcelable {
         shipsPlaced = in.readByte() != 0;
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(playerID);
-        dest.writeString(chatMessage);
-        dest.writeInt(movesChosen);
-        dest.writeByte((byte) (turnDone ? 1 : 0));
-        dest.writeString(emojiType);
-        dest.writeByte((byte) (shipsPlaced ? 1 : 0));
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    public static final Creator<quickShipBluetoothPacketsToBeSent> CREATOR = new Creator<quickShipBluetoothPacketsToBeSent>() {
-        @Override
-        public quickShipBluetoothPacketsToBeSent createFromParcel(Parcel in) {
-            return new quickShipBluetoothPacketsToBeSent(in);
-        }
-
-        @Override
-        public quickShipBluetoothPacketsToBeSent[] newArray(int size) {
-            return new quickShipBluetoothPacketsToBeSent[size];
-        }
-    };
 }

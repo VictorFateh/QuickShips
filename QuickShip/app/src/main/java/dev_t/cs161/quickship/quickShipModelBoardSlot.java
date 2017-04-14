@@ -1,8 +1,11 @@
 package dev_t.cs161.quickship;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.UUID;
 
-public class quickShipModelBoardSlot {
+public class quickShipModelBoardSlot implements Parcelable {
     private boolean isHit;
     private boolean isOccupied;
     private boolean isAnchor;
@@ -35,6 +38,38 @@ public class quickShipModelBoardSlot {
         setAnchorIndex(anchorIndex);
         setShipType(shipType);
     }
+
+    protected quickShipModelBoardSlot(Parcel in) {
+        isHit = in.readByte() != 0;
+        isOccupied = in.readByte() != 0;
+        isAnchor = in.readByte() != 0;
+        mAnchorIndex = in.readInt();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeByte((byte) (isHit ? 1 : 0));
+        dest.writeByte((byte) (isOccupied ? 1 : 0));
+        dest.writeByte((byte) (isAnchor ? 1 : 0));
+        dest.writeInt(mAnchorIndex);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<quickShipModelBoardSlot> CREATOR = new Creator<quickShipModelBoardSlot>() {
+        @Override
+        public quickShipModelBoardSlot createFromParcel(Parcel in) {
+            return new quickShipModelBoardSlot(in);
+        }
+
+        @Override
+        public quickShipModelBoardSlot[] newArray(int size) {
+            return new quickShipModelBoardSlot[size];
+        }
+    };
 
     public int getAnchorIndex() {
         return mAnchorIndex;
