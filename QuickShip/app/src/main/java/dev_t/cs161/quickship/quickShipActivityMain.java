@@ -562,10 +562,8 @@ public class quickShipActivityMain extends Activity implements Runnable {
     }
 
     public void doneButton(View button) {
-        // temporary setting the opponent board to what we set in choose mode for the player
-        // used for testing since we don't have bluetooth yet
-        mGameModel.setOpponentGameBoard(mGameModel.getPlayerGameBoard());
-
+        quickShipBluetoothPacketsToBeSent data = new quickShipBluetoothPacketsToBeSent(PacketType.SHIPS_PLACED, mGameModel.getPlayerGameBoard());
+        mBluetoothConnection.write(ParcelableUtil.marshall(data));
         mainScreenViewFlipper.setDisplayedChild(2);
         reinitializeUI();
     }
@@ -647,7 +645,8 @@ public class quickShipActivityMain extends Activity implements Runnable {
                         break;
 
                     case SHIPS_PLACED:
-
+                        mGameModel.setOpponentGameBoard(data.getModelBoard());
+                        toast_displayMessage("Opponent Data Transferred.");
                         break;
 
                     case MOVES:

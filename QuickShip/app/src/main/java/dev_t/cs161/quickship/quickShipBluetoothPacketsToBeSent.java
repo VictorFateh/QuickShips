@@ -14,12 +14,22 @@ public class quickShipBluetoothPacketsToBeSent implements Parcelable {
     private boolean turnDone;
     private String emojiType;
     private boolean shipsPlaced;
+    private quickShipModelBoard mModelBoard;
+    // Packet Types List: CHAT, SHIPS_PLACED, MOVES, TURN_DONE, GAME_WON, QUIT, NAME_CHANGE
 
+    // packetType should be: CHAT
     public quickShipBluetoothPacketsToBeSent(PacketType packetType, String chatMessage) {
         this.packetType = packetType;
         this.chatMessage = chatMessage;
     }
 
+    // packetType should be: SHIPS_PLACED
+    public quickShipBluetoothPacketsToBeSent(PacketType packetType, quickShipModelBoard modelBoard) {
+        this.packetType = packetType;
+        this.mModelBoard = modelBoard;
+    }
+
+    // packetType should be: MOVES
     public quickShipBluetoothPacketsToBeSent(PacketType packetType, String playerID, int movesChosen, String emojiType) {
         this.packetType = packetType;
         this.playerID = playerID;
@@ -27,6 +37,7 @@ public class quickShipBluetoothPacketsToBeSent implements Parcelable {
         this.emojiType = emojiType;
     }
 
+    // packetType should be statuses: TURN_DONE, GAME_WON, QUIT, NAME_CHANGE
     public quickShipBluetoothPacketsToBeSent(PacketType packetType, boolean status) {
         this.packetType = packetType;
         if (packetType.equals(PacketType.TURN_DONE)) {
@@ -34,6 +45,10 @@ public class quickShipBluetoothPacketsToBeSent implements Parcelable {
         } else if (packetType.equals(PacketType.SHIPS_PLACED)) {
             this.shipsPlaced = status;
         }
+    }
+
+    public quickShipModelBoard getModelBoard() {
+        return mModelBoard;
     }
 
     public PacketType getPacketType() {
