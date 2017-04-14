@@ -260,7 +260,7 @@ public class quickShipViewChooseModeGrid extends View {
         boardGridSelectedEndY = boardGridFrameDividerY[yIndex + 1];
     }
 
-    // Returns an array where array[0] = x, array[1] = y
+    // Returns an array where array[0] = x, array[1] = y, array[2] = (bottom right) x, array[3] = (bottom right) y
     public float[] getIndexXYCoord(int index) {
         int xIndex = index % 10;
         index = index / 10;

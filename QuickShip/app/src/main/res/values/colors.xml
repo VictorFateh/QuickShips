@@ -19,6 +19,8 @@
     <color name="play_mode_player_grid_line">#dcdfe5</color>
     <color name="play_mode_player_cell_selected">#f4a442</color>
     <color name="play_mode_player_cell_missed">#c1c3c7</color>
+    <color name="play_mode_opponent_ship_hit">#ff2626</color>
+    <color name="play_mode_opponent_ship_miss">#f9feff</color>
 
     <color name="choose_mode_top">#758e9f</color>
     <color name="choose_mode_bottom">#758e9f</color>

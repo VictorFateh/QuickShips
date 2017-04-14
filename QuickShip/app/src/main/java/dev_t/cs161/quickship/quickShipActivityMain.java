@@ -586,6 +586,16 @@ public class quickShipActivityMain extends Activity implements Runnable {
         chooseModeGrid.setOrientation();
     }
 
+    //Update opponent grid when user presses fire button
+    public void fireOpponentBtn(View v) {
+        mGameModel.getOpponentGameBoard().setHit(playModeOpponentGrid.getCurrentIndex(), true);
+
+        /*
+        Bluetooth Packet Code Goes here to send updated information
+         */
+
+    }
+
     public Bitmap scaleDownDrawableImage(int res, int reqHeight, int reqWidth) {
         Bitmap b = null;
 

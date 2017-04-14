@@ -46,6 +46,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="top"
                         android:layout_marginTop="10dp"
+                        android:onClick="fireOpponentBtn"
                         android:text="@string/play_mode_fire_btn"/>
                 </LinearLayout>
             </LinearLayout>
