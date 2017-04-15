@@ -17,6 +17,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
+import android.text.Html;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
@@ -89,6 +90,9 @@ public class quickShipActivityMain extends Activity implements Runnable {
     private EditText mEditTextChatMessageLog;
     private TextView mChooseModeChatMessageLogInGame;
     private EditText mEditTextChatMessageLogInGame;
+    private boolean playerChooseModeDone;
+    private boolean opponentChooseModeDone;
+
     private static final UUID MY_UUID_INSECURE = UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
 
     @Override
@@ -176,7 +180,6 @@ public class quickShipActivityMain extends Activity implements Runnable {
                     mPlayModeOptionsBtn.setPressed(true);
                 }
                 return true;
-
             }
         });
 
@@ -206,16 +209,12 @@ public class quickShipActivityMain extends Activity implements Runnable {
                 if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
                     InputMethodManager inputManager = (InputMethodManager) mActivityMain.getSystemService(mActivityMain.INPUT_METHOD_SERVICE);
                     inputManager.hideSoftInputFromWindow(mActivityMain.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-                    String full_msg = btAdapter.getName() + ": " + mEditTextChatMessageLog.getText().toString();
-                    messages.append(full_msg + "\n");
-                    mChooseModeChatMessageLog.setText(messages);
+                    String full_msg = getColoredSpanned(mPlayerName + ": " + mEditTextChatMessageLog.getText().toString(), "#000000");
+                    messages.append(full_msg + "<br>");
+                    mChooseModeChatMessageLog.setText(Html.fromHtml(messages.toString()));
+                    mChooseModeChatMessageLog.setText(Html.fromHtml(messages.toString()));
 
-<<<<<<< Updated upstream
-
-                    quickShipBluetoothPacketsToBeSent data = new quickShipBluetoothPacketsToBeSent(PacketType.CHAT, full_msg);
-=======
-                    quickShipBluetoothPacketsToBeSent data = new quickShipBluetoothPacketsToBeSent(0, full_msg);
->>>>>>> Stashed changes
+                    quickShipBluetoothPacketsToBeSent data = new quickShipBluetoothPacketsToBeSent(quickShipBluetoothPacketsToBeSent.CHAT, full_msg);
 
                     mBluetoothConnection.write(ParcelableUtil.marshall(data));
                     mEditTextChatMessageLog.setText("");//clear message
@@ -232,12 +231,13 @@ public class quickShipActivityMain extends Activity implements Runnable {
                 if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
                     InputMethodManager inputManager = (InputMethodManager) mActivityMain.getSystemService(mActivityMain.INPUT_METHOD_SERVICE);
                     inputManager.hideSoftInputFromWindow(mActivityMain.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-                    String full_msg = btAdapter.getName() + ": " + mEditTextChatMessageLogInGame.getText().toString();
-                    messages.append(full_msg + "\n");
-                    mChooseModeChatMessageLogInGame.setText(messages);
+                    String full_msg = getColoredSpanned(mPlayerName + ": " + mEditTextChatMessageLog.getText().toString(), "#000000");
+                    messages.append(full_msg + "<br>");
+                    mChooseModeChatMessageLog.setText(Html.fromHtml(messages.toString()));
+                    mChooseModeChatMessageLog.setText(Html.fromHtml(messages.toString()));
 
 
-                    quickShipBluetoothPacketsToBeSent data = new quickShipBluetoothPacketsToBeSent(PacketType.CHAT, full_msg);
+                    quickShipBluetoothPacketsToBeSent data = new quickShipBluetoothPacketsToBeSent(quickShipBluetoothPacketsToBeSent.CHAT, full_msg);
 
                     mBluetoothConnection.write(ParcelableUtil.marshall(data));
                     mEditTextChatMessageLogInGame.setText("");//clear message
@@ -323,15 +323,14 @@ public class quickShipActivityMain extends Activity implements Runnable {
     public void startBTListViewDialog() {
         String playerNameCheck = mSplashScreenPlayerName.getText().toString();
         if (!playerNameCheck.equals(mPlayerName)) {
+            mPlayerName = playerNameCheck;
             SharedPreferences preferences = getSharedPreferences("quickShipSettings", MODE_PRIVATE);
             SharedPreferences.Editor editor = preferences.edit();
             editor.putString("playerName", playerNameCheck);
             editor.commit();
         }
 
-        if (btAdapter.setName("QSBT_" + playerNameCheck)) {
-            Toast.makeText(mActivityMain, "Find Nearby Devices?", Toast.LENGTH_SHORT).show();
-
+        if (btAdapter.setName("QSBT_" + mPlayerName)) {
             Intent discoverableIntent =
                     new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
             discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
@@ -491,6 +490,8 @@ public class quickShipActivityMain extends Activity implements Runnable {
     }
 
     public void newGame() {
+        playerChooseModeDone = false;
+        opponentChooseModeDone = false;
         mGameModel = new quickShipModel(mPlayerName);
         chooseModeInitializeView();
         playModeInitializeView();
@@ -548,40 +549,42 @@ public class quickShipActivityMain extends Activity implements Runnable {
     }
 
     public void setChooseModeSelectedShip(View selectedShip) {
-        mShipSize2.setBackgroundColor(0);
-        mShipSize3a.setBackgroundColor(0);
-        mShipSize3b.setBackgroundColor(0);
-        mShipSize4.setBackgroundColor(0);
-        mShipSize5.setBackgroundColor(0);
+        if (!playerChooseModeDone) {
+            mShipSize2.setBackgroundColor(0);
+            mShipSize3a.setBackgroundColor(0);
+            mShipSize3b.setBackgroundColor(0);
+            mShipSize4.setBackgroundColor(0);
+            mShipSize5.setBackgroundColor(0);
 
-        if (mSelectedShip == null || (selectedShip != null && !mSelectedShip.equals(selectedShip))) {
-            selectedShip.setBackgroundColor(getResources().getColor(R.color.choose_mode_ship_selected));
-            mSelectedShip = (ImageView) selectedShip;
-            String shipTag = (String) mSelectedShip.getTag();
-            switch (shipTag) {
-                case "image_view_ship_size_2":
-                    chooseModeGrid.setShipSelected(ShipType.TWO);
-                    break;
+            if (mSelectedShip == null || (selectedShip != null && !mSelectedShip.equals(selectedShip))) {
+                selectedShip.setBackgroundColor(getResources().getColor(R.color.choose_mode_ship_selected));
+                mSelectedShip = (ImageView) selectedShip;
+                String shipTag = (String) mSelectedShip.getTag();
+                switch (shipTag) {
+                    case "image_view_ship_size_2":
+                        chooseModeGrid.setShipSelected(quickShipModelBoardSlot.TWO);
+                        break;
 
-                case "image_view_ship_size_3_a":
-                    chooseModeGrid.setShipSelected(ShipType.THREE_A);
-                    break;
+                    case "image_view_ship_size_3_a":
+                        chooseModeGrid.setShipSelected(quickShipModelBoardSlot.THREE_A);
+                        break;
 
-                case "image_view_ship_size_3_b":
-                    chooseModeGrid.setShipSelected(ShipType.THREE_B);
-                    break;
+                    case "image_view_ship_size_3_b":
+                        chooseModeGrid.setShipSelected(quickShipModelBoardSlot.THREE_B);
+                        break;
 
-                case "image_view_ship_size_4":
-                    chooseModeGrid.setShipSelected(ShipType.FOUR);
-                    break;
+                    case "image_view_ship_size_4":
+                        chooseModeGrid.setShipSelected(quickShipModelBoardSlot.FOUR);
+                        break;
 
-                case "image_view_ship_size_5":
-                    chooseModeGrid.setShipSelected(ShipType.FIVE);
-                    break;
+                    case "image_view_ship_size_5":
+                        chooseModeGrid.setShipSelected(quickShipModelBoardSlot.FIVE);
+                        break;
+                }
+            } else {
+                mSelectedShip = null;
+                chooseModeGrid.deSelectShip();
             }
-        } else {
-            mSelectedShip = null;
-            chooseModeGrid.deSelectShip();
         }
     }
 
@@ -596,10 +599,49 @@ public class quickShipActivityMain extends Activity implements Runnable {
     }
 
     public void doneButton(View button) {
-        //quickShipBluetoothPacketsToBeSent data = new quickShipBluetoothPacketsToBeSent(PacketType.SHIPS_PLACED, mGameModel.getPlayerGameBoard());
-        //mBluetoothConnection.write(ParcelableUtil.marshall(data));
-        mainScreenViewFlipper.setDisplayedChild(2);
-        reinitializeUI();
+        setChooseModeDoneBtnStatus(false);
+        quickShipBluetoothPacketsToBeSent data = new quickShipBluetoothPacketsToBeSent(quickShipBluetoothPacketsToBeSent.SHIPS_PLACED, mGameModel.convertPlayerBoardToGSON());
+        mBluetoothConnection.write(ParcelableUtil.marshall(data));
+        playerChooseModeDone = true;
+        checkChooseModeDone("player");
+    }
+
+    public void checkChooseModeDone(String status) {
+        if (playerChooseModeDone && opponentChooseModeDone) {
+            mainScreenViewFlipper.setDisplayedChild(2);
+            reinitializeUI();
+            messages.append("The game has started!" + "\n");
+            mChooseModeChatMessageLog.setText(messages);
+            mChooseModeChatMessageLogInGame.setText(messages);
+        } else {
+            if (status.equals("player")) {
+                String msg = getColoredSpanned("Ships placed. Waiting for opponent to finish ship placements.", "#eda136");
+                messages.append(msg + "<br>");
+                mChooseModeChatMessageLog.setText(Html.fromHtml(messages.toString()));
+                mChooseModeChatMessageLog.setText(Html.fromHtml(messages.toString()));
+            } else {
+                String msg = getColoredSpanned("Your opponent has finished placing ships.", "#eda136");
+                messages.append(msg + "<br>");
+                mChooseModeChatMessageLog.setText(Html.fromHtml(messages.toString()));
+                mChooseModeChatMessageLog.setText(Html.fromHtml(messages.toString()));
+            }
+        }
+    }
+
+    public boolean isPlayerChooseModeDone() {
+        return playerChooseModeDone;
+    }
+
+    public void setPlayerChooseModeDone(boolean playerChooseModeDone) {
+        this.playerChooseModeDone = playerChooseModeDone;
+    }
+
+    public boolean isOpponentChooseModeDone() {
+        return opponentChooseModeDone;
+    }
+
+    public void setOpponentChooseModeDone(boolean opponentChooseModeDone) {
+        this.opponentChooseModeDone = opponentChooseModeDone;
     }
 
     public void enableBluetooth(View button) {
@@ -621,7 +663,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
     //Update opponent grid when user presses fire button
     public void fireOpponentBtn(View v) {
         mGameModel.getOpponentGameBoard().setHit(playModeOpponentGrid.getCurrentIndex(), true);
-
+        playModeOpponentGrid.deSelectCell();
         /*
         Bluetooth Packet Code Goes here to send updated information
          */
@@ -665,22 +707,46 @@ public class quickShipActivityMain extends Activity implements Runnable {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
 
+    private String getColoredSpanned(String text, String color) {
+        String input = "<font color=" + color + ">" + text + "</font>";
+        return input;
+    }
+
     private final BroadcastReceiver quickShipDock = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getExtras().getParcelable("quickShipPackage") != null) {
                 quickShipBluetoothPacketsToBeSent data = intent.getExtras().getParcelable("quickShipPackage");
-                toast_displayMessage("RECEIVED!");
-                //PacketType packetType = data.getPacketType();
-                Log.d("DEBUG", "" + data.getPacketType());
                 int packetType = data.getPacketType();
+                Log.d("DEBUG", "PACKETTYPE RECEIVED: " + packetType);
                 switch (packetType) {
-                    case 0:
+                    case quickShipBluetoothPacketsToBeSent.CHAT:
                         String text = data.getChatMessage();
-                        messages.append(text + "\n");
-                        mChooseModeChatMessageLog.setText(messages);
+                        messages.append(text + "<br>");
+                        mChooseModeChatMessageLog.setText(Html.fromHtml(messages.toString()));
+                        mChooseModeChatMessageLog.setText(Html.fromHtml(messages.toString()));
                         break;
-                    case 1:
+                    case quickShipBluetoothPacketsToBeSent.SHIPS_PLACED:
+                        String tempBoard = data.getBoard();
+                        Log.d("DEBUG", tempBoard);
+                        mGameModel.setOpponentBoardFromGSON(tempBoard);
+                        opponentChooseModeDone = true;
+                        checkChooseModeDone("opponent");
+                        break;
+
+                    case quickShipBluetoothPacketsToBeSent.MOVES:
+                        break;
+
+                    case quickShipBluetoothPacketsToBeSent.TURN_DONE:
+                        break;
+
+                    case quickShipBluetoothPacketsToBeSent.GAME_WON:
+                        break;
+
+                    case quickShipBluetoothPacketsToBeSent.QUIT:
+                        break;
+
+                    case quickShipBluetoothPacketsToBeSent.NAME_CHANGE:
                         break;
                 }
             } else if (intent.getBooleanExtra("joinedLobby", false)) {
@@ -703,7 +769,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
                 // Discovery has found a device. Get the BluetoothDevice
                 // object and its info from the Intent.
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                if (device.getName().contains("QSBT")) {
+                if (device.getName() != null && device.getName().contains("QSBT")) {
                     mBTDevices.add(device);
                 }
                 Log.d("Discovered Device: ", "" + device.getName());

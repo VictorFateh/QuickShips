@@ -4,9 +4,11 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 
-public class quickShipModelBoard implements Parcelable {
+public class quickShipModelBoard {
 
     private String mPlayerID;
     private String mPlayerName;
@@ -36,35 +38,6 @@ public class quickShipModelBoard implements Parcelable {
             completeBoard[i] = new quickShipModelBoardSlot();
         }
     }
-
-    protected quickShipModelBoard(Parcel in) {
-        mPlayerID = in.readString();
-        mPlayerName = in.readString();
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(mPlayerID);
-        dest.writeString(mPlayerName);
-        dest.writeTypedArray(completeBoard, flags);
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    public static final Creator<quickShipModelBoard> CREATOR = new Creator<quickShipModelBoard>() {
-        @Override
-        public quickShipModelBoard createFromParcel(Parcel in) {
-            return new quickShipModelBoard(in);
-        }
-
-        @Override
-        public quickShipModelBoard[] newArray(int size) {
-            return new quickShipModelBoard[size];
-        }
-    };
 
     public String getPlayerName() {
         return mPlayerName;
@@ -134,11 +107,11 @@ public class quickShipModelBoard implements Parcelable {
         mPlayerID = playerID;
     }
 
-    public Orientation getOrientation(int index) {
+    public int getOrientation(int index) {
         return completeBoard[index].getOrientation();
     }
 
-    public void setOrientation(int index, Orientation orientation) {
+    public void setOrientation(int index, int orientation) {
         completeBoard[index].setOrientation(orientation);
     }
 
@@ -166,11 +139,11 @@ public class quickShipModelBoard implements Parcelable {
         completeBoard[index].setOccupied(occupied);
     }
 
-    public ShipType getShipType(int index) {
+    public int getShipType(int index) {
         return completeBoard[index].getShipType();
     }
 
-    public void setShipType(int index, ShipType shipType) {
+    public void setShipType(int index, int shipType) {
         completeBoard[index].setShipType(shipType);
     }
 
@@ -192,60 +165,60 @@ public class quickShipModelBoard implements Parcelable {
         }
     }
 
-    public void addShip(int anchorIndex, ShipType shipType, Orientation orientation) {
+    public void addShip(int anchorIndex, int shipType, int orientation) {
         completeBoard[anchorIndex] = new quickShipModelBoardSlot(anchorIndex, shipType, orientation);
-        if (orientation.equals(Orientation.VERTICAL)) {
+        if (orientation == quickShipModelBoardSlot.VERTICAL) {
             switch (shipType) {
-                case TWO:
+                case quickShipModelBoardSlot.TWO:
                     completeBoard[anchorIndex + 10] = new quickShipModelBoardSlot(anchorIndex, shipType);
                     break;
 
-                case THREE_A:
-                    completeBoard[anchorIndex + 10] = new quickShipModelBoardSlot(anchorIndex, shipType);
-                    completeBoard[anchorIndex + 20] = new quickShipModelBoardSlot(anchorIndex, shipType);
-                    break;
-
-                case THREE_B:
+                case quickShipModelBoardSlot.THREE_A:
                     completeBoard[anchorIndex + 10] = new quickShipModelBoardSlot(anchorIndex, shipType);
                     completeBoard[anchorIndex + 20] = new quickShipModelBoardSlot(anchorIndex, shipType);
                     break;
 
-                case FOUR:
+                case quickShipModelBoardSlot.THREE_B:
+                    completeBoard[anchorIndex + 10] = new quickShipModelBoardSlot(anchorIndex, shipType);
+                    completeBoard[anchorIndex + 20] = new quickShipModelBoardSlot(anchorIndex, shipType);
+                    break;
+
+                case quickShipModelBoardSlot.FOUR:
                     completeBoard[anchorIndex + 10] = new quickShipModelBoardSlot(anchorIndex, shipType);
                     completeBoard[anchorIndex + 20] = new quickShipModelBoardSlot(anchorIndex, shipType);
                     completeBoard[anchorIndex + 30] = new quickShipModelBoardSlot(anchorIndex, shipType);
                     break;
 
-                case FIVE:
+                case quickShipModelBoardSlot.FIVE:
                     completeBoard[anchorIndex + 10] = new quickShipModelBoardSlot(anchorIndex, shipType);
                     completeBoard[anchorIndex + 20] = new quickShipModelBoardSlot(anchorIndex, shipType);
                     completeBoard[anchorIndex + 30] = new quickShipModelBoardSlot(anchorIndex, shipType);
                     completeBoard[anchorIndex + 40] = new quickShipModelBoardSlot(anchorIndex, shipType);
                     break;
             }
-        } else if (orientation.equals(Orientation.HORIZONTAL)) {
+        } else if (orientation == quickShipModelBoardSlot.HORIZONTAL) {
             switch (shipType) {
-                case TWO:
+                case quickShipModelBoardSlot.TWO:
                     completeBoard[anchorIndex + 1] = new quickShipModelBoardSlot(anchorIndex, shipType);
                     break;
 
-                case THREE_A:
-                    completeBoard[anchorIndex + 1] = new quickShipModelBoardSlot(anchorIndex, shipType);
-                    completeBoard[anchorIndex + 2] = new quickShipModelBoardSlot(anchorIndex, shipType);
-                    break;
-
-                case THREE_B:
+                case quickShipModelBoardSlot.THREE_A:
                     completeBoard[anchorIndex + 1] = new quickShipModelBoardSlot(anchorIndex, shipType);
                     completeBoard[anchorIndex + 2] = new quickShipModelBoardSlot(anchorIndex, shipType);
                     break;
 
-                case FOUR:
+                case quickShipModelBoardSlot.THREE_B:
+                    completeBoard[anchorIndex + 1] = new quickShipModelBoardSlot(anchorIndex, shipType);
+                    completeBoard[anchorIndex + 2] = new quickShipModelBoardSlot(anchorIndex, shipType);
+                    break;
+
+                case quickShipModelBoardSlot.FOUR:
                     completeBoard[anchorIndex + 1] = new quickShipModelBoardSlot(anchorIndex, shipType);
                     completeBoard[anchorIndex + 2] = new quickShipModelBoardSlot(anchorIndex, shipType);
                     completeBoard[anchorIndex + 3] = new quickShipModelBoardSlot(anchorIndex, shipType);
                     break;
 
-                case FIVE:
+                case quickShipModelBoardSlot.FIVE:
                     completeBoard[anchorIndex + 1] = new quickShipModelBoardSlot(anchorIndex, shipType);
                     completeBoard[anchorIndex + 2] = new quickShipModelBoardSlot(anchorIndex, shipType);
                     completeBoard[anchorIndex + 3] = new quickShipModelBoardSlot(anchorIndex, shipType);
@@ -255,9 +228,9 @@ public class quickShipModelBoard implements Parcelable {
         }
     }
 
-    public int chooseModeSelectedShip(ShipType shipType) {
+    public int chooseModeSelectedShip(int shipType) {
         for (int i = 0; i < 100; i++) {
-            if (completeBoard[i].isAnchor() && completeBoard[i].getShipType().equals(shipType)) {
+            if (completeBoard[i].isAnchor() && completeBoard[i].getShipType() == shipType) {
                 return i;
             }
         }
@@ -268,80 +241,80 @@ public class quickShipModelBoard implements Parcelable {
         return completeBoard[index];
     }
 
-    public boolean isCollisionExist(int index, ShipType shipType, Orientation orientation) {
-        if (orientation.equals(Orientation.VERTICAL)) {
+    public boolean isCollisionExist(int index, int shipType, int orientation) {
+        if (orientation == quickShipModelBoardSlot.VERTICAL) {
             int index2 = index / 10;
             int yIndex = index2 % 10;
             //Log.d("DEBUG", "yIndex: " + yIndex);
             switch (shipType) {
-                case TWO:
+                case quickShipModelBoardSlot.TWO:
                     //Log.d("DEBUG", "checking: " + index + ", " + (index + 10));
                     if (completeBoard[index].isOccupied() || (yIndex + 1 < 10 && completeBoard[index + 10].isOccupied())) {
                         return true;
                     }
                     break;
 
-                case THREE_A:
+                case quickShipModelBoardSlot.THREE_A:
                     //Log.d("DEBUG", "checking: " + index + ", " + (index + 10) + ", " + (index + 20));
                     if (completeBoard[index].isOccupied() || (yIndex + 1 < 10 && completeBoard[index + 10].isOccupied()) || (yIndex + 2 < 10 && completeBoard[index + 20].isOccupied())) {
                         return true;
                     }
                     break;
 
-                case THREE_B:
+                case quickShipModelBoardSlot.THREE_B:
                     //Log.d("DEBUG", "checking: " + index + ", " + (index + 10) + ", " + (index + 20));
                     if (completeBoard[index].isOccupied() || (yIndex + 1 < 10 && completeBoard[index + 10].isOccupied()) || (yIndex + 2 < 10 && completeBoard[index + 20].isOccupied())) {
                         return true;
                     }
                     break;
 
-                case FOUR:
+                case quickShipModelBoardSlot.FOUR:
                     //Log.d("DEBUG", "checking: " + index + ", " + (index + 10) + ", " + (index + 20) + ", " + (index + 30));
                     if (completeBoard[index].isOccupied() || (yIndex + 1 < 10 && completeBoard[index + 10].isOccupied()) || (yIndex + 2 < 10 && completeBoard[index + 20].isOccupied()) || (yIndex + 3 < 10 && completeBoard[index + 30].isOccupied())) {
                         return true;
                     }
                     break;
 
-                case FIVE:
+                case quickShipModelBoardSlot.FIVE:
                     //Log.d("DEBUG", "checking: " + index + ", " + (index + 10) + ", " + (index + 20) + ", " + (index + 30) + ", " + (index + 40));
                     if (completeBoard[index].isOccupied() || (yIndex + 1 < 10 && completeBoard[index + 10].isOccupied()) || (yIndex + 2 < 10 && completeBoard[index + 20].isOccupied()) || (yIndex + 3 < 10 && completeBoard[index + 30].isOccupied()) || (yIndex + 4 < 10 && completeBoard[index + 40].isOccupied())) {
                         return true;
                     }
                     break;
             }
-        } else if (orientation.equals(Orientation.HORIZONTAL)) {
+        } else if (orientation == quickShipModelBoardSlot.HORIZONTAL) {
             int xIndex = index % 10;
             //Log.d("DEBUG", "xIndex: "+xIndex);
             switch (shipType) {
-                case TWO:
+                case quickShipModelBoardSlot.TWO:
                     //Log.d("DEBUG", "checking: "+index+", "+(index+1));
                     if (completeBoard[index].isOccupied() || (xIndex + 1 < 10 && completeBoard[index + 1].isOccupied())) {
                         return true;
                     }
                     break;
 
-                case THREE_A:
+                case quickShipModelBoardSlot.THREE_A:
                     //Log.d("DEBUG", "checking: "+index+", "+(index+1)+", "+(index+2));
                     if (completeBoard[index].isOccupied() || (xIndex + 1 < 10 && completeBoard[index + 1].isOccupied()) || (xIndex + 2 < 10 && completeBoard[index + 2].isOccupied())) {
                         return true;
                     }
                     break;
 
-                case THREE_B:
+                case quickShipModelBoardSlot.THREE_B:
                     //Log.d("DEBUG", "checking: "+index+", "+(index+1)+", "+(index+2));
                     if (completeBoard[index].isOccupied() || (xIndex + 1 < 10 && completeBoard[index + 1].isOccupied()) || (xIndex + 2 < 10 && completeBoard[index + 2].isOccupied())) {
                         return true;
                     }
                     break;
 
-                case FOUR:
+                case quickShipModelBoardSlot.FOUR:
                     //Log.d("DEBUG", "checking: "+index+", "+(index+1)+", "+(index+2)+", "+(index+3));
                     if (completeBoard[index].isOccupied() || (xIndex + 1 < 10 && completeBoard[index + 1].isOccupied()) || (xIndex + 2 < 10 && completeBoard[index + 2].isOccupied()) || (xIndex + 3 < 10 && completeBoard[index + 3].isOccupied())) {
                         return true;
                     }
                     break;
 
-                case FIVE:
+                case quickShipModelBoardSlot.FIVE:
                     //Log.d("DEBUG", "checking: "+index+", "+(index+1)+", "+(index+2)+", "+(index+3)+", "+(index+4));
                     if (completeBoard[index].isOccupied() || (xIndex + 1 < 10 && completeBoard[index + 1].isOccupied()) || (xIndex + 2 < 10 && completeBoard[index + 2].isOccupied()) || (xIndex + 3 < 10 && completeBoard[index + 3].isOccupied()) || (xIndex + 4 < 10 && completeBoard[index + 4].isOccupied())) {
                         return true;
@@ -359,28 +332,26 @@ public class quickShipModelBoard implements Parcelable {
         boolean size4exist = false;
         boolean size5exist = false;
         for (int i = 0; i < 100; i++) {
-            if (completeBoard[i].isAnchor() && completeBoard[i].getShipType().equals(ShipType.TWO)) {
+            if (completeBoard[i].isAnchor() && completeBoard[i].getShipType() == quickShipModelBoardSlot.TWO) {
                 size2exist = true;
             }
-            if (completeBoard[i].isAnchor() && completeBoard[i].getShipType().equals(ShipType.THREE_A)) {
+            if (completeBoard[i].isAnchor() && completeBoard[i].getShipType() == quickShipModelBoardSlot.THREE_A) {
                 size3aexist = true;
             }
-            if (completeBoard[i].isAnchor() && completeBoard[i].getShipType().equals(ShipType.THREE_B)) {
+            if (completeBoard[i].isAnchor() && completeBoard[i].getShipType() == quickShipModelBoardSlot.THREE_B) {
                 size3bexist = true;
             }
-            if (completeBoard[i].isAnchor() && completeBoard[i].getShipType().equals(ShipType.FOUR)) {
+            if (completeBoard[i].isAnchor() && completeBoard[i].getShipType() == quickShipModelBoardSlot.FOUR) {
                 size4exist = true;
             }
-            if (completeBoard[i].isAnchor() && completeBoard[i].getShipType().equals(ShipType.FIVE)) {
+            if (completeBoard[i].isAnchor() && completeBoard[i].getShipType() == quickShipModelBoardSlot.FIVE) {
                 size5exist = true;
             }
         }
         if (size2exist && size3aexist && size3bexist && size4exist && size5exist) {
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
-
 }

@@ -5,13 +5,21 @@ import android.os.Parcelable;
 
 import java.util.UUID;
 
-public class quickShipModelBoardSlot implements Parcelable {
+public class quickShipModelBoardSlot {
     private boolean isHit;
     private boolean isOccupied;
     private boolean isAnchor;
-    private Orientation mOrientation;
-    private ShipType mShipType;
+    private int mOrientation;
+    private int mShipType;
     private int mAnchorIndex;
+    static final int HORIZONTAL = 0;
+    static final int VERTICAL = 1;
+
+    static final int TWO = 3;
+    static final int THREE_A = 4;
+    static final int THREE_B = 5;
+    static final int FOUR = 6;
+    static final int FIVE = 7;
 
     public quickShipModelBoardSlot() {
         setHit(false);
@@ -21,7 +29,7 @@ public class quickShipModelBoardSlot implements Parcelable {
     }
 
     // For anchor spots
-    public quickShipModelBoardSlot(int anchorIndex, ShipType shipType, Orientation orientation) {
+    public quickShipModelBoardSlot(int anchorIndex, int shipType, int orientation) {
         setHit(false);
         setAnchor(true);
         setOccupied(true);
@@ -31,45 +39,13 @@ public class quickShipModelBoardSlot implements Parcelable {
     }
 
     // For child of anchor spots
-    public quickShipModelBoardSlot(int anchorIndex, ShipType shipType) {
+    public quickShipModelBoardSlot(int anchorIndex, int shipType) {
         setHit(false);
         setAnchor(false);
         setOccupied(true);
         setAnchorIndex(anchorIndex);
         setShipType(shipType);
     }
-
-    protected quickShipModelBoardSlot(Parcel in) {
-        isHit = in.readByte() != 0;
-        isOccupied = in.readByte() != 0;
-        isAnchor = in.readByte() != 0;
-        mAnchorIndex = in.readInt();
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeByte((byte) (isHit ? 1 : 0));
-        dest.writeByte((byte) (isOccupied ? 1 : 0));
-        dest.writeByte((byte) (isAnchor ? 1 : 0));
-        dest.writeInt(mAnchorIndex);
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    public static final Creator<quickShipModelBoardSlot> CREATOR = new Creator<quickShipModelBoardSlot>() {
-        @Override
-        public quickShipModelBoardSlot createFromParcel(Parcel in) {
-            return new quickShipModelBoardSlot(in);
-        }
-
-        @Override
-        public quickShipModelBoardSlot[] newArray(int size) {
-            return new quickShipModelBoardSlot[size];
-        }
-    };
 
     public int getAnchorIndex() {
         return mAnchorIndex;
@@ -79,11 +55,11 @@ public class quickShipModelBoardSlot implements Parcelable {
         mAnchorIndex = anchorIndex;
     }
 
-    public Orientation getOrientation() {
+    public int getOrientation() {
         return mOrientation;
     }
 
-    public void setOrientation(Orientation orientation) {
+    public void setOrientation(int orientation) {
         mOrientation = orientation;
     }
 
@@ -111,11 +87,11 @@ public class quickShipModelBoardSlot implements Parcelable {
         isOccupied = occupied;
     }
 
-    public ShipType getShipType() {
+    public int getShipType() {
         return mShipType;
     }
 
-    public void setShipType(ShipType shipType) {
+    public void setShipType(int shipType) {
         mShipType = shipType;
     }
 }

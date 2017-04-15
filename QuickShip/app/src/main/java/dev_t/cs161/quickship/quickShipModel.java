@@ -1,7 +1,7 @@
 package dev_t.cs161.quickship;
 
 import android.util.Log;
-
+import com.google.gson.Gson;
 import java.util.UUID;
 
 public class quickShipModel {
@@ -69,5 +69,15 @@ public class quickShipModel {
 
         Log.d("debug", " Player: " + mPlayerGameBoard);
         Log.d("debug", " Opponent: " + mOpponentGameBoard);
+    }
+
+    public String convertPlayerBoardToGSON() {
+        Gson gson = new Gson();
+        return gson.toJson(mPlayerGameBoard);
+    }
+
+    public void setOpponentBoardFromGSON(String gsonBoard) {
+        Gson gson = new Gson();
+        mOpponentGameBoard = gson.fromJson(gsonBoard, quickShipModelBoard.class);
     }
 }

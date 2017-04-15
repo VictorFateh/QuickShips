@@ -196,37 +196,37 @@ public class quickShipViewPlayModePlayerGrid extends View {
         return true;
     }
 
-    public Bitmap getGenerateBitmap(ShipType shipType, Orientation orientation) {
+    public Bitmap getGenerateBitmap(int shipType, int orientation) {
         int tempHeight;
         int tempWidth;
         Bitmap returnBitmap = null;
-        if (orientation.equals(Orientation.VERTICAL)) {
+        if (orientation == quickShipModelBoardSlot.VERTICAL) {
             switch (shipType) {
-                case TWO:
+                case quickShipModelBoardSlot.TWO:
                     tempHeight = Math.round(2 * boardGridCellHeight);
                     tempWidth = Math.round(boardGridCellHeight);
                     returnBitmap = mMainActivity.scaleDownDrawableImage(R.drawable.ship_size2_vertical, tempHeight, tempWidth);
                     break;
 
-                case THREE_A:
+                case quickShipModelBoardSlot.THREE_A:
                     tempHeight = Math.round(3 * boardGridCellHeight);
                     tempWidth = Math.round(boardGridCellHeight);
                     returnBitmap = mMainActivity.scaleDownDrawableImage(R.drawable.ship_size3_a_vertical, tempHeight, tempWidth);
                     break;
 
-                case THREE_B:
+                case quickShipModelBoardSlot.THREE_B:
                     tempHeight = Math.round(3 * boardGridCellHeight);
                     tempWidth = Math.round(boardGridCellHeight);
                     returnBitmap = mMainActivity.scaleDownDrawableImage(R.drawable.ship_size3_b_vertical, tempHeight, tempWidth);
                     break;
 
-                case FOUR:
+                case quickShipModelBoardSlot.FOUR:
                     tempHeight = Math.round(4 * boardGridCellHeight);
                     tempWidth = Math.round(boardGridCellHeight);
                     returnBitmap = mMainActivity.scaleDownDrawableImage(R.drawable.ship_size4_vertical, tempHeight, tempWidth);
                     break;
 
-                case FIVE:
+                case quickShipModelBoardSlot.FIVE:
                     tempHeight = Math.round(5 * boardGridCellHeight);
                     tempWidth = Math.round(boardGridCellHeight);
                     returnBitmap = mMainActivity.scaleDownDrawableImage(R.drawable.ship_size5_vertical, tempHeight, tempWidth);
@@ -234,31 +234,31 @@ public class quickShipViewPlayModePlayerGrid extends View {
             }
         } else {
             switch (shipType) {
-                case TWO:
+                case quickShipModelBoardSlot.TWO:
                     tempHeight = Math.round(boardGridCellHeight);
                     tempWidth = Math.round(2 * boardGridCellHeight);
                     returnBitmap = mMainActivity.scaleDownDrawableImage(R.drawable.ship_size2_horizontal, tempHeight, tempWidth);
                     break;
 
-                case THREE_A:
+                case quickShipModelBoardSlot.THREE_A:
                     tempHeight = Math.round(boardGridCellHeight);
                     tempWidth = Math.round(3 * boardGridCellHeight);
                     returnBitmap = mMainActivity.scaleDownDrawableImage(R.drawable.ship_size3_a_horizontal, tempHeight, tempWidth);
                     break;
 
-                case THREE_B:
+                case quickShipModelBoardSlot.THREE_B:
                     tempHeight = Math.round(boardGridCellHeight);
                     tempWidth = Math.round(3 * boardGridCellHeight);
                     returnBitmap = mMainActivity.scaleDownDrawableImage(R.drawable.ship_size3_b_horizontal, tempHeight, tempWidth);
                     break;
 
-                case FOUR:
+                case quickShipModelBoardSlot.FOUR:
                     tempHeight = Math.round(boardGridCellHeight);
                     tempWidth = Math.round(4 * boardGridCellHeight);
                     returnBitmap = mMainActivity.scaleDownDrawableImage(R.drawable.ship_size4_horizontal, tempHeight, tempWidth);
                     break;
 
-                case FIVE:
+                case quickShipModelBoardSlot.FIVE:
                     tempHeight = Math.round(boardGridCellHeight);
                     tempWidth = Math.round(5 * boardGridCellHeight);
                     returnBitmap = mMainActivity.scaleDownDrawableImage(R.drawable.ship_size5_horizontal, tempHeight, tempWidth);
@@ -269,63 +269,63 @@ public class quickShipViewPlayModePlayerGrid extends View {
     }
 
     // Returns an array where array[0] = startingX, array[1] = startingY, array[2] = endingX, array[4] = endingY
-    public float[] getIndexXYCanvasBox(int index, ShipType shipType, Orientation orientation) {
+    public float[] getIndexXYCanvasBox(int index, int shipType, int orientation) {
         int xIndex = index % 10;
         index = index / 10;
         int yIndex = index % 10;
         float[] returnArray = new float[4];
         returnArray[0] = boardGridFrameDividerX[xIndex];
         returnArray[1] = boardGridFrameDividerY[yIndex];
-        if (orientation.equals(Orientation.VERTICAL)) {
+        if (orientation == quickShipModelBoardSlot.VERTICAL) {
             switch (shipType) {
-                case TWO:
+                case quickShipModelBoardSlot.TWO:
                     returnArray[2] = boardGridFrameDividerX[xIndex + 1];
                     returnArray[3] = boardGridFrameDividerY[yIndex + 2];
                     break;
 
-                case THREE_A:
+                case quickShipModelBoardSlot.THREE_A:
                     returnArray[2] = boardGridFrameDividerX[xIndex + 1];
                     returnArray[3] = boardGridFrameDividerY[yIndex + 3];
                     break;
 
-                case THREE_B:
+                case quickShipModelBoardSlot.THREE_B:
                     returnArray[2] = boardGridFrameDividerX[xIndex + 1];
                     returnArray[3] = boardGridFrameDividerY[yIndex + 3];
                     break;
 
-                case FOUR:
+                case quickShipModelBoardSlot.FOUR:
                     returnArray[2] = boardGridFrameDividerX[xIndex + 1];
                     returnArray[3] = boardGridFrameDividerY[yIndex + 4];
                     break;
 
-                case FIVE:
+                case quickShipModelBoardSlot.FIVE:
                     returnArray[2] = boardGridFrameDividerX[xIndex + 1];
                     returnArray[3] = boardGridFrameDividerY[yIndex + 5];
                     break;
             }
         } else {
             switch (shipType) {
-                case TWO:
+                case quickShipModelBoardSlot.TWO:
                     returnArray[2] = boardGridFrameDividerX[xIndex + 2];
                     returnArray[3] = boardGridFrameDividerY[yIndex + 1];
                     break;
 
-                case THREE_A:
+                case quickShipModelBoardSlot.THREE_A:
                     returnArray[2] = boardGridFrameDividerX[xIndex + 3];
                     returnArray[3] = boardGridFrameDividerY[yIndex + 1];
                     break;
 
-                case THREE_B:
+                case quickShipModelBoardSlot.THREE_B:
                     returnArray[2] = boardGridFrameDividerX[xIndex + 3];
                     returnArray[3] = boardGridFrameDividerY[yIndex + 1];
                     break;
 
-                case FOUR:
+                case quickShipModelBoardSlot.FOUR:
                     returnArray[2] = boardGridFrameDividerX[xIndex + 4];
                     returnArray[3] = boardGridFrameDividerY[yIndex + 1];
                     break;
 
-                case FIVE:
+                case quickShipModelBoardSlot.FIVE:
                     returnArray[2] = boardGridFrameDividerX[xIndex + 5];
                     returnArray[3] = boardGridFrameDividerY[yIndex + 1];
                     break;

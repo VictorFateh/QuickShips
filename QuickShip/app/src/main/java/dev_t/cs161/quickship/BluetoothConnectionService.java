@@ -257,7 +257,7 @@ public class BluetoothConnectionService {
             Intent x = new Intent("quickShipCargo");
             //String sendStatus = mmDevice.getName() + " Joined The Game!";
             x.putExtra("joinedLobby", true);
-            LocalBroadcastManager.getInstance(mContext).sendBroadcast(x );
+            LocalBroadcastManager.getInstance(mContext).sendBroadcast(x);
 
             // Keep listening to the InputStream until an exception occurs
             while (true) {
@@ -287,8 +287,8 @@ public class BluetoothConnectionService {
 
         //Call this from the main activity to send data to the remote device
         public void write(byte[] bytes) {
-            String text = new String(bytes, Charset.defaultCharset());
-            Log.d(TAG, "write: Writing to outputstream: " + text);
+            //String text = new String(bytes, Charset.defaultCharset());
+            //Log.d(TAG, "write: Writing to outputstream: " + text);
             try {
                 mmOutStream.write(bytes);
             } catch (IOException e) {
@@ -320,10 +320,10 @@ public class BluetoothConnectionService {
      */
     public void write(byte[] out) {
         // Create temporary object
-        ConnectedThread r;
+        //ConnectedThread r;
 
         // Synchronize a copy of the ConnectedThread
-        Log.d(TAG, "write: Write Called.");
+        //Log.d(TAG, "write: Write Called.");
         //perform the write
         mConnectedThread.write(out);
     }
