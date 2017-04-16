@@ -68,7 +68,7 @@ public class quickShipViewPlayModeOpponentGrid extends View {
         calculateBoardGUIPositions();
     }
 
-    public int getFireIndex(){
+    public int getFireIndex() {
         return fireIndex;
     }
 
@@ -95,8 +95,8 @@ public class quickShipViewPlayModeOpponentGrid extends View {
 
         boardGridLinePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         boardGridLinePaint.setStyle(Paint.Style.STROKE);
-        int dpSize =  1;
-        DisplayMetrics dm = mMainActivity.getResources().getDisplayMetrics() ;
+        int dpSize = 1;
+        DisplayMetrics dm = mMainActivity.getResources().getDisplayMetrics();
         boardGridLinePaintStrokeWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpSize, dm);
         boardGridLinePaint.setStrokeWidth(boardGridLinePaintStrokeWidth);
         boardGridLinePaint.setColor(mMainActivity.getResources().getColor(R.color.play_mode_opponent_grid_line));
@@ -106,6 +106,10 @@ public class quickShipViewPlayModeOpponentGrid extends View {
         boardGridSelectedPaint.setColor(mMainActivity.getResources().getColor(R.color.play_mode_player_cell_selected));
         boardGridFrameDividerX = new Float[11];
         boardGridFrameDividerY = new Float[11];
+    }
+
+    public void setGameModel(quickShipModel playerBoardData) {
+        mGameModel = playerBoardData;
     }
 
     public void calculateBoardGUIPositions() {
@@ -176,14 +180,14 @@ public class quickShipViewPlayModeOpponentGrid extends View {
         //Loop through enemy board and draw hits and misses
         //Hit slots have red circle drawn
         //Slots that have been hit but don't have ships have white circles
-        for(int i = 0; i < 100; i++) {
+        for (int i = 0; i < 100; i++) {
             //If specific index is hit on opponents board paint it as hit
-            if(mGameModel.getOpponentGameBoard().isHit(i) && mGameModel.getOpponentGameBoard().isOccupied(i)) {
+            if (mGameModel.getOpponentGameBoard().isHit(i) && mGameModel.getOpponentGameBoard().isOccupied(i)) {
                 hitXY = getIndexXYCoordCircle(i);
                 canvas.drawCircle(hitXY[0], hitXY[1], hitXY[2], boatHitPaint);
             }
             //If index was shot at but is not occupied, paint a missed white circle
-            else if(mGameModel.getOpponentGameBoard().isHit(i) && !mGameModel.getOpponentGameBoard().isOccupied(i)) {
+            else if (mGameModel.getOpponentGameBoard().isHit(i) && !mGameModel.getOpponentGameBoard().isOccupied(i)) {
                 missXY = getIndexXYCoordCircle(i);
                 canvas.drawCircle(missXY[0], missXY[1], missXY[2], boatMissPaint);
             }
@@ -203,10 +207,10 @@ public class quickShipViewPlayModeOpponentGrid extends View {
         returnArray[3] = boardGridFrameDividerY[yIndex + 1];
 
         //Circle X Center
-        returnArray[0] = boardGridFrameDividerX[xIndex] + (((boardGridFrameDividerX[xIndex + 1]-boardGridFrameDividerX[xIndex]) / 2));
+        returnArray[0] = boardGridFrameDividerX[xIndex] + (((boardGridFrameDividerX[xIndex + 1] - boardGridFrameDividerX[xIndex]) / 2));
 
         //Circle Y Center
-        returnArray[1] = boardGridFrameDividerY[yIndex] + (((boardGridFrameDividerY[yIndex + 1]-boardGridFrameDividerY[yIndex]) / 2));
+        returnArray[1] = boardGridFrameDividerY[yIndex] + (((boardGridFrameDividerY[yIndex + 1] - boardGridFrameDividerY[yIndex]) / 2));
 
         //Circle Radius
         returnArray[2] = (boardGridFrameDividerX[xIndex + 1] - boardGridFrameDividerX[xIndex]) / 3;
@@ -233,21 +237,22 @@ public class quickShipViewPlayModeOpponentGrid extends View {
                 } else if (abs(initialX - endX) > swipeThreshold) {
                     mMainActivity.playModeSwitchToPlayerGrid(null);
                 } else {
-                    if (endX >= boardGridFrameStartX && endX <= boardGridFrameEndX && endY >= boardGridFrameStartY && endY <= boardGridFrameEndY && abs(endX - initialX) < 5 && abs(endY - initialY) < 5) {
-                        selectedIndex = calculateCellTouched(initialX, initialY);
-                        if(!mGameModel.getOpponentGameBoard().isHit(selectedIndex)) {
-                            if (selectedIndex != currentIndex) {
-                                currentIndex = selectedIndex;
-                                Log.d("debug", "Index: " + currentIndex);
-                                calculateSelectedRect(currentIndex);
-                                mMainActivity.setPlayModeFireBtnStatus(true);
+                    if (!mMainActivity.isPlayerTurnDone()) {
+                        if (endX >= boardGridFrameStartX && endX <= boardGridFrameEndX && endY >= boardGridFrameStartY && endY <= boardGridFrameEndY && abs(endX - initialX) < 5 && abs(endY - initialY) < 5) {
+                            selectedIndex = calculateCellTouched(initialX, initialY);
+                            if (!mGameModel.getOpponentGameBoard().isHit(selectedIndex)) {
+                                if (selectedIndex != currentIndex) {
+                                    currentIndex = selectedIndex;
+                                    Log.d("debug", "Index: " + currentIndex);
+                                    calculateSelectedRect(currentIndex);
+                                    mMainActivity.setPlayModeFireBtnStatus(true);
+                                }
+                            } else {
+                                deSelectCell();
                             }
-                        }
-                        else {
+                        } else {
                             deSelectCell();
                         }
-                    } else {
-                        deSelectCell();
                     }
                 }
                 held = false;
@@ -321,8 +326,7 @@ public class quickShipViewPlayModeOpponentGrid extends View {
     public boolean insideBoardGridBound(float x, float y) {
         if (x < boardGridFrameStartX || x > boardGridFrameEndX || y < boardGridFrameStartY || y > boardGridFrameEndY) {
             return false;
-        }
-        else {
+        } else {
             return true;
         }
     }

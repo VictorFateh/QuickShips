@@ -40,16 +40,31 @@
                     android:gravity="center"
                     android:orientation="horizontal">
 
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
                     <Button
                         android:id="@+id/play_mode_fire_btn"
                         android:layout_width="140dp"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginLeft="20dp"
                         android:onClick="fireOpponentBtn"
                         android:text="@string/play_mode_fire_btn"
-                        android:layout_marginRight="5dp"
                         android:focusable="true"/>
+
+                        <TextView
+                            android:id="@+id/play_mode_status"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="18sp"
+                            android:layout_gravity="center"
+                            android:textColor="@color/play_mode_status"></TextView>
+
+
+                        </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -75,6 +90,11 @@
                                 android:layout_weight="1"
                                 android:orientation="vertical">
 
+                                <ScrollView
+                                    android:id="@+id/play_mode_scroller"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:fillViewport="true">
                                 <TextView
                                     android:id="@+id/edit_text_chat_log_in_game"
                                     android:layout_width="match_parent"
@@ -83,6 +103,7 @@
                                     android:padding="5dp"
                                     android:text="Welcome to the battlefield!"
                                     android:textColor="@color/choose_mode_choose_ship_title"/>
+                                </ScrollView>
                             </LinearLayout>
 
                             <LinearLayout

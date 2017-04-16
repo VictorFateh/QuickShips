@@ -33,6 +33,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
@@ -86,12 +87,21 @@ public class quickShipActivityMain extends Activity implements Runnable {
     private BluetoothDevice mBTDevice;
     private AlertDialog mBTListViewDialog;
     private ListView mDevicesListView;
+    private ScrollView mChooseModeScroller;
     private TextView mChooseModeChatMessageLog;
-    private EditText mEditTextChatMessageLog;
-    private TextView mChooseModeChatMessageLogInGame;
-    private EditText mEditTextChatMessageLogInGame;
+    private EditText mChooseModeEditTextSend;
+    private ScrollView mPlayModeScroller;
+    private TextView mPlayModeChatMessageLog;
+    private EditText mPlayModeEditTextSend;
+    private TextView mPlayModeStatusText;
     private boolean playerChooseModeDone;
     private boolean opponentChooseModeDone;
+    private boolean playerTurnDone;
+    private boolean opponentTurnDone;
+    private boolean gameOver;
+    private int playerChosenTarget;
+    private int opponentChosenTarget;
+    private int turnCount;
 
     private static final UUID MY_UUID_INSECURE = UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
 
@@ -111,24 +121,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
         mActivityMain = this;
 
         mSplashScreenPlayerName = (EditText) findViewById(R.id.splash_screen_player_name);
-//        mSplashScreenPlayerName.setOnKeyListener(new View.OnKeyListener() {
-//            @Override
-//            public boolean onKey(View v, int keyCode, KeyEvent event) {
-//                if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
-//                    InputMethodManager inputManager = (InputMethodManager) mActivityMain.getSystemService(mActivityMain.INPUT_METHOD_SERVICE);
-//                    inputManager.hideSoftInputFromWindow(mActivityMain.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-//                    String newName = mSplashScreenPlayerName.getText().toString();//em
-//                    if (!newName.isEmpty()) {//em
-//                        if (btAdapter.setName(newName))//em
-//                            Toast.makeText(mActivityMain, "Player Name set to " + newName, Toast.LENGTH_LONG).show();//em
-//                    }//em
-//                    return true;//em
-//                }
-//                return false;
-//            }
-//        });
-
-
+        mPlayModeStatusText = (TextView) findViewById(R.id.play_mode_status);
         mChooseModeFrameLayout = (FrameLayout) findViewById(R.id.choose_mode);
         mSplashScreenFrameLayout = (FrameLayout) findViewById(R.id.splash_screen);
         mTempSelectedShip = (ImageView) findViewById(R.id.temp_ship_spot);
@@ -147,7 +140,6 @@ public class quickShipActivityMain extends Activity implements Runnable {
                     mPlayerGridBtn.setPressed(true);
                 }
                 return true;
-
             }
         });
 
@@ -196,28 +188,32 @@ public class quickShipActivityMain extends Activity implements Runnable {
         mPlaceBtn = (Button) findViewById(R.id.choose_mode_place_button);
         mDoneBtn = (Button) findViewById(R.id.choose_mode_done_button);
 
+        mChooseModeScroller = (ScrollView) findViewById(R.id.choose_mode_scroller);
         mChooseModeChatMessageLog = (TextView) findViewById(R.id.edit_text_chat_log);
-        mEditTextChatMessageLog = (EditText) findViewById(R.id.edit_text_send_message);
+        mChooseModeEditTextSend = (EditText) findViewById(R.id.edit_text_send_message);
 
-        mChooseModeChatMessageLogInGame = (TextView) findViewById(R.id.edit_text_chat_log_in_game);
-        mEditTextChatMessageLogInGame = (EditText) findViewById(R.id.edit_text_send_message_in_game);
+        mPlayModeScroller = (ScrollView) findViewById(R.id.play_mode_scroller);
+        mPlayModeChatMessageLog = (TextView) findViewById(R.id.edit_text_chat_log_in_game);
+        mPlayModeEditTextSend = (EditText) findViewById(R.id.edit_text_send_message_in_game);
 
         //Chat Box for Ship Placement Screen
-        mEditTextChatMessageLog.setOnKeyListener(new View.OnKeyListener() {
+        mChooseModeEditTextSend.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
                     InputMethodManager inputManager = (InputMethodManager) mActivityMain.getSystemService(mActivityMain.INPUT_METHOD_SERVICE);
                     inputManager.hideSoftInputFromWindow(mActivityMain.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-                    String full_msg = getColoredSpanned(mPlayerName + ": " + mEditTextChatMessageLog.getText().toString(), "#000000");
+                    String full_msg = getColoredSpanned(mPlayerName + ": " + mChooseModeEditTextSend.getText().toString(), "#000000");
                     messages.append(full_msg + "<br>");
                     mChooseModeChatMessageLog.setText(Html.fromHtml(messages.toString()));
                     mChooseModeChatMessageLog.setText(Html.fromHtml(messages.toString()));
+                    mChooseModeScroller.smoothScrollTo(0, mChooseModeChatMessageLog.getBottom());
+                    mPlayModeScroller.smoothScrollTo(0, mPlayModeChatMessageLog.getBottom());
 
                     quickShipBluetoothPacketsToBeSent data = new quickShipBluetoothPacketsToBeSent(quickShipBluetoothPacketsToBeSent.CHAT, full_msg);
                     //Log.d("Chat Parcel Byte Size: ",""+ParcelableUtil.marshall(data).length); //debugging
                     mBluetoothConnection.write(ParcelableUtil.marshall(data));
-                    mEditTextChatMessageLog.setText("");//clear message
+                    mChooseModeEditTextSend.setText("");//clear message
                     return true;//em
                 }
                 return false;
@@ -225,39 +221,76 @@ public class quickShipActivityMain extends Activity implements Runnable {
         });
 
         //Chat Box for Opponent screen
-        mEditTextChatMessageLogInGame.setOnKeyListener(new View.OnKeyListener() {
+        mPlayModeEditTextSend.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
                     InputMethodManager inputManager = (InputMethodManager) mActivityMain.getSystemService(mActivityMain.INPUT_METHOD_SERVICE);
                     inputManager.hideSoftInputFromWindow(mActivityMain.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-                    String full_msg = getColoredSpanned(mPlayerName + ": " + mEditTextChatMessageLog.getText().toString(), "#000000");
+                    String full_msg = getColoredSpanned(mPlayerName + ": " + mPlayModeEditTextSend.getText().toString(), "#000000");
                     messages.append(full_msg + "<br>");
                     mChooseModeChatMessageLog.setText(Html.fromHtml(messages.toString()));
                     mChooseModeChatMessageLog.setText(Html.fromHtml(messages.toString()));
-
+                    mChooseModeScroller.smoothScrollTo(0, mChooseModeChatMessageLog.getBottom());
+                    mPlayModeScroller.smoothScrollTo(0, mPlayModeChatMessageLog.getBottom());
 
                     quickShipBluetoothPacketsToBeSent data = new quickShipBluetoothPacketsToBeSent(quickShipBluetoothPacketsToBeSent.CHAT, full_msg);
                     mBluetoothConnection.write(ParcelableUtil.marshall(data));
-                    mEditTextChatMessageLogInGame.setText("");//clear message
+                    mPlayModeEditTextSend.setText("");//clear message
 
                     return true;
                 }
                 return false;
             }
         });
-        mEditTextChatMessageLogInGame.clearFocus();
+        mPlayModeEditTextSend.clearFocus();
 
         startGame = (Button) findViewById(R.id.start_game_btn);
         mBluetoothEnableButton = (Button) findViewById(R.id.splash_creen_bluetooth_btn);
+
+        otherViewsInitializeObjects();
 
         blueToothInitializeObjects();
 
         launchStartScreen();
     }
 
+    public void otherViewsInitializeObjects() {
+        mGameModel = new quickShipModel();
+        LinearLayout topLinear = (LinearLayout) findViewById(R.id.choose_mode_top_linear);
+        FrameLayout topFrame = (FrameLayout) findViewById(R.id.choose_mode_top_frame);
+        chooseModeGrid = new quickShipViewChooseModeGrid(this, mGameModel, mChooseModeFrameLayout, mTempSelectedShip);
+        topFrame.getLayoutParams().height = Math.round(screenWidth);
+        topFrame.addView(chooseModeGrid);
+        FrameLayout topFrameBorder = (FrameLayout) findViewById(R.id.choose_mode_top_frame_border);
+        topFrameBorder.addView(new quickShipViewGridBorder(this));
+        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Math.round(screenWidth));
+        topLinear.setLayoutParams(param);
+
+        LinearLayout topOpponentLinear = (LinearLayout) findViewById(R.id.play_mode_opponent_top_linear);
+        FrameLayout topOpponentFrame = (FrameLayout) findViewById(R.id.play_mode_opponent_top_frame);
+        playModeOpponentGrid = new quickShipViewPlayModeOpponentGrid(this, mGameModel);
+        topOpponentFrame.getLayoutParams().height = Math.round(screenWidth);
+        topOpponentFrame.addView(playModeOpponentGrid);
+        LinearLayout.LayoutParams param2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Math.round(screenWidth));
+        topOpponentLinear.setLayoutParams(param2);
+        FrameLayout topOpponentFrameBorder = (FrameLayout) findViewById(R.id.play_mode_opponent_top_frame_border);
+        topOpponentFrameBorder.addView(new quickShipViewGridBorder(this));
+
+        LinearLayout topPlayerLinear = (LinearLayout) findViewById(R.id.play_mode_player_top_linear);
+        FrameLayout topPlayerFrame = (FrameLayout) findViewById(R.id.play_mode_player_top_frame);
+        playModePlayerGrid = new quickShipViewPlayModePlayerGrid(this, mGameModel);
+        topPlayerFrame.getLayoutParams().height = Math.round(screenWidth);
+        topPlayerFrame.addView(playModePlayerGrid);
+        LinearLayout.LayoutParams param3 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Math.round(screenWidth));
+        topPlayerLinear.setLayoutParams(param3);
+        FrameLayout topPlayerFrameBorder = (FrameLayout) findViewById(R.id.play_mode_player_top_frame_border);
+        topPlayerFrameBorder.addView(new quickShipViewGridBorder(this));
+    }
+
     public void blueToothInitializeObjects() {
         btAdapter = BluetoothAdapter.getDefaultAdapter();
+        messages = new StringBuilder();
         if (btAdapter == null) {
             startGame.setEnabled(false);
             mSplashScreenPlayerName.setVisibility(View.INVISIBLE);//em
@@ -289,7 +322,6 @@ public class quickShipActivityMain extends Activity implements Runnable {
                                   });
             alertDialog.show();
         }
-        messages = new StringBuilder();
         mDevicesListView = new ListView(this);
         // Used for receiving quickship parcelables
         //registerReceiver(quickShipDock, new IntentFilter("quickShipCargo"));
@@ -395,41 +427,6 @@ public class quickShipActivityMain extends Activity implements Runnable {
         mDoneBtn.setEnabled(status);
     }
 
-    public void chooseModeInitializeView() {
-        LinearLayout topLinear = (LinearLayout) findViewById(R.id.choose_mode_top_linear);
-        FrameLayout topFrame = (FrameLayout) findViewById(R.id.choose_mode_top_frame);
-        chooseModeGrid = new quickShipViewChooseModeGrid(this, mGameModel, mChooseModeFrameLayout, mTempSelectedShip);
-        topFrame.getLayoutParams().height = Math.round(screenWidth);
-        topFrame.addView(chooseModeGrid);
-        FrameLayout topFrameBorder = (FrameLayout) findViewById(R.id.choose_mode_top_frame_border);
-        topFrameBorder.addView(new quickShipViewGridBorder(this));
-        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Math.round(screenWidth));
-        topLinear.setLayoutParams(param);
-    }
-
-    public void playModeInitializeView() {
-        LinearLayout topOpponentLinear = (LinearLayout) findViewById(R.id.play_mode_opponent_top_linear);
-        FrameLayout topOpponentFrame = (FrameLayout) findViewById(R.id.play_mode_opponent_top_frame);
-        playModeOpponentGrid = new quickShipViewPlayModeOpponentGrid(this, mGameModel);
-        topOpponentFrame.getLayoutParams().height = Math.round(screenWidth);
-        topOpponentFrame.addView(playModeOpponentGrid);
-        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Math.round(screenWidth));
-        topOpponentLinear.setLayoutParams(param);
-        FrameLayout topOpponentFrameBorder = (FrameLayout) findViewById(R.id.play_mode_opponent_top_frame_border);
-        topOpponentFrameBorder.addView(new quickShipViewGridBorder(this));
-
-        LinearLayout topPlayerLinear = (LinearLayout) findViewById(R.id.play_mode_player_top_linear);
-        FrameLayout topPlayerFrame = (FrameLayout) findViewById(R.id.play_mode_player_top_frame);
-        playModePlayerGrid = new quickShipViewPlayModePlayerGrid(this, mGameModel);
-        topPlayerFrame.getLayoutParams().height = Math.round(screenWidth);
-        topPlayerFrame.addView(playModePlayerGrid);
-        LinearLayout.LayoutParams param2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Math.round(screenWidth));
-        topPlayerLinear.setLayoutParams(param2);
-        FrameLayout topPlayerFrameBorder = (FrameLayout) findViewById(R.id.play_mode_player_top_frame_border);
-        topPlayerFrameBorder.addView(new quickShipViewGridBorder(this));
-        playModeFlipper.setDisplayedChild(1);
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -489,11 +486,20 @@ public class quickShipActivityMain extends Activity implements Runnable {
     }
 
     public void newGame() {
+        gameOver = false;
+        turnCount = 1;
+        messages.setLength(0);
         playerChooseModeDone = false;
         opponentChooseModeDone = false;
-        mGameModel = new quickShipModel(mPlayerName);
-        chooseModeInitializeView();
-        playModeInitializeView();
+        playerTurnDone = false;
+        opponentTurnDone = false;
+        mPlayModeStatusText.setVisibility(View.INVISIBLE);
+        mGameModel = new quickShipModel();
+        chooseModeGrid.setGameModel(mGameModel);
+        playModeOpponentGrid.setGameModel(mGameModel);
+        playModePlayerGrid.setGameModel(mGameModel);
+        mPlayModeFireBtn.setText("Fire!");
+        playModeFlipper.setDisplayedChild(1);
         running = true;
     }
 
@@ -597,14 +603,18 @@ public class quickShipActivityMain extends Activity implements Runnable {
         chooseModeGrid.deSelectShip();
     }
 
+    public void play_again_btn(View button) {
+        mainScreenViewFlipper.setDisplayedChild(2);
+    }
+
     public void doneButton(View button) {
         setChooseModeDoneBtnStatus(false);
         //String x = mGameModel.convertPlayerBoardToGSON();
-        byte [] x = mGameModel.convertPlayerBoardToByteArray();
-        Log.d("BOARD SIZE: ",""+x.length);
+        byte[] x = mGameModel.convertPlayerBoardToByteArray();
+        Log.d("BOARD SIZE: ", "" + x.length);
         //quickShipBluetoothPacketsToBeSent data = new quickShipBluetoothPacketsToBeSent(quickShipBluetoothPacketsToBeSent.SHIPS_PLACED, mGameModel.convertPlayerBoardToGSON());
         quickShipBluetoothPacketsToBeSent data = new quickShipBluetoothPacketsToBeSent(quickShipBluetoothPacketsToBeSent.SHIPS_PLACED, mGameModel.convertPlayerBoardToByteArray());
-        Log.d("Final Parcel Size: ",""+ParcelableUtil.marshall(data).length);
+        Log.d("Final Parcel Size: ", "" + ParcelableUtil.marshall(data).length);
         mBluetoothConnection.write(ParcelableUtil.marshall(data));
         playerChooseModeDone = true;
         checkChooseModeDone("player");
@@ -614,22 +624,110 @@ public class quickShipActivityMain extends Activity implements Runnable {
         if (playerChooseModeDone && opponentChooseModeDone) {
             mainScreenViewFlipper.setDisplayedChild(2);
             reinitializeUI();
-            messages.append("The game has started!" + "\n");
-            mChooseModeChatMessageLog.setText(messages);
-            mChooseModeChatMessageLogInGame.setText(messages);
+            String msg = getColoredSpanned("The game has started!", "#eda136");
+            messages.append(msg + "<br>");
+            mChooseModeChatMessageLog.setText(Html.fromHtml(messages.toString()));
+            mPlayModeChatMessageLog.setText(Html.fromHtml(messages.toString()));
+            mChooseModeScroller.smoothScrollTo(0, mChooseModeChatMessageLog.getBottom());
+            mPlayModeScroller.smoothScrollTo(0, mPlayModeChatMessageLog.getBottom());
         } else {
             if (status.equals("player")) {
                 String msg = getColoredSpanned("Ships placed. Waiting for opponent to finish ship placements.", "#eda136");
                 messages.append(msg + "<br>");
                 mChooseModeChatMessageLog.setText(Html.fromHtml(messages.toString()));
-                mChooseModeChatMessageLog.setText(Html.fromHtml(messages.toString()));
+                mPlayModeChatMessageLog.setText(Html.fromHtml(messages.toString()));
+                mChooseModeScroller.smoothScrollTo(0, mChooseModeChatMessageLog.getBottom());
+                mPlayModeScroller.smoothScrollTo(0, mPlayModeChatMessageLog.getBottom());
             } else {
                 String msg = getColoredSpanned("Your opponent has finished placing ships.", "#eda136");
                 messages.append(msg + "<br>");
                 mChooseModeChatMessageLog.setText(Html.fromHtml(messages.toString()));
-                mChooseModeChatMessageLog.setText(Html.fromHtml(messages.toString()));
+                mPlayModeChatMessageLog.setText(Html.fromHtml(messages.toString()));
+                mChooseModeScroller.smoothScrollTo(0, mChooseModeChatMessageLog.getBottom());
+                mPlayModeScroller.smoothScrollTo(0, mPlayModeChatMessageLog.getBottom());
             }
         }
+    }
+
+    //Update opponent grid when user presses fire button
+    public void fireOpponentBtn(View v) {
+        if (!gameOver) {
+            playerChosenTarget = playModeOpponentGrid.getCurrentIndex();
+            playModeOpponentGrid.deSelectCell();
+            playModeOpponentGrid.invalidate();
+        /*
+        Bluetooth Packet Code Goes here to send updated information
+         */
+            quickShipBluetoothPacketsToBeSent data = new quickShipBluetoothPacketsToBeSent(quickShipBluetoothPacketsToBeSent.MOVES, playerChosenTarget, "");
+            mBluetoothConnection.write(ParcelableUtil.marshall(data));
+            playerTurnDone = true;
+            checkPlayModeTurnDone("player");
+        }
+        else {
+            // Add bluetooth disconnection code here
+            mainScreenViewFlipper.setDisplayedChild(0);
+        }
+    }
+
+    public void checkPlayModeTurnDone(String status) {
+        if (playerTurnDone && opponentTurnDone) {
+            mGameModel.getPlayerGameBoard().setHit(opponentChosenTarget, true);
+            mGameModel.getOpponentGameBoard().setHit(playerChosenTarget, true);
+            playModeOpponentGrid.invalidate();
+            String msg = getColoredSpanned("Turn: "+turnCount, "#349edb");
+            messages.append(msg + "<br>");
+            String msg2 = getColoredSpanned("-------------------------", "#349edb");
+            messages.append(msg2 + "<br>");
+            if (mGameModel.getOpponentGameBoard().getShipSlotAtIndex(playerChosenTarget).isOccupied()) {
+                String msg3 = getColoredSpanned("You hit a ship!", "#db756b");
+                messages.append(msg3 + "<br>");
+                mPlayModeChatMessageLog.setText(Html.fromHtml(messages.toString()));
+            } else {
+                String msg3 = getColoredSpanned("You missed!", "#db756b");
+                messages.append(msg3 + "<br>");
+                mPlayModeChatMessageLog.setText(Html.fromHtml(messages.toString()));
+            }
+            if (mGameModel.getPlayerGameBoard().getShipSlotAtIndex(opponentChosenTarget).isOccupied()) {
+                String msg3 = getColoredSpanned("Your opponent hit your ship!", "#db756b");
+                messages.append(msg3 + "<br>");
+                mPlayModeChatMessageLog.setText(Html.fromHtml(messages.toString()));
+            } else {
+                String msg3 = getColoredSpanned("Your opponent missed!", "#db756b");
+                messages.append(msg3 + "<br>");
+                mPlayModeChatMessageLog.setText(Html.fromHtml(messages.toString()));
+            }
+            boolean playerGameOver = mGameModel.getPlayerGameBoard().checkGameOver();
+            boolean opponentGameOver = mGameModel.getOpponentGameBoard().checkGameOver();
+            if (playerGameOver && opponentGameOver) {
+                mPlayModeStatusText.setText("Game Ended in a draw!");
+                mPlayModeStatusText.setVisibility(View.VISIBLE);
+            } else if (playerGameOver) {
+                mPlayModeStatusText.setText("You lost!");
+                mPlayModeStatusText.setVisibility(View.VISIBLE);
+            } else if (opponentGameOver) {
+                mPlayModeStatusText.setText("You Won!");
+                mPlayModeStatusText.setVisibility(View.VISIBLE);
+            }
+            if (!playerGameOver && !opponentGameOver) {
+                turnCount++;
+                playerTurnDone = false;
+                opponentTurnDone = false;
+                mPlayModeStatusText.setVisibility(View.INVISIBLE);
+            } else {
+                gameOver = true;
+                mPlayModeFireBtn.setText("Play Again");
+                mPlayModeFireBtn.setEnabled(true);
+            }
+        } else {
+            if (status.equals("player")) {
+                mPlayModeStatusText.setText("Waiting on opponent...");
+                mPlayModeStatusText.setVisibility(View.VISIBLE);
+            } else {
+                mPlayModeStatusText.setText("Your opponent is done...");
+                mPlayModeStatusText.setVisibility(View.VISIBLE);
+            }
+        }
+        mPlayModeScroller.smoothScrollTo(0, mPlayModeChatMessageLog.getBottom());
     }
 
     public boolean isPlayerChooseModeDone() {
@@ -648,6 +746,10 @@ public class quickShipActivityMain extends Activity implements Runnable {
         this.opponentChooseModeDone = opponentChooseModeDone;
     }
 
+    public boolean isPlayerTurnDone() {
+        return playerTurnDone;
+    }
+
     public void enableBluetooth(View button) {
         toast_displayMessage("Attempting to enable Bluetooth...");
 
@@ -662,16 +764,6 @@ public class quickShipActivityMain extends Activity implements Runnable {
 
     public void setRotation(View button) {
         chooseModeGrid.setOrientation();
-    }
-
-    //Update opponent grid when user presses fire button
-    public void fireOpponentBtn(View v) {
-        mGameModel.getOpponentGameBoard().setHit(playModeOpponentGrid.getCurrentIndex(), true);
-        playModeOpponentGrid.deSelectCell();
-        /*
-        Bluetooth Packet Code Goes here to send updated information
-         */
-
     }
 
     public Bitmap scaleDownDrawableImage(int res, int reqHeight, int reqWidth) {
@@ -729,6 +821,8 @@ public class quickShipActivityMain extends Activity implements Runnable {
                         messages.append(text + "<br>");
                         mChooseModeChatMessageLog.setText(Html.fromHtml(messages.toString()));
                         mChooseModeChatMessageLog.setText(Html.fromHtml(messages.toString()));
+                        mChooseModeScroller.smoothScrollTo(0, mChooseModeChatMessageLog.getBottom());
+                        mPlayModeScroller.smoothScrollTo(0, mPlayModeChatMessageLog.getBottom());
                         break;
                     case quickShipBluetoothPacketsToBeSent.SHIPS_PLACED:
                         //String tempBoard = data.getBoard();
@@ -737,14 +831,17 @@ public class quickShipActivityMain extends Activity implements Runnable {
                         //opponentChooseModeDone = true;
                         //checkChooseModeDone("opponent");
 
-                        byte [] tempBoard = data.getBoardv2();
-                        Log.d("DEBUG - received Board", ""+tempBoard.length);
+                        byte[] tempBoard = data.getBoardv2();
+                        Log.d("DEBUG - received Board", "" + tempBoard.length);
                         mGameModel.setOpponentBoardFromByteArray(tempBoard); //TODO
                         opponentChooseModeDone = true;
                         checkChooseModeDone("opponent");
                         break;
 
                     case quickShipBluetoothPacketsToBeSent.MOVES:
+                        opponentChosenTarget = data.getMovesChosen();
+                        opponentTurnDone = true;
+                        checkPlayModeTurnDone("opponent");
                         break;
 
                     case quickShipBluetoothPacketsToBeSent.TURN_DONE:

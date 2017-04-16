@@ -243,7 +243,7 @@ public class BluetoothConnectionService {
         }
 
         public void run(){
-            Log.d(TAG, "ConnecectedThread->run()");
+            Log.d(TAG, "Connected->run()");
             byte[] buffer = new byte[1024];  // buffer store for the stream
 
             int bytes; // bytes returned from read()

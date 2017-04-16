@@ -112,6 +112,10 @@ public class quickShipViewChooseModeGrid extends View {
         mCurrentOrientation = quickShipModelBoardSlot.HORIZONTAL;
     }
 
+    public void setGameModel(quickShipModel playerBoardData) {
+        mGameModel = playerBoardData;
+    }
+
     public void calculateBoardGUIPositions() {
         screenWidth = (float) screen.x;
         screenHeight = (float) screen.y;

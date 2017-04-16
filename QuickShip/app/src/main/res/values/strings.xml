@@ -20,4 +20,6 @@
     <string name="play_mode_player_grid_btn">Your Board</string>
     <string name="play_mode_opponent_grid_btn">Enemy Board</string>
     <string name="play_mode_options_btn">Options</string>
+
+    <string name="game_over_play_again_btn">Play Again</string>
 </resources>

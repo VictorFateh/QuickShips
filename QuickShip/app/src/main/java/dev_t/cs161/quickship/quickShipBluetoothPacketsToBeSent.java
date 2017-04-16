@@ -4,10 +4,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
-/**
- * Created by trinhnguyen on 3/30/17.
- */
-
 public class quickShipBluetoothPacketsToBeSent implements Parcelable {
     private int packetType;
     private String playerID;
@@ -31,9 +27,6 @@ public class quickShipBluetoothPacketsToBeSent implements Parcelable {
         if (packetType == CHAT) {
             this.chatMessage = stringType;
         }
-        //if (packetType == SHIPS_PLACED) {
-        //    this.mBoard = stringType;
-        //}
     }
     public quickShipBluetoothPacketsToBeSent(int packetType, byte [] byteArray) {
         this.packetType = packetType;
@@ -42,6 +35,7 @@ public class quickShipBluetoothPacketsToBeSent implements Parcelable {
         }
     }
 
+    // Used for placing moves
     public quickShipBluetoothPacketsToBeSent(int packetType, int movesChosen, String emojiType) {
         this.packetType = packetType;
         this.movesChosen = movesChosen;

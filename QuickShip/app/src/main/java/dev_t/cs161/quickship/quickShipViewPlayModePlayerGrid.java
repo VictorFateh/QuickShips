@@ -94,6 +94,10 @@ public class quickShipViewPlayModePlayerGrid extends View {
         boardGridFrameDividerY = new Float[11];
     }
 
+    public void setGameModel(quickShipModel playerBoardData) {
+        mGameModel = playerBoardData;
+    }
+
     public void calculateBoardGUIPositions() {
         screenWidth = (float) screen.x;
         screenHeight = (float) screen.y;
