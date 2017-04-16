@@ -17,6 +17,7 @@ public class quickShipBluetoothPacketsToBeSent implements Parcelable {
     private String emojiType;
     private boolean shipsPlaced;
     private String mBoard;
+    private byte [] mBoardv2;
     static final int CHAT = 0;
     static final int SHIPS_PLACED = 1;
     static final int MOVES = 2;
@@ -30,8 +31,14 @@ public class quickShipBluetoothPacketsToBeSent implements Parcelable {
         if (packetType == CHAT) {
             this.chatMessage = stringType;
         }
+        //if (packetType == SHIPS_PLACED) {
+        //    this.mBoard = stringType;
+        //}
+    }
+    public quickShipBluetoothPacketsToBeSent(int packetType, byte [] byteArray) {
+        this.packetType = packetType;
         if (packetType == SHIPS_PLACED) {
-            this.mBoard = stringType;
+            this.mBoardv2 = byteArray;
         }
     }
 
@@ -50,6 +57,10 @@ public class quickShipBluetoothPacketsToBeSent implements Parcelable {
 
     public String getBoard() {
         return mBoard;
+    }
+
+    public byte[] getBoardv2() {
+        return mBoardv2;
     }
 
     public int getPacketType() {
@@ -123,6 +134,9 @@ public class quickShipBluetoothPacketsToBeSent implements Parcelable {
         dest.writeByte((byte) (turnDone ? 1 : 0));
         dest.writeString(emojiType);
         dest.writeByte((byte) (shipsPlaced ? 1 : 0));
+        dest.writeInt((mBoardv2 != null) ? mBoardv2.length : 0);
+        dest.writeByteArray(mBoardv2);
+
     }
 
     protected quickShipBluetoothPacketsToBeSent(Parcel in) {
@@ -134,6 +148,9 @@ public class quickShipBluetoothPacketsToBeSent implements Parcelable {
         turnDone = in.readByte() != 0;
         emojiType = in.readString();
         shipsPlaced = in.readByte() != 0;
+        mBoardv2 = new byte[in.readInt()];
+        if(mBoardv2.length > 0)
+            in.readByteArray(mBoardv2);
     }
 
     public static final Creator<quickShipBluetoothPacketsToBeSent> CREATOR = new Creator<quickShipBluetoothPacketsToBeSent>() {

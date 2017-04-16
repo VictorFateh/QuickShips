@@ -4,6 +4,7 @@ import android.util.Log;
 import com.google.gson.Gson;
 import java.util.UUID;
 
+
 public class quickShipModel {
 
     private String mPlayerID;
@@ -79,5 +80,11 @@ public class quickShipModel {
     public void setOpponentBoardFromGSON(String gsonBoard) {
         Gson gson = new Gson();
         mOpponentGameBoard = gson.fromJson(gsonBoard, quickShipModelBoard.class);
+    }
+    public void setOpponentBoardFromByteArray(byte [] byteArrayBoard){
+        mOpponentGameBoard.convertByteArray2Board( byteArrayBoard );
+    }
+    public byte[] convertPlayerBoardToByteArray(){
+        return mPlayerGameBoard.convertBoard2ByteArray();
     }
 }

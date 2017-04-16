@@ -215,7 +215,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
                     mChooseModeChatMessageLog.setText(Html.fromHtml(messages.toString()));
 
                     quickShipBluetoothPacketsToBeSent data = new quickShipBluetoothPacketsToBeSent(quickShipBluetoothPacketsToBeSent.CHAT, full_msg);
-
+                    //Log.d("Chat Parcel Byte Size: ",""+ParcelableUtil.marshall(data).length); //debugging
                     mBluetoothConnection.write(ParcelableUtil.marshall(data));
                     mEditTextChatMessageLog.setText("");//clear message
                     return true;//em
@@ -238,7 +238,6 @@ public class quickShipActivityMain extends Activity implements Runnable {
 
 
                     quickShipBluetoothPacketsToBeSent data = new quickShipBluetoothPacketsToBeSent(quickShipBluetoothPacketsToBeSent.CHAT, full_msg);
-
                     mBluetoothConnection.write(ParcelableUtil.marshall(data));
                     mEditTextChatMessageLogInGame.setText("");//clear message
 
@@ -600,7 +599,12 @@ public class quickShipActivityMain extends Activity implements Runnable {
 
     public void doneButton(View button) {
         setChooseModeDoneBtnStatus(false);
-        quickShipBluetoothPacketsToBeSent data = new quickShipBluetoothPacketsToBeSent(quickShipBluetoothPacketsToBeSent.SHIPS_PLACED, mGameModel.convertPlayerBoardToGSON());
+        //String x = mGameModel.convertPlayerBoardToGSON();
+        byte [] x = mGameModel.convertPlayerBoardToByteArray();
+        Log.d("BOARD SIZE: ",""+x.length);
+        //quickShipBluetoothPacketsToBeSent data = new quickShipBluetoothPacketsToBeSent(quickShipBluetoothPacketsToBeSent.SHIPS_PLACED, mGameModel.convertPlayerBoardToGSON());
+        quickShipBluetoothPacketsToBeSent data = new quickShipBluetoothPacketsToBeSent(quickShipBluetoothPacketsToBeSent.SHIPS_PLACED, mGameModel.convertPlayerBoardToByteArray());
+        Log.d("Final Parcel Size: ",""+ParcelableUtil.marshall(data).length);
         mBluetoothConnection.write(ParcelableUtil.marshall(data));
         playerChooseModeDone = true;
         checkChooseModeDone("player");
@@ -727,9 +731,15 @@ public class quickShipActivityMain extends Activity implements Runnable {
                         mChooseModeChatMessageLog.setText(Html.fromHtml(messages.toString()));
                         break;
                     case quickShipBluetoothPacketsToBeSent.SHIPS_PLACED:
-                        String tempBoard = data.getBoard();
-                        Log.d("DEBUG", tempBoard);
-                        mGameModel.setOpponentBoardFromGSON(tempBoard);
+                        //String tempBoard = data.getBoard();
+                        //Log.d("DEBUG", tempBoard);
+                        //mGameModel.setOpponentBoardFromGSON(tempBoard);
+                        //opponentChooseModeDone = true;
+                        //checkChooseModeDone("opponent");
+
+                        byte [] tempBoard = data.getBoardv2();
+                        Log.d("DEBUG - received Board", ""+tempBoard.length);
+                        mGameModel.setOpponentBoardFromByteArray(tempBoard); //TODO
                         opponentChooseModeDone = true;
                         checkChooseModeDone("opponent");
                         break;

@@ -123,6 +123,14 @@ public class quickShipModelBoard {
         completeBoard[index].setAnchor(anchor);
     }
 
+    public int getAnchorIndex(int index){
+        return completeBoard[index].getAnchorIndex();
+    }
+
+    public void setAnchorIndex(int index, int anchorIndex){
+        completeBoard[index].setAnchorIndex(anchorIndex);
+    }
+
     public boolean isHit(int index) {
         return completeBoard[index].isHit();
     }
@@ -352,6 +360,67 @@ public class quickShipModelBoard {
             return true;
         } else {
             return false;
+        }
+    }
+
+    public boolean isBitSet(byte value, int bit){
+        return (value&(1<<bit))!=0;
+    }
+    public byte setBit(byte value, int bit){
+        return (byte) (value|(1<<bit));
+    }
+
+
+    public byte[] convertBoard2ByteArray() {
+        byte[] board = new byte[400];
+        int j=0;
+        for (int i = 0; i < 100; i++) {
+            //isAnchor_isOccupied_booleans used to save isAnchor and isOccupied booleans in least significant bits
+            byte isAnchor_isOccupied_booleans = 0b00000000;
+            if(completeBoard[i].isAnchor()) {
+                Log.d("Board Debug","isAnchor @ "+i);
+                isAnchor_isOccupied_booleans = setBit(isAnchor_isOccupied_booleans, 0);
+            }
+            if(completeBoard[i].isOccupied()){
+                Log.d("Board Debug","isOccupied @ "+i);
+                isAnchor_isOccupied_booleans = setBit(isAnchor_isOccupied_booleans, 1);
+            }
+            board[j++] = isAnchor_isOccupied_booleans;
+            board[j++] = (byte) completeBoard[i].getAnchorIndex();
+            board[j++] =  (byte) completeBoard[i].getOrientation();
+            board[j++] = (byte) completeBoard[i].getShipType();
+            if(completeBoard[i].getAnchorIndex() > 0)
+                Log.d("Board Debug","getAnchorIndex @ "+completeBoard[i].getAnchorIndex());
+
+        }
+        return board;
+    }
+    void convertByteArray2Board(byte [] byteArrayBoard){
+
+        int b_i = 0;
+        for(int i = 0; i < 100; i++){
+            boolean anchorBool = isBitSet( byteArrayBoard[b_i], 0);
+            boolean occupiedBool = isBitSet(byteArrayBoard[b_i], 1);
+            int anchorIndex = byteArrayBoard[b_i+1];
+            int orientation = byteArrayBoard[b_i+2];
+            int shipType = byteArrayBoard[b_i+3];
+
+            completeBoard[i].setAnchor( anchorBool );
+            completeBoard[i].setHit( false );
+            completeBoard[i].setOccupied( occupiedBool );
+            completeBoard[i].setAnchorIndex( anchorIndex );
+            completeBoard[i].setOrientation( orientation );
+            completeBoard[i].setShipType( shipType );
+            b_i += 4;
+
+            //debugging log
+            if(completeBoard[i].isAnchor())
+                Log.d("Board Debug","isAnchor @ "+i);
+            if(completeBoard[i].isOccupied())
+                Log.d("Board Debug","isOccupied @ "+i);
+            if(completeBoard[i].getAnchorIndex() > 0)
+                Log.d("Board Debug","getAnchorIndex @ "+completeBoard[i].getAnchorIndex());
+
         }
     }
 }
