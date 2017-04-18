@@ -2,10 +2,14 @@ package dev_t.cs161.quickship;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.RectF;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -56,6 +60,7 @@ public class quickShipViewPlayModeOpponentGrid extends View {
     private quickShipModel mGameModel;
     private quickShipActivityMain mMainActivity;
     private int fireIndex;
+
 
 
     public quickShipViewPlayModeOpponentGrid(quickShipActivityMain context, quickShipModel gameModel) {
@@ -173,9 +178,9 @@ public class quickShipViewPlayModeOpponentGrid extends View {
         float[] hitXY;
         float[] missXY;
 
-        mGameModel.getOpponentGameBoard().setOccupied(0, true);
-        mGameModel.getOpponentGameBoard().setOccupied(1, true);
-        mGameModel.getOpponentGameBoard().setOccupied(2, true);
+        Drawable hitDrawable = getResources().getDrawable(R.drawable.smoke_hit_02);
+        Bitmap hitBitmap = ((BitmapDrawable) hitDrawable).getBitmap();
+        RectF smokeSquare;
 
         //Loop through enemy board and draw hits and misses
         //Hit slots have red circle drawn
@@ -183,8 +188,11 @@ public class quickShipViewPlayModeOpponentGrid extends View {
         for (int i = 0; i < 100; i++) {
             //If specific index is hit on opponents board paint it as hit
             if (mGameModel.getOpponentGameBoard().isHit(i) && mGameModel.getOpponentGameBoard().isOccupied(i)) {
+
                 hitXY = getIndexXYCoordCircle(i);
                 canvas.drawCircle(hitXY[0], hitXY[1], hitXY[2], boatHitPaint);
+
+               // canvas.drawBitmap(hitBitmap, null, smokeSquare, null);
             }
             //If index was shot at but is not occupied, paint a missed white circle
             else if (mGameModel.getOpponentGameBoard().isHit(i) && !mGameModel.getOpponentGameBoard().isOccupied(i)) {
