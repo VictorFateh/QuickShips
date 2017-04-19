@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -60,6 +61,8 @@ public class quickShipViewPlayModeOpponentGrid extends View {
     private quickShipModel mGameModel;
     private quickShipActivityMain mMainActivity;
     private int fireIndex;
+    private float[] hitXY;
+    private float[] missXY;
 
 
 
@@ -175,12 +178,10 @@ public class quickShipViewPlayModeOpponentGrid extends View {
             canvas.drawRect(boardGridSelectedStartX, boardGridSelectedStartY, boardGridSelectedEndX, boardGridSelectedEndY, boardGridSelectedPaint);
         }
 
-        float[] hitXY;
-        float[] missXY;
-
         Drawable hitDrawable = getResources().getDrawable(R.drawable.smoke_hit_02);
         Bitmap hitBitmap = ((BitmapDrawable) hitDrawable).getBitmap();
-        RectF smokeSquare;
+
+        Rect hitSquare = new Rect();
 
         //Loop through enemy board and draw hits and misses
         //Hit slots have red circle drawn
@@ -188,19 +189,30 @@ public class quickShipViewPlayModeOpponentGrid extends View {
         for (int i = 0; i < 100; i++) {
             //If specific index is hit on opponents board paint it as hit
             if (mGameModel.getOpponentGameBoard().isHit(i) && mGameModel.getOpponentGameBoard().isOccupied(i)) {
-
-                hitXY = getIndexXYCoordCircle(i);
-                canvas.drawCircle(hitXY[0], hitXY[1], hitXY[2], boatHitPaint);
-
-               // canvas.drawBitmap(hitBitmap, null, smokeSquare, null);
+                hitXY = getIndexXYCoord(i);
+                hitSquare.set(Math.round(hitXY[0]), Math.round(hitXY[1]), Math.round(hitXY[2]), Math.round(hitXY[3]));
+                canvas.drawBitmap(hitBitmap, null, hitSquare, null);
             }
-            //If index was shot at but is not occupied, paint a missed white circle
+            //If index was shot at but is not occupied, paint a missed marker
             else if (mGameModel.getOpponentGameBoard().isHit(i) && !mGameModel.getOpponentGameBoard().isOccupied(i)) {
-                missXY = getIndexXYCoordCircle(i);
-                canvas.drawCircle(missXY[0], missXY[1], missXY[2], boatMissPaint);
+                missXY = getIndexXYCoord(i);
+                canvas.drawRect(missXY[0], missXY[1], missXY[2], missXY[3], boatMissPaint);
             }
         }
 
+    }
+
+    // Returns an array where array[0] = x, array[1] = y, array[2] = (bottom right) x, array[3] = (bottom right) y
+    public float[] getIndexXYCoord(int index) {
+        int xIndex = index % 10;
+        index = index / 10;
+        int yIndex = index % 10;
+        float[] returnArray = new float[4];
+        returnArray[0] = boardGridFrameDividerX[xIndex];
+        returnArray[1] = boardGridFrameDividerY[yIndex];
+        returnArray[2] = boardGridFrameDividerX[xIndex + 1];
+        returnArray[3] = boardGridFrameDividerY[yIndex + 1];
+        return returnArray;
     }
 
     //Returns Array for drawing circle in middle of grid
