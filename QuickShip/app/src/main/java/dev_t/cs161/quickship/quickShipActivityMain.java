@@ -653,8 +653,6 @@ public class quickShipActivityMain extends Activity implements Runnable {
     public void fireOpponentBtn(View v) {
         if (!gameOver) {
             playerChosenTarget = playModeOpponentGrid.getCurrentIndex();
-            playModeOpponentGrid.deSelectCell();
-            playModeOpponentGrid.invalidate();
         /*
         Bluetooth Packet Code Goes here to send updated information
          */
@@ -673,6 +671,8 @@ public class quickShipActivityMain extends Activity implements Runnable {
         if (playerTurnDone && opponentTurnDone) {
             mGameModel.getPlayerGameBoard().setHit(opponentChosenTarget, true);
             mGameModel.getOpponentGameBoard().setHit(playerChosenTarget, true);
+            playModeOpponentGrid.deSelectCell();
+            playModePlayerGrid.invalidate();
             playModeOpponentGrid.invalidate();
             String msg = getColoredSpanned("Turn: "+turnCount, "#349edb");
             messages.append(msg + "<br>");
@@ -719,6 +719,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
                 mPlayModeFireBtn.setEnabled(true);
             }
         } else {
+            mPlayModeFireBtn.setEnabled(false);
             if (status.equals("player")) {
                 mPlayModeStatusText.setText("Waiting on opponent...");
                 mPlayModeStatusText.setVisibility(View.VISIBLE);

@@ -687,6 +687,8 @@ public class quickShipViewChooseModeGrid extends View {
             currentIndex = -1;
             mCurrentOrientation = quickShipModelBoardSlot.HORIZONTAL;
             mTempShipSpot.setVisibility(INVISIBLE);
+            mMainActivity.setChooseModeRotateBtnStatus(false);
+            mMainActivity.setChooseModePlaceBtnStatus(false);
         }
         invalidate();
         mShipSelected = true;
