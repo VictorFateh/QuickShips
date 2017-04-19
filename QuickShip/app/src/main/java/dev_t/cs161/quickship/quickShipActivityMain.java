@@ -820,7 +820,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
                         String text = data.getChatMessage();
                         messages.append(text + "<br>");
                         mChooseModeChatMessageLog.setText(Html.fromHtml(messages.toString()));
-                        mChooseModeChatMessageLog.setText(Html.fromHtml(messages.toString()));
+                        mPlayModeChatMessageLog.setText(Html.fromHtml(messages.toString()));
                         mChooseModeScroller.smoothScrollTo(0, mChooseModeChatMessageLog.getBottom());
                         mPlayModeScroller.smoothScrollTo(0, mPlayModeChatMessageLog.getBottom());
                         break;
