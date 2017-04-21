@@ -109,6 +109,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
     private int playerChosenTarget;
     private int opponentChosenTarget;
     private int turnCount;
+    private EmojiconsPopup tempPop;
 
     private static final UUID MY_UUID_INSECURE = UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
 
@@ -121,6 +122,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
         screenHeight = (float) screen.y;
         initialBoot = true;
         initializeView();
+        emojiPopUpInitializer();
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
     }
 
@@ -1131,6 +1133,12 @@ public class quickShipActivityMain extends Activity implements Runnable {
     }
 
     public void trinhTest(View v) {
-        EmojiconsPopup tempPop = new EmojiconsPopup(mSplashScreenFrameLayout, this);
+        tempPop.setSizeForSoftKeyboard();
+        tempPop.showAtBottom();
+    }
+
+    public void emojiPopUpInitializer() {
+        LinearLayout root = (LinearLayout) findViewById(R.id.root_frame);
+        tempPop = new EmojiconsPopup(root, this);
     }
 }
