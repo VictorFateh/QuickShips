@@ -30,7 +30,8 @@
             android:layout_height="match_parent"
             android:layout_weight="5"
             android:gravity="center_horizontal"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:id="@+id/root_frame">
 
             <LinearLayout
                 android:id="@+id/start_game_btn_parent"
@@ -112,6 +113,15 @@
                 android:onClick="enableBluetooth"
                 android:layout_gravity="bottom"
                 android:text="@string/splash_screen_bluetooth_btn"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:onClick="trinhTest"
+                android:layout_gravity="bottom"
+                android:text="Emoji"
+                android:id="@+id/emojiButton"/>
             </LinearLayout>
     </FrameLayout>
 </FrameLayout>

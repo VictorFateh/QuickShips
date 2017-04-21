@@ -1,5 +1,11 @@
 package dev_t.cs161.quickship;
 
+import github.ankushsachdeva.emojicon.EmojiconEditText;
+import github.ankushsachdeva.emojicon.EmojiconGridView.OnEmojiconClickedListener;
+import github.ankushsachdeva.emojicon.EmojiconsPopup;
+import github.ankushsachdeva.emojicon.EmojiconsPopup.OnEmojiconBackspaceClickedListener;
+import github.ankushsachdeva.emojicon.EmojiconsPopup.OnSoftKeyboardOpenCloseListener;
+import github.ankushsachdeva.emojicon.emoji.Emojicon;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -38,6 +44,8 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
+import android.widget.PopupWindow.OnDismissListener;
+import android.view.View.OnClickListener;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -103,6 +111,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
     private int playerChosenTarget;
     private int opponentChosenTarget;
     private int turnCount;
+    private EmojiconsPopup tempPop;
 
     private static final UUID MY_UUID_INSECURE = UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
 
@@ -115,6 +124,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
         screenHeight = (float) screen.y;
         initialBoot = true;
         initializeView();
+        emojiPopUpInitializer();
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
     }
 
@@ -129,6 +139,16 @@ public class quickShipActivityMain extends Activity implements Runnable {
         mTempSelectedShip = (ImageView) findViewById(R.id.temp_ship_spot);
         mPlayModeFireBtn = (Button) findViewById(R.id.play_mode_fire_btn);
         mPlayModeFireBtn.setEnabled(false);
+        mPlayModeFireBtn.setBackgroundResource(R.drawable.firebutton_01_disabled);
+
+        mPlayModeFireBtn.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN)
+                    mPlayModeFireBtn.setBackgroundResource(R.drawable.firebutton_02);
+                return false;
+            }
+        });
 
         mPlayerGridBtn = (Button) findViewById(R.id.play_mode_player_grid_btn);
         mPlayerGridBtn.setOnTouchListener(new View.OnTouchListener() {
@@ -415,6 +435,18 @@ public class quickShipActivityMain extends Activity implements Runnable {
 
     public void setPlayModeFireBtnStatus(boolean status) {
         mPlayModeFireBtn.setEnabled(status);
+        if(status == false){
+            mPlayModeFireBtn.setBackgroundResource(R.drawable.firebutton_01_disabled);
+        }
+    }
+
+    public void setButtonBack(boolean on){
+        if(on == true){
+            mPlayModeFireBtn.setBackgroundResource(R.drawable.firebutton_01);
+        }
+        else {
+            mPlayModeFireBtn.setBackgroundResource(R.drawable.firebutton_01_disabled);
+        }
     }
 
     public void setChooseModeRotateBtnStatus(boolean status) {
@@ -500,7 +532,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
         chooseModeGrid.setGameModel(mGameModel);
         playModeOpponentGrid.setGameModel(mGameModel);
         playModePlayerGrid.setGameModel(mGameModel);
-        mPlayModeFireBtn.setText("Fire!");
+        //mPlayModeFireBtn.setText("Fire!");
         playModeFlipper.setDisplayedChild(1);
         running = true;
     }
@@ -725,6 +757,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
             if (status.equals("player")) {
                 mPlayModeStatusText.setText("Waiting on opponent...");
                 mPlayModeStatusText.setVisibility(View.VISIBLE);
+                mPlayModeFireBtn.setBackgroundResource(R.drawable.firebutton_02);
             } else {
                 mPlayModeStatusText.setText("Your opponent is done...");
                 mPlayModeStatusText.setVisibility(View.VISIBLE);
@@ -1108,5 +1141,28 @@ public class quickShipActivityMain extends Activity implements Runnable {
 //            timePrevFrame = System.currentTimeMillis();
 //            boardScreen.render();
 //        }
+    }
+
+    public void trinhTest(View v) {
+        tempPop.setSizeForSoftKeyboard();
+        tempPop.showAtBottom();
+    }
+
+    public void emojiPopUpInitializer() {
+        LinearLayout root = (LinearLayout) findViewById(R.id.root_frame);
+        tempPop = new EmojiconsPopup(root, this);
+
+        tempPop.setOnEmojiconClickedListener(new OnEmojiconClickedListener() {
+
+            EditText tempText = (EditText) findViewById(R.id.splash_screen_player_name);
+
+            @Override
+            public void onEmojiconClicked(Emojicon emojicon) {
+
+                tempText.append(emojicon.getEmoji());
+                tempPop.dismiss();
+
+            }
+        });
     }
 }
