@@ -36,6 +36,8 @@ public class BluetoothConnectionService {
 
     private ConnectedThread mConnectedThread;
 
+    private boolean startGame = false;
+
     public BluetoothConnectionService(Context context) {
         mContext = context;
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -92,6 +94,7 @@ public class BluetoothConnectionService {
             }
 
             Log.i(TAG, "END mAcceptThread ");
+            startGame = true;
         }
 
         public void cancel() {
@@ -200,7 +203,7 @@ public class BluetoothConnectionService {
         Log.d(TAG, "startClient: Started.");
 
         //initprogress dialog
-        mProgressDialog = ProgressDialog.show(mContext,"Joining Game Lobby"
+        mProgressDialog = ProgressDialog.show(mContext,"Connecting Players"
                 ,"Please Wait...",true);
 
         mConnectThread = new ConnectThread(device, uuid);
@@ -225,7 +228,7 @@ public class BluetoothConnectionService {
 
             //dismiss the progressdialog when connection is established
             try{
-                mProgressDialog.dismiss();
+                //mProgressDialog.dismiss();
             }catch (NullPointerException e){
                 e.printStackTrace();
             }
@@ -248,16 +251,14 @@ public class BluetoothConnectionService {
 
             int bytes; // bytes returned from read()
 
-            /*
-            Intent x = new Intent("incomingMessage");
-            String sendStatus = mmDevice.getName() + " Joined The Game!";
-            x.putExtra("theMsg", sendStatus);
-            LocalBroadcastManager.getInstance(mContext).sendBroadcast( x );
-            */
-            Intent x = new Intent("quickShipCargo");
-            //String sendStatus = mmDevice.getName() + " Joined The Game!";
-            x.putExtra("joinedLobby", true);
-            LocalBroadcastManager.getInstance(mContext).sendBroadcast(x);
+            //Start Game for First Player
+            if(startGame) {
+                mProgressDialog.dismiss();
+                Intent x = new Intent("quickShipCargo");
+                //String sendStatus = mmDevice.getName() + " Joined The Game!";
+                x.putExtra("joinedLobby", true);
+                LocalBroadcastManager.getInstance(mContext).sendBroadcast(x);
+            }
 
             // Keep listening to the InputStream until an exception occurs
             while (true) {
@@ -265,14 +266,22 @@ public class BluetoothConnectionService {
                 try {
                     bytes = mmInStream.read(buffer);
 
-                    //String incomingMessage = new String(buffer, 0, bytes);
-                    //Log.d(TAG, "InputStream: " + incomingMessage);
+
 
                     //Send input to MAIN Activity
                     quickShipBluetoothPacketsToBeSent dataPackage = ParcelableUtil.unmarshall(buffer,quickShipBluetoothPacketsToBeSent.CREATOR);
-                            //Intent incomingMessageIntent = new Intent("incomingMessage");
-                    //incomingMessageIntent.putExtra("theMsg", incomingMessage);
-                    //quickShipBluetoothPacketsToBeSent dataPacket = new quickShipBluetoothPacketsToBeSent(PacketType.CHAT, incomingMessage);
+
+                    //Start Game for Second Player
+                    if( startGame == false ){
+                        if(dataPackage.isTurnDone()){
+                            mProgressDialog.dismiss();
+                            startGame = true;
+                            Intent x = new Intent("quickShipCargo");
+                            x.putExtra("joinedLobby", true);
+                            LocalBroadcastManager.getInstance(mContext).sendBroadcast(x);
+                        }
+                    }
+
                     Intent quickShipCargo = new Intent("quickShipCargo");
                     quickShipCargo.putExtra("quickShipPackage", dataPackage);
 

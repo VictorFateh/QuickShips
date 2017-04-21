@@ -865,6 +865,9 @@ public class quickShipActivityMain extends Activity implements Runnable {
                 mBTListViewDialog.dismiss();
                 newGame();
                 mainScreenViewFlipper.setDisplayedChild(1);
+                //Notify Second Player to start Game.
+                quickShipBluetoothPacketsToBeSent data = new quickShipBluetoothPacketsToBeSent(quickShipBluetoothPacketsToBeSent.TURN_DONE, true);
+                mBluetoothConnection.write(ParcelableUtil.marshall(data));
             }
         }
     };
@@ -879,7 +882,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
                 // Discovery has found a device. Get the BluetoothDevice
                 // object and its info from the Intent.
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                if (device.getName() != null && device.getName().contains("QSBT")) {
+                if (device.getName() != null && device.getName().contains("QSBT_")) {
                     mBTDevices.add(device);
                 }
                 Log.d("Discovered Device: ", "" + device.getName());
@@ -966,6 +969,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
                 // case1: bonded already
                 if (device.getBondState() == BluetoothDevice.BOND_BONDED) {
                     toast_displayMessage("Connection Established!");
+                    Log.d("BT Bonding", "BONDED with "+device.getName());
                     mBTDevice = device; // device it is paired with
                     //mBTListViewDialog.dismiss();
                     // Make new game. Show choose mode screen
@@ -976,10 +980,13 @@ public class quickShipActivityMain extends Activity implements Runnable {
                 // case 2: creating a bond
                 if (device.getBondState() == BluetoothDevice.BOND_BONDING) {
                     toast_displayMessage("Devices Bonding...");
+                    Log.d("BT Bonding", "Bonding with "+device.getName());
                 }
 
                 // case 3: disconnecting a bond
                 if (device.getBondState() == BluetoothDevice.BOND_NONE) {
+                    Log.d("BT Bonding", "Bond NONE with "+device.getName());
+                    /*
                     AlertDialog alertDialog = new AlertDialog.Builder(mActivityMain).create();
                     alertDialog.setTitle("Disconnect");
                     alertDialog.setMessage("Device Disconnected");
@@ -990,6 +997,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
                                               }
                                           });
                     alertDialog.show();
+                    */
                 }
 
             }
@@ -1060,11 +1068,12 @@ public class quickShipActivityMain extends Activity implements Runnable {
                 if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR2) {
                     toast_displayMessage("Attempting to connect with...\n" + deviceName + "\n" + deviceMAC);
 
-                    mBTDevices.get(i).createBond();
-
-                    mBTDevice = mBTDevices.get(i);
-                    mBluetoothConnection = new BluetoothConnectionService(mActivityMain);
-                    startConnection();
+                    if(mBTDevices.get(i).createBond()) {
+                        Log.d("BT Create Bond", "True");
+                        mBTDevice = mBTDevices.get(i);
+                        mBluetoothConnection = new BluetoothConnectionService(mActivityMain);
+                        startConnection();
+                    }
                 }
 
                 mBTListViewDialog.dismiss();
