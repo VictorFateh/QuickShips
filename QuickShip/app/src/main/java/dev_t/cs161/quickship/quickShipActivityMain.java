@@ -208,7 +208,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
                     String full_msg = getColoredSpanned(mPlayerName + ": " + mChooseModeEditTextSend.getText().toString(), "#000000");
                     messages.append(full_msg + "<br>");
                     mChooseModeChatMessageLog.setText(Html.fromHtml(messages.toString()));
-                    mChooseModeChatMessageLog.setText(Html.fromHtml(messages.toString()));
+                    mPlayModeChatMessageLog.setText(Html.fromHtml(messages.toString()));
                     mChooseModeScroller.smoothScrollTo(0, mChooseModeChatMessageLog.getBottom());
                     mPlayModeScroller.smoothScrollTo(0, mPlayModeChatMessageLog.getBottom());
 
@@ -232,7 +232,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
                     String full_msg = getColoredSpanned(mPlayerName + ": " + mPlayModeEditTextSend.getText().toString(), "#000000");
                     messages.append(full_msg + "<br>");
                     mChooseModeChatMessageLog.setText(Html.fromHtml(messages.toString()));
-                    mChooseModeChatMessageLog.setText(Html.fromHtml(messages.toString()));
+                    mPlayModeChatMessageLog.setText(Html.fromHtml(messages.toString()));
                     mChooseModeScroller.smoothScrollTo(0, mChooseModeChatMessageLog.getBottom());
                     mPlayModeScroller.smoothScrollTo(0, mPlayModeChatMessageLog.getBottom());
 
