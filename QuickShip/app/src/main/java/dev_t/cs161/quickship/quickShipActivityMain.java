@@ -1,5 +1,11 @@
 package dev_t.cs161.quickship;
 
+import github.ankushsachdeva.emojicon.EmojiconEditText;
+import github.ankushsachdeva.emojicon.EmojiconGridView.OnEmojiconClickedListener;
+import github.ankushsachdeva.emojicon.EmojiconsPopup;
+import github.ankushsachdeva.emojicon.EmojiconsPopup.OnEmojiconBackspaceClickedListener;
+import github.ankushsachdeva.emojicon.EmojiconsPopup.OnSoftKeyboardOpenCloseListener;
+import github.ankushsachdeva.emojicon.emoji.Emojicon;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -1122,5 +1128,9 @@ public class quickShipActivityMain extends Activity implements Runnable {
 //            timePrevFrame = System.currentTimeMillis();
 //            boardScreen.render();
 //        }
+    }
+
+    public void trinhTest(View v) {
+        EmojiconsPopup tempPop = new EmojiconsPopup(mSplashScreenFrameLayout, this);
     }
 }
