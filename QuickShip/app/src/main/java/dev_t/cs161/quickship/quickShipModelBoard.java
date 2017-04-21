@@ -411,6 +411,7 @@ public class quickShipModelBoard {
             completeBoard[i].setAnchorIndex( anchorIndex );
             completeBoard[i].setOrientation( orientation );
             completeBoard[i].setShipType( shipType );
+            completeBoard[i].setEmoji("");
             b_i += 4;
 
             //debugging log
