@@ -291,6 +291,7 @@ public class quickShipViewPlayModeOpponentGrid extends View {
                                     Log.d("debug", "Index: " + currentIndex);
                                     calculateSelectedRect(currentIndex);
                                     mMainActivity.setPlayModeFireBtnStatus(true);
+                                    mMainActivity.setButtonBack(true);
                                 }
                             } else {
                                 deSelectCell();

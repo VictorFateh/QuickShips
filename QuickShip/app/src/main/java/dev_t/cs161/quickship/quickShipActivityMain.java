@@ -129,6 +129,16 @@ public class quickShipActivityMain extends Activity implements Runnable {
         mTempSelectedShip = (ImageView) findViewById(R.id.temp_ship_spot);
         mPlayModeFireBtn = (Button) findViewById(R.id.play_mode_fire_btn);
         mPlayModeFireBtn.setEnabled(false);
+        mPlayModeFireBtn.setBackgroundResource(R.drawable.firebutton_01_disabled);
+
+        mPlayModeFireBtn.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN)
+                    mPlayModeFireBtn.setBackgroundResource(R.drawable.firebutton_02);
+                return false;
+            }
+        });
 
         mPlayerGridBtn = (Button) findViewById(R.id.play_mode_player_grid_btn);
         mPlayerGridBtn.setOnTouchListener(new View.OnTouchListener() {
@@ -415,6 +425,18 @@ public class quickShipActivityMain extends Activity implements Runnable {
 
     public void setPlayModeFireBtnStatus(boolean status) {
         mPlayModeFireBtn.setEnabled(status);
+        if(status == false){
+            mPlayModeFireBtn.setBackgroundResource(R.drawable.firebutton_01_disabled);
+        }
+    }
+
+    public void setButtonBack(boolean on){
+        if(on == true){
+            mPlayModeFireBtn.setBackgroundResource(R.drawable.firebutton_01);
+        }
+        else {
+            mPlayModeFireBtn.setBackgroundResource(R.drawable.firebutton_01_disabled);
+        }
     }
 
     public void setChooseModeRotateBtnStatus(boolean status) {
@@ -500,7 +522,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
         chooseModeGrid.setGameModel(mGameModel);
         playModeOpponentGrid.setGameModel(mGameModel);
         playModePlayerGrid.setGameModel(mGameModel);
-        mPlayModeFireBtn.setText("Fire!");
+        //mPlayModeFireBtn.setText("Fire!");
         playModeFlipper.setDisplayedChild(1);
         running = true;
     }
@@ -725,6 +747,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
             if (status.equals("player")) {
                 mPlayModeStatusText.setText("Waiting on opponent...");
                 mPlayModeStatusText.setVisibility(View.VISIBLE);
+                mPlayModeFireBtn.setBackgroundResource(R.drawable.firebutton_02);
             } else {
                 mPlayModeStatusText.setText("Your opponent is done...");
                 mPlayModeStatusText.setVisibility(View.VISIBLE);
