@@ -44,6 +44,8 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
+import android.widget.PopupWindow.OnDismissListener;
+import android.view.View.OnClickListener;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -1140,5 +1142,18 @@ public class quickShipActivityMain extends Activity implements Runnable {
     public void emojiPopUpInitializer() {
         LinearLayout root = (LinearLayout) findViewById(R.id.root_frame);
         tempPop = new EmojiconsPopup(root, this);
+
+        tempPop.setOnEmojiconClickedListener(new OnEmojiconClickedListener() {
+
+            EditText tempText = (EditText) findViewById(R.id.splash_screen_player_name);
+
+            @Override
+            public void onEmojiconClicked(Emojicon emojicon) {
+
+                tempText.append(emojicon.getEmoji());
+                tempPop.dismiss();
+
+            }
+        });
     }
 }

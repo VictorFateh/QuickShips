@@ -120,7 +120,8 @@
                 android:textSize="20sp"
                 android:onClick="trinhTest"
                 android:layout_gravity="bottom"
-                android:text="Emoji"/>
+                android:text="Emoji"
+                android:id="@+id/emojiButton"/>
             </LinearLayout>
     </FrameLayout>
 </FrameLayout>
