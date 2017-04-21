@@ -12,7 +12,7 @@ public class quickShipModelBoardSlot {
     private int mOrientation;
     private int mShipType;
     private int mAnchorIndex;
-    private String emoji;
+    private int emoji;
     static final int HORIZONTAL = 0;
     static final int VERTICAL = 1;
 
@@ -27,7 +27,7 @@ public class quickShipModelBoardSlot {
         setOccupied(false);
         setAnchor(false);
         setAnchorIndex(-1);
-        emoji="";
+        emoji=0;
     }
 
     // For anchor spots
@@ -38,7 +38,7 @@ public class quickShipModelBoardSlot {
         setAnchorIndex(anchorIndex);
         setShipType(shipType);
         setOrientation(orientation);
-        emoji="";
+        emoji=0;
     }
 
     // For child of anchor spots
@@ -48,13 +48,13 @@ public class quickShipModelBoardSlot {
         setOccupied(true);
         setAnchorIndex(anchorIndex);
         setShipType(shipType);
-        emoji="";
+        emoji=0;
     }
-    public void setEmoji(String newEmoji) {
+    public void setEmoji(int newEmoji) {
         emoji = newEmoji;
     }
 
-    public String getEmoji() {
+    public int getEmoji() {
         return emoji;
     }
 
