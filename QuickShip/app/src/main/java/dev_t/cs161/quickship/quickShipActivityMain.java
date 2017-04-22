@@ -861,15 +861,9 @@ public class quickShipActivityMain extends Activity implements Runnable {
                         mPlayModeScroller.smoothScrollTo(0, mPlayModeChatMessageLog.getBottom());
                         break;
                     case quickShipBluetoothPacketsToBeSent.SHIPS_PLACED:
-                        //String tempBoard = data.getBoard();
-                        //Log.d("DEBUG", tempBoard);
-                        //mGameModel.setOpponentBoardFromGSON(tempBoard);
-                        //opponentChooseModeDone = true;
-                        //checkChooseModeDone("opponent");
-
                         byte[] tempBoard = data.getBoardv2();
                         Log.d("DEBUG - received Board", "" + tempBoard.length);
-                        mGameModel.setOpponentBoardFromByteArray(tempBoard); //TODO
+                        mGameModel.setOpponentBoardFromByteArray(tempBoard);
                         opponentChooseModeDone = true;
                         checkChooseModeDone("opponent");
                         break;
@@ -892,9 +886,8 @@ public class quickShipActivityMain extends Activity implements Runnable {
                     case quickShipBluetoothPacketsToBeSent.NAME_CHANGE:
                         break;
                 }
-            } else if (intent.getBooleanExtra("joinedLobby", false)) {
-                //TODO Display when user has joined.
-                Log.d("MainActivity ->", "JoinedLobby triggered.");
+            } else if (intent.getBooleanExtra("startGame", false)) {
+                Log.d("MainActivity ->", "startGame triggered.");
                 mBTListViewDialog.dismiss();
                 newGame();
                 mainScreenViewFlipper.setDisplayedChild(1);
@@ -929,10 +922,15 @@ public class quickShipActivityMain extends Activity implements Runnable {
                         String deviceMAC = mBTDevices.get(i).getAddress();
                         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR2) {
                             toast_displayMessage("Attempting to bond with...\n" + deviceName + "\n" + deviceMAC);
-                            mBTDevices.get(i).createBond();
-                            mBTDevice = mBTDevices.get(i);
-                            mBluetoothConnection = new BluetoothConnectionService(mActivityMain);
-                            startConnection();
+                            if (mBTDevices.get(i).getBondState() == BluetoothDevice.BOND_BONDED) {
+                                Log.d("Bonding With", "On click " + mBTDevices.get(i).getName());
+                                mBTDevice = mBTDevices.get(i);
+                                mBluetoothConnection = new BluetoothConnectionService(mActivityMain);
+                                startConnection();
+                            }else{
+                                mBTDevices.get(i).createBond();
+                            }
+
                         }
                     }
                 });
@@ -1001,9 +999,20 @@ public class quickShipActivityMain extends Activity implements Runnable {
 
                 // case1: bonded already
                 if (device.getBondState() == BluetoothDevice.BOND_BONDED) {
-                    toast_displayMessage("Connection Established!");
                     Log.d("BT Bonding", "BONDED with "+device.getName());
-                    mBTDevice = device; // device it is paired with
+                    AlertDialog alertDialog = new AlertDialog.Builder(mActivityMain).create();
+                    alertDialog.setTitle("Devices Successfully Paired");
+                    alertDialog.setMessage("Please Reconnect");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                    //mBTDevice = device; // device it is paired with
+                    //mBluetoothConnection = new BluetoothConnectionService(mActivityMain);
+                    //startConnection();
                     //mBTListViewDialog.dismiss();
                     // Make new game. Show choose mode screen
                     //newGame();
@@ -1012,7 +1021,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
 
                 // case 2: creating a bond
                 if (device.getBondState() == BluetoothDevice.BOND_BONDING) {
-                    toast_displayMessage("Devices Bonding...");
+                    toast_displayMessage("Pairing Devices...");
                     Log.d("BT Bonding", "Bonding with "+device.getName());
                 }
 

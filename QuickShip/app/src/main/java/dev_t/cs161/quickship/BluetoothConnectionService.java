@@ -203,8 +203,8 @@ public class BluetoothConnectionService {
         Log.d(TAG, "startClient: Started.");
 
         //initprogress dialog
-        mProgressDialog = ProgressDialog.show(mContext,"Connecting Players"
-                ,"Please Wait...",true);
+        mProgressDialog = ProgressDialog.show(mContext,"Starting Game"
+                ,"Waiting for Player...",true);
 
         mConnectThread = new ConnectThread(device, uuid);
         mConnectThread.start();
@@ -256,7 +256,7 @@ public class BluetoothConnectionService {
                 mProgressDialog.dismiss();
                 Intent x = new Intent("quickShipCargo");
                 //String sendStatus = mmDevice.getName() + " Joined The Game!";
-                x.putExtra("joinedLobby", true);
+                x.putExtra("startGame", true);
                 LocalBroadcastManager.getInstance(mContext).sendBroadcast(x);
             }
 
@@ -277,7 +277,7 @@ public class BluetoothConnectionService {
                             mProgressDialog.dismiss();
                             startGame = true;
                             Intent x = new Intent("quickShipCargo");
-                            x.putExtra("joinedLobby", true);
+                            x.putExtra("startGame", true);
                             LocalBroadcastManager.getInstance(mContext).sendBroadcast(x);
                         }
                     }
