@@ -5,8 +5,12 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.text.Layout;
+import android.text.StaticLayout;
+import android.text.TextPaint;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -217,7 +221,10 @@ public class debugQuickShipViewPlayModeOpponentGrid extends View {
         // draw selected square
         if (boardGridSelectedStartX != null && boardGridSelectedEndX != null && boardGridSelectedStartY != null && boardGridSelectedEndY != null) {
             String emoji = mMainActivity.getOpponentChosenEmoji();
-            renderEmoji(emoji, boardGridCellWidth, boardGridSelectedStartX, boardGridSelectedStartY, canvas);
+            //renderEmoji(emoji, boardGridCellWidth, boardGridSelectedStartX, boardGridSelectedStartY, canvas);
+            Bitmap emojiBitmap = textToBitmap(emoji, boardGridCellWidth);
+            hitSquare.set(Math.round(boardGridSelectedStartX), Math.round(boardGridSelectedStartY), Math.round(boardGridSelectedEndX), Math.round(boardGridSelectedEndY));
+            canvas.drawBitmap(emojiBitmap, null, hitSquare, null);
         }
     }
 
@@ -535,5 +542,42 @@ public class debugQuickShipViewPlayModeOpponentGrid extends View {
         // Set the paint for that size.
         emojiPaint.setTextSize(desiredTextSize - 2);
         canvas.drawText(emojiString, x+1, y - (1.4f*(emojiPaint.ascent()+emojiPaint.descent())), emojiPaint);
+    }
+
+    public static Bitmap textToBitmap(String text, float textWidth) {
+        final float testTextSize = 48f;
+        TextPaint textBoundPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG | Paint.LINEAR_TEXT_FLAG);
+        textBoundPaint.setStyle(Paint.Style.FILL);
+        textBoundPaint.setColor(Color.BLACK);
+        textBoundPaint.setTextAlign(Paint.Align.LEFT);
+        // Get the bounds of the text, using our testTextSize.
+        textBoundPaint.setTextSize(testTextSize);
+        Rect bounds = new Rect();
+        textBoundPaint.getTextBounds(text, 0, text.length(), bounds);
+
+        // Calculate the desired size as a proportion of our testTextSize.
+        float calculatedTextSize = (testTextSize * textWidth / bounds.width())-2;
+        textBoundPaint.setTextSize(calculatedTextSize);
+
+        StaticLayout mTextLayout = new StaticLayout(text, textBoundPaint, Math.round(textWidth), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
+
+        // Create bitmap and canvas to draw to
+        Bitmap b = Bitmap.createBitmap(Math.round(textWidth), mTextLayout.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(b);
+
+        // Draw background
+//        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.LINEAR_TEXT_FLAG);
+//        paint.setStyle(Paint.Style.FILL);
+//        paint.setColor(Color.BLUE);
+//        c.drawPaint(paint);
+
+        // Draw text
+        c.save();
+        c.translate(2, 0);
+        //c.translate(0, 0);
+        mTextLayout.draw(c);
+        c.restore();
+
+        return b;
     }
 }
