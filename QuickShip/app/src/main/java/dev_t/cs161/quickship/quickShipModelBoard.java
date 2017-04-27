@@ -411,16 +411,16 @@ public class quickShipModelBoard {
             completeBoard[i].setAnchorIndex( anchorIndex );
             completeBoard[i].setOrientation( orientation );
             completeBoard[i].setShipType( shipType );
-            completeBoard[i].setEmoji(0);
+            completeBoard[i].setEmoji("");
             b_i += 4;
 
             //debugging log
-            if(completeBoard[i].isAnchor())
-                Log.d("Board Debug","isAnchor @ "+i);
-            if(completeBoard[i].isOccupied())
-                Log.d("Board Debug","isOccupied @ "+i);
-            if(completeBoard[i].getAnchorIndex() > 0)
-                Log.d("Board Debug","getAnchorIndex @ "+completeBoard[i].getAnchorIndex());
+//            if(completeBoard[i].isAnchor())
+//                Log.d("Board Debug","isAnchor @ "+i);
+//            if(completeBoard[i].isOccupied())
+//                Log.d("Board Debug","isOccupied @ "+i);
+//            if(completeBoard[i].getAnchorIndex() > 0)
+//                Log.d("Board Debug","getAnchorIndex @ "+completeBoard[i].getAnchorIndex());
 
         }
     }

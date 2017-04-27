@@ -1,7 +1,5 @@
 package dev_t.cs161.quickship;
 
-import android.app.Activity;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -10,6 +8,7 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.MotionEvent;
@@ -17,7 +16,7 @@ import android.view.View;
 
 import static java.lang.Math.abs;
 
-public class quickShipViewPlayModePlayerGrid extends View {
+public class debugQuickShipViewPlayModeOpponentGrid extends View {
 
     private Point screen = new Point();
     private volatile boolean held;
@@ -59,12 +58,13 @@ public class quickShipViewPlayModePlayerGrid extends View {
     private quickShipActivityMain mMainActivity;
     private Bitmap hitBitmap;
     private Rect hitSquare;
+    private int fireIndex;
     private float[] hitXY;
     private float[] missXY;
     private Paint emojiPaint;
 
 
-    public quickShipViewPlayModePlayerGrid(quickShipActivityMain context, quickShipModel gameModel) {
+    public debugQuickShipViewPlayModeOpponentGrid(quickShipActivityMain context, quickShipModel gameModel) {
         super(context);
         mMainActivity = context;
         mGameModel = gameModel;
@@ -74,8 +74,12 @@ public class quickShipViewPlayModePlayerGrid extends View {
         calculateBoardGUIPositions();
     }
 
+    public int getFireIndex() {
+        return fireIndex;
+    }
+
     public void initializeValues() {
-        mTitle = getContext().getResources().getString(R.string.play_mode_grid_player_title);
+        mTitle = getContext().getResources().getString(R.string.play_mode_grid_opponent_title);
         held = true;
         currentIndex = -1;
 
@@ -85,23 +89,23 @@ public class quickShipViewPlayModePlayerGrid extends View {
 
         boardGridFramePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         boardGridFramePaint.setStyle(Paint.Style.FILL);
-        boardGridFramePaint.setColor(mMainActivity.getResources().getColor(R.color.play_mode_player_grid));
+        boardGridFramePaint.setColor(mMainActivity.getResources().getColor(R.color.play_mode_opponent_grid));
 
         boatHitPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         boatHitPaint.setStyle(Paint.Style.FILL);
-        boatHitPaint.setColor(mMainActivity.getResources().getColor(R.color.play_mode_player_ship_hit));
+        boatHitPaint.setColor(mMainActivity.getResources().getColor(R.color.play_mode_opponent_ship_hit));
 
         boatMissPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         boatMissPaint.setStyle(Paint.Style.FILL);
-        boatMissPaint.setColor(mMainActivity.getResources().getColor(R.color.play_mode_player_ship_miss));
+        boatMissPaint.setColor(mMainActivity.getResources().getColor(R.color.play_mode_opponent_ship_miss));
 
         boardGridLinePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         boardGridLinePaint.setStyle(Paint.Style.STROKE);
-        int dpSize =  1;
-        DisplayMetrics dm = mMainActivity.getResources().getDisplayMetrics() ;
+        int dpSize = 1;
+        DisplayMetrics dm = mMainActivity.getResources().getDisplayMetrics();
         boardGridLinePaintStrokeWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpSize, dm);
         boardGridLinePaint.setStrokeWidth(boardGridLinePaintStrokeWidth);
-        boardGridLinePaint.setColor(mMainActivity.getResources().getColor(R.color.play_mode_player_grid_line));
+        boardGridLinePaint.setColor(mMainActivity.getResources().getColor(R.color.play_mode_opponent_grid_line));
 
         boardGridSelectedPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         boardGridSelectedPaint.setStyle(Paint.Style.FILL);
@@ -179,15 +183,14 @@ public class quickShipViewPlayModePlayerGrid extends View {
 
         // Color hit and missed boxes properly
         for (int i = 0; i < 100; i++) {
-            if (mGameModel.getPlayerGameBoard().isHit(i) && mGameModel.getPlayerGameBoard().isOccupied(i)) {
+            if (mGameModel.getOpponentGameBoard().isHit(i) && mGameModel.getOpponentGameBoard().isOccupied(i)) {
                 hitXY = getIndexXYCoord(i);
                 canvas.drawRect(hitXY[0], hitXY[1], hitXY[2], hitXY[3], boatHitPaint);
                 canvas.drawLine(hitXY[0], hitXY[1], hitXY[2], hitXY[1], boardGridLinePaint);
                 canvas.drawLine(hitXY[0], hitXY[1], hitXY[0], hitXY[3], boardGridLinePaint);
                 canvas.drawLine(hitXY[2], hitXY[1], hitXY[2], hitXY[3], boardGridLinePaint);
                 canvas.drawLine(hitXY[0], hitXY[3], hitXY[2], hitXY[3], boardGridLinePaint);
-            }
-            else if (mGameModel.getPlayerGameBoard().isHit(i) && !mGameModel.getPlayerGameBoard().isOccupied(i)) {
+            } else if (mGameModel.getOpponentGameBoard().isHit(i) && !mGameModel.getOpponentGameBoard().isOccupied(i)) {
                 missXY = getIndexXYCoord(i);
                 canvas.drawRect(missXY[0], missXY[1], missXY[2], missXY[3], boatMissPaint);
                 canvas.drawLine(missXY[0], missXY[1], missXY[2], missXY[1], boardGridLinePaint);
@@ -199,31 +202,59 @@ public class quickShipViewPlayModePlayerGrid extends View {
 
         // Draw a ship over what was drawn before this
         for (int i = 0; i < 100; i++) {
-            if (mGameModel.getPlayerGameBoard().isAnchor(i)) {
-                quickShipModelBoardSlot anchorShip = mGameModel.getPlayerGameBoard().getShipSlotAtIndex(i);
+            if (mGameModel.getOpponentGameBoard().isAnchor(i) && checkIfCompleteShipDestroyed(i)) {
+                quickShipModelBoardSlot anchorShip = mGameModel.getOpponentGameBoard().getShipSlotAtIndex(i);
                 Bitmap tempBitmap = getGenerateBitmap(anchorShip.getShipType(), anchorShip.getOrientation());
                 float[] tempXYcoord = getIndexXYCanvasBox(anchorShip.getAnchorIndex(), anchorShip.getShipType(), anchorShip.getOrientation());
-                Paint paint = new Paint();
-                paint.setAntiAlias(true);
-                paint.setFilterBitmap(true);
-                paint.setDither(true);
-                canvas.drawBitmap(tempBitmap, null, new RectF(tempXYcoord[0], tempXYcoord[1], tempXYcoord[2], tempXYcoord[3]), paint);
+                Paint paintTempShip = new Paint();
+                paintTempShip.setAntiAlias(true);
+                paintTempShip.setFilterBitmap(true);
+                paintTempShip.setDither(true);
+                canvas.drawBitmap(tempBitmap, null, new RectF(tempXYcoord[0], tempXYcoord[1], tempXYcoord[2], tempXYcoord[3]), paintTempShip);
             }
         }
 
-        // Draw a hit emoji icon over any ship spot that got hit
-        for (int i = 0; i < 100; i++) {
-            if (mGameModel.getOpponentGameBoard().isHit(i) && mGameModel.getOpponentGameBoard().isOccupied(i)) {
-                hitXY = getIndexXYCoord(i);
-                String emoji = mMainActivity.getOpponentChosenEmoji();
-                renderEmoji(emoji, boardGridCellWidth, hitXY[0], hitXY[1], canvas);
-            }
-        }
-
-        // draw selected square. In player board screen. This is unlikely to be executed
+        // draw selected square
         if (boardGridSelectedStartX != null && boardGridSelectedEndX != null && boardGridSelectedStartY != null && boardGridSelectedEndY != null) {
-            canvas.drawRect(boardGridSelectedStartX, boardGridSelectedStartY, boardGridSelectedEndX, boardGridSelectedEndY, boardGridSelectedPaint);
+            String emoji = mMainActivity.getOpponentChosenEmoji();
+            renderEmoji(emoji, boardGridCellWidth, boardGridSelectedStartX, boardGridSelectedStartY, canvas);
         }
+    }
+
+    // Returns an array where array[0] = x, array[1] = y, array[2] = (bottom right) x, array[3] = (bottom right) y
+    public float[] getIndexXYCoord(int index) {
+        int xIndex = index % 10;
+        index = index / 10;
+        int yIndex = index % 10;
+        float[] returnArray = new float[4];
+        returnArray[0] = boardGridFrameDividerX[xIndex];
+        returnArray[1] = boardGridFrameDividerY[yIndex];
+        returnArray[2] = boardGridFrameDividerX[xIndex + 1];
+        returnArray[3] = boardGridFrameDividerY[yIndex + 1];
+        return returnArray;
+    }
+
+    //Returns Array for drawing circle in middle of grid
+    public float[] getIndexXYCoordCircle(int index) {
+        int xIndex = index % 10;
+        index = index / 10;
+        int yIndex = index % 10;
+        float[] returnArray = new float[4];
+        returnArray[0] = boardGridFrameDividerX[xIndex];
+        returnArray[1] = boardGridFrameDividerY[yIndex];
+        returnArray[2] = boardGridFrameDividerX[xIndex + 1];
+        returnArray[3] = boardGridFrameDividerY[yIndex + 1];
+
+        //Circle X Center
+        returnArray[0] = boardGridFrameDividerX[xIndex] + (((boardGridFrameDividerX[xIndex + 1] - boardGridFrameDividerX[xIndex]) / 2));
+
+        //Circle Y Center
+        returnArray[1] = boardGridFrameDividerY[yIndex] + (((boardGridFrameDividerY[yIndex + 1] - boardGridFrameDividerY[yIndex]) / 2));
+
+        //Circle Radius
+        returnArray[2] = (boardGridFrameDividerX[xIndex + 1] - boardGridFrameDividerX[xIndex]) / 3;
+
+        return returnArray;
     }
 
     @Override
@@ -241,9 +272,28 @@ public class quickShipViewPlayModePlayerGrid extends View {
                 endX = event.getX();
                 endY = event.getY();
                 if (initialX > endX && abs(initialX - endX) > swipeThreshold) {
-                    mMainActivity.playModeSwitchToOpponentGrid(null);
+                    mMainActivity.playModeSwitchToOptions(null);
                 } else if (abs(initialX - endX) > swipeThreshold) {
                     mMainActivity.playModeSwitchToPlayerGrid(null);
+                } else {
+                    if (!mMainActivity.isPlayerTurnDone()) {
+                        if (endX >= boardGridFrameStartX && endX <= boardGridFrameEndX && endY >= boardGridFrameStartY && endY <= boardGridFrameEndY && abs(endX - initialX) < 5 && abs(endY - initialY) < 5) {
+                            selectedIndex = calculateCellTouched(initialX, initialY);
+                            if (!mGameModel.getOpponentGameBoard().isHit(selectedIndex)) {
+                                if (selectedIndex != currentIndex) {
+                                    currentIndex = selectedIndex;
+                                    Log.d("debug", "Index: " + currentIndex);
+                                    calculateSelectedRect(currentIndex);
+                                    mMainActivity.setPlayModeFireBtnStatus(true);
+                                    mMainActivity.setButtonBack(true);
+                                }
+                            } else {
+                                deSelectCell();
+                            }
+                        } else {
+                            deSelectCell();
+                        }
+                    }
                 }
                 held = false;
                 break;
@@ -253,8 +303,72 @@ public class quickShipViewPlayModePlayerGrid extends View {
                 break;
             default:
         }
+
         invalidate();
         return true;
+    }
+
+    public void calculateSelectedRect(int index) {
+        int xIndex = index % 10;
+        index = index / 10;
+        int yIndex = index % 10;
+        boardGridSelectedStartX = boardGridFrameDividerX[xIndex];
+        boardGridSelectedEndX = boardGridFrameDividerX[xIndex + 1];
+        boardGridSelectedStartY = boardGridFrameDividerY[yIndex];
+        boardGridSelectedEndY = boardGridFrameDividerY[yIndex + 1];
+    }
+
+    public int calculateCellTouched(float x, float y) {
+        int index = 0;
+        for (int i = 0; i < 10; i++) {
+            if (isBetween(y, boardGridFrameDividerY[i], boardGridFrameDividerY[i + 1])) {
+                for (int j = 0; j < 10; j++) {
+                    if (isBetween(x, boardGridFrameDividerX[j], boardGridFrameDividerX[j + 1])) {
+                        return index;
+                    }
+                    index++;
+                }
+            }
+            index = index + 10;
+        }
+        return index;
+    }
+
+    public float getViewHeight() {
+        return viewHeight;
+    }
+
+    public float getViewWidth() {
+        return viewWidth;
+    }
+
+    public float getBoardGridFrameMargin() {
+        return boardGridFrameMargin;
+    }
+
+    public int getCurrentIndex() {
+        return currentIndex;
+    }
+
+    public void deSelectCell() {
+        mMainActivity.setPlayModeFireBtnStatus(false);
+        currentIndex = -1;
+        boardGridSelectedStartX = null;
+        boardGridSelectedStartY = null;
+        boardGridSelectedEndX = null;
+        boardGridSelectedEndY = null;
+    }
+
+    public static boolean isBetween(float x, float lower, float upper) {
+        return lower <= x && x < upper;
+    }
+
+    public boolean insideBoardGridBound(float x, float y) {
+        if (x < boardGridFrameStartX || x > boardGridFrameEndX || y < boardGridFrameStartY || y > boardGridFrameEndY) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     public Bitmap getGenerateBitmap(int shipType, int orientation) {
@@ -395,80 +509,16 @@ public class quickShipViewPlayModePlayerGrid extends View {
         return returnArray;
     }
 
-    public void calculateSelectedRect(int index) {
-        int xIndex = index % 10;
-        index = index / 10;
-        int yIndex = index % 10;
-        boardGridSelectedStartX = boardGridFrameDividerX[xIndex];
-        boardGridSelectedEndX = boardGridFrameDividerX[xIndex + 1];
-        boardGridSelectedStartY = boardGridFrameDividerY[yIndex];
-        boardGridSelectedEndY = boardGridFrameDividerY[yIndex + 1];
-    }
-
-    // Returns an array where array[0] = x, array[1] = y, array[2] = (bottom right) x, array[3] = (bottom right) y
-    public float[] getIndexXYCoord(int index) {
-        int xIndex = index % 10;
-        index = index / 10;
-        int yIndex = index % 10;
-        float[] returnArray = new float[4];
-        returnArray[0] = boardGridFrameDividerX[xIndex];
-        returnArray[1] = boardGridFrameDividerY[yIndex];
-        returnArray[2] = boardGridFrameDividerX[xIndex + 1];
-        returnArray[3] = boardGridFrameDividerY[yIndex + 1];
-        return returnArray;
-    }
-
-    public int calculateCellTouched(float x, float y) {
-        int index = 0;
-        for (int i = 0; i < 10; i++) {
-            if (isBetween(y, boardGridFrameDividerY[i], boardGridFrameDividerY[i + 1])) {
-                for (int j = 0; j < 10; j++) {
-                    if (isBetween(x, boardGridFrameDividerX[j], boardGridFrameDividerX[j + 1])) {
-                        return index;
-                    }
-                    index++;
-                }
+    // Checks to see if a particular ship got all of its spots hit
+    public boolean checkIfCompleteShipDestroyed(int anchorIndex) {
+        boolean isShipDestroyed = true;
+        for (int i = 0; i < 100; i++) {
+            if (mGameModel.getOpponentGameBoard().getAnchorIndex(i) == anchorIndex && !mGameModel.getOpponentGameBoard().isHit(i)) {
+                isShipDestroyed = false;
+                break;
             }
-            index = index + 10;
         }
-        return index;
-    }
-
-    public float getViewHeight() {
-        return viewHeight;
-    }
-
-    public float getViewWidth() {
-        return viewWidth;
-    }
-
-    public float getBoardGridFrameMargin() {
-        return boardGridFrameMargin;
-    }
-
-    public int getCurrentIndex() {
-        return currentIndex;
-    }
-
-    public void deSelectCell() {
-        currentIndex = -1;
-        boardGridSelectedStartX = null;
-        boardGridSelectedStartY = null;
-        boardGridSelectedEndX = null;
-        boardGridSelectedEndY = null;
-    }
-
-    public static boolean isBetween(float x, float lower, float upper) {
-        return lower <= x && x < upper;
-    }
-
-    public boolean insideBoardGridBound(float x, float y) {
-        if (x < boardGridFrameStartX || x > boardGridFrameEndX || y < boardGridFrameStartY || y > boardGridFrameEndY) {
-            return false;
-        }
-        else {
-            return true;
-        }
+        return isShipDestroyed;
     }
 
     public void renderEmoji(String emojiString, float desiredWidth, float x, float y, Canvas canvas) {

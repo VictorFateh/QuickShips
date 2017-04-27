@@ -79,7 +79,7 @@ public class EmojiconsPopup extends PopupWindow implements ViewPager.OnPageChang
 		View customView = createCustomView();
 		setContentView(customView);
 		setSoftInputMode(LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-		//default size 
+		//default size
 		setSize((int) mContext.getResources().getDimension(R.dimen.keyboard_height), LayoutParams.MATCH_PARENT);
 	}
 	/**

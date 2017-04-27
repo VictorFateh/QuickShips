@@ -65,6 +65,7 @@ public class quickShipViewPlayModeOpponentGrid extends View {
     private int fireIndex;
     private float[] hitXY;
     private float[] missXY;
+    private Paint emojiPaint;
 
 
     public quickShipViewPlayModeOpponentGrid(quickShipActivityMain context, quickShipModel gameModel) {
@@ -115,6 +116,11 @@ public class quickShipViewPlayModeOpponentGrid extends View {
         boardGridSelectedPaint.setColor(mMainActivity.getResources().getColor(R.color.play_mode_player_cell_selected));
         boardGridFrameDividerX = new Float[11];
         boardGridFrameDividerY = new Float[11];
+
+        emojiPaint = new Paint();
+        emojiPaint.setStyle(Paint.Style.FILL);
+        emojiPaint.setColor(Color.BLACK);
+        emojiPaint.setTextAlign(Paint.Align.LEFT);
     }
 
     public void setGameModel(quickShipModel playerBoardData) {
@@ -212,12 +218,12 @@ public class quickShipViewPlayModeOpponentGrid extends View {
             }
         }
 
-        // Draw a hit flame icon over any ship spot that got hit
+        // Draw a hit emoji icon over any ship spot that got hit
         for (int i = 0; i < 100; i++) {
             if (mGameModel.getOpponentGameBoard().isHit(i) && mGameModel.getOpponentGameBoard().isOccupied(i)) {
                 hitXY = getIndexXYCoord(i);
-                hitSquare.set(Math.round(hitXY[0]), Math.round(hitXY[1]), Math.round(hitXY[2]), Math.round(hitXY[3]));
-                canvas.drawBitmap(hitBitmap, null, hitSquare, null);
+                String emoji = mMainActivity.getOpponentChosenEmoji();
+                renderEmoji(emoji, boardGridCellWidth, hitXY[0], hitXY[1], canvas);
             }
         }
 
@@ -525,5 +531,21 @@ public class quickShipViewPlayModeOpponentGrid extends View {
             }
         }
         return isShipDestroyed;
+    }
+
+    public void renderEmoji(String emojiString, float desiredWidth, float x, float y, Canvas canvas) {
+        final float testTextSize = 48f;
+
+        // Get the bounds of the text, using our testTextSize.
+        emojiPaint.setTextSize(testTextSize);
+        Rect bounds = new Rect();
+        emojiPaint.getTextBounds(emojiString, 0, emojiString.length(), bounds);
+
+        // Calculate the desired size as a proportion of our testTextSize.
+        float desiredTextSize = testTextSize * desiredWidth / bounds.width();
+
+        // Set the paint for that size.
+        emojiPaint.setTextSize(desiredTextSize - 2);
+        canvas.drawText(emojiString, x+1, y - (1.4f*(emojiPaint.ascent()+emojiPaint.descent())), emojiPaint);
     }
 }

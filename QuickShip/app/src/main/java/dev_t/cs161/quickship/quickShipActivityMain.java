@@ -18,6 +18,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -110,6 +111,8 @@ public class quickShipActivityMain extends Activity implements Runnable {
     private boolean gameOver;
     private int playerChosenTarget;
     private int opponentChosenTarget;
+    private String playerChosenEmoji;
+    private String opponentChosenEmoji = "\uD83D\uDE00";
     private int turnCount;
     private EmojiconsPopup tempPop;
 
@@ -1152,23 +1155,44 @@ public class quickShipActivityMain extends Activity implements Runnable {
 //        }
     }
 
+    public String getPlayerChosenEmoji() {
+        return playerChosenEmoji;
+    }
+
+    public void setPlayerChosenEmoji(String playerChosenEmoji) {
+        this.playerChosenEmoji = playerChosenEmoji;
+    }
+
+    public String getOpponentChosenEmoji() {
+        return opponentChosenEmoji;
+    }
+
+    public void setOpponentChosenEmoji(String opponentChosenEmoji) {
+        this.opponentChosenEmoji = opponentChosenEmoji;
+    }
+
+    public void debugView(View v) {
+        debugQuickShipViewPlayModeOpponentGrid testGrid = new debugQuickShipViewPlayModeOpponentGrid(this, mGameModel);
+        setContentView(testGrid);
+    }
     public void trinhTest(View v) {
-        tempPop.setSizeForSoftKeyboard();
+        Double widthWithMargin = screenWidth * 0.9;
+        Double heightWithMargin = screenHeight - (screenWidth * 0.1);
+        tempPop.setSize(widthWithMargin.intValue(), heightWithMargin.intValue());
         tempPop.showAtBottom();
     }
 
     public void emojiPopUpInitializer() {
-        LinearLayout root = (LinearLayout) findViewById(R.id.root_frame);
+        FrameLayout root = (FrameLayout) findViewById(R.id.root_frame);
         tempPop = new EmojiconsPopup(root, this);
 
         tempPop.setOnEmojiconClickedListener(new OnEmojiconClickedListener() {
 
-            EditText tempText = (EditText) findViewById(R.id.splash_screen_player_name);
-
             @Override
             public void onEmojiconClicked(Emojicon emojicon) {
 
-                tempText.append(emojicon.getEmoji());
+                opponentChosenEmoji = emojicon.getEmoji();
+                Log.d("DEBUG", opponentChosenEmoji);
                 tempPop.dismiss();
 
             }

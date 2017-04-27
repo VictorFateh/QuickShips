@@ -1,10 +1,5 @@
 package dev_t.cs161.quickship;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
-import java.util.UUID;
-
 public class quickShipModelBoardSlot {
     private boolean isHit;
     private boolean isOccupied;
@@ -12,7 +7,7 @@ public class quickShipModelBoardSlot {
     private int mOrientation;
     private int mShipType;
     private int mAnchorIndex;
-    private int emoji;
+    private String mEmoji;
     static final int HORIZONTAL = 0;
     static final int VERTICAL = 1;
 
@@ -27,7 +22,7 @@ public class quickShipModelBoardSlot {
         setOccupied(false);
         setAnchor(false);
         setAnchorIndex(-1);
-        emoji=0;
+        mEmoji = "";
     }
 
     // For anchor spots
@@ -38,7 +33,7 @@ public class quickShipModelBoardSlot {
         setAnchorIndex(anchorIndex);
         setShipType(shipType);
         setOrientation(orientation);
-        emoji=0;
+        mEmoji = "";
     }
 
     // For child of anchor spots
@@ -48,14 +43,14 @@ public class quickShipModelBoardSlot {
         setOccupied(true);
         setAnchorIndex(anchorIndex);
         setShipType(shipType);
-        emoji=0;
+        mEmoji = "";
     }
-    public void setEmoji(int newEmoji) {
-        emoji = newEmoji;
+    public void setEmoji(String newEmoji) {
+        mEmoji = newEmoji;
     }
 
-    public int getEmoji() {
-        return emoji;
+    public String getEmoji() {
+        return mEmoji;
     }
 
     public int getAnchorIndex() {

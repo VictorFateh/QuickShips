@@ -30,8 +30,7 @@
             android:layout_height="match_parent"
             android:layout_weight="5"
             android:gravity="center_horizontal"
-            android:orientation="vertical"
-            android:id="@+id/root_frame">
+            android:orientation="vertical">
 
             <LinearLayout
                 android:id="@+id/start_game_btn_parent"
@@ -122,6 +121,14 @@
                 android:layout_gravity="bottom"
                 android:text="Emoji"
                 android:id="@+id/emojiButton"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:onClick="debugView"
+                android:layout_gravity="bottom"
+                android:text="Debug"/>
             </LinearLayout>
     </FrameLayout>
 </FrameLayout>
