@@ -327,8 +327,8 @@ public class quickShipActivityMain extends Activity implements Runnable {
                                       public void onClick(DialogInterface dialog, int which) {
                                           dialog.dismiss();
                                           // Temporary show the chooes mode even though there's no bluetooth
-                                          newGame();
-                                          mainScreenViewFlipper.setDisplayedChild(1);
+                                          // newGame();
+                                          // mainScreenViewFlipper.setDisplayedChild(1);
                                       }
                                   });
             alertDialog.show();
