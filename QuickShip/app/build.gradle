@@ -5,7 +5,7 @@ android {
     buildToolsVersion "25.0.2"
     defaultConfig {
         applicationId "dev_t.cs161.quickship"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
@@ -29,4 +29,5 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.google.code.gson:gson:2.8.0'
     compile project(':emojicon')
+    compile 'com.daasuu:FPSAnimator:0.2.3.0'
 }
