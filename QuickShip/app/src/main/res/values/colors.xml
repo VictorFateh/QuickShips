@@ -23,6 +23,8 @@
     <color name="play_mode_opponent_ship_hit">#4466b7</color>
     <color name="play_mode_opponent_ship_miss">#4466b7</color>
     <color name="play_mode_status">#ff2626</color>
+    <color name="play_mode_opponent_frame_color">#e27807</color>
+    <color name="play_mode_player_frame_color">#c6208e</color>
 
     <color name="choose_mode_top">#758e9f</color>
     <color name="choose_mode_bottom">#758e9f</color>
@@ -39,4 +41,5 @@
     <color name="choose_mode_chat_message_hint">#c7c6c6</color>
     <color name="choose_mode_ship_not_selected">#758e9f</color>
     <color name="choose_mode_ship_selected">#e27807</color>
+    <color name="choose_mode_player_frame_color">#46b79f</color>
 </resources>

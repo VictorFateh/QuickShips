@@ -303,7 +303,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
         topFrame.getLayoutParams().height = Math.round(screenWidth);
         topFrame.addView(chooseModeGrid);
         FrameLayout topFrameBorder = (FrameLayout) findViewById(R.id.choose_mode_top_frame_border);
-        topFrameBorder.addView(new quickShipViewGridBorder(this));
+        topFrameBorder.addView(new quickShipViewGridBorder(this, getResources().getColor(R.color.choose_mode_player_frame_color)));
         LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Math.round(screenWidth));
         topLinear.setLayoutParams(param);
 
@@ -315,7 +315,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
         LinearLayout.LayoutParams param2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Math.round(screenWidth));
         topOpponentLinear.setLayoutParams(param2);
         FrameLayout topOpponentFrameBorder = (FrameLayout) findViewById(R.id.play_mode_opponent_top_frame_border);
-        topOpponentFrameBorder.addView(new quickShipViewGridBorder(this));
+        topOpponentFrameBorder.addView(new quickShipViewGridBorder(this, getResources().getColor(R.color.play_mode_opponent_frame_color)));
 
         LinearLayout topPlayerLinear = (LinearLayout) findViewById(R.id.play_mode_player_top_linear);
         FrameLayout topPlayerFrame = (FrameLayout) findViewById(R.id.play_mode_player_top_frame);
@@ -325,7 +325,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
         LinearLayout.LayoutParams param3 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Math.round(screenWidth));
         topPlayerLinear.setLayoutParams(param3);
         FrameLayout topPlayerFrameBorder = (FrameLayout) findViewById(R.id.play_mode_player_top_frame_border);
-        topPlayerFrameBorder.addView(new quickShipViewGridBorder(this));
+        topPlayerFrameBorder.addView(new quickShipViewGridBorder(this, getResources().getColor(R.color.play_mode_player_frame_color)));
     }
 
     public void blueToothInitializeObjects() {

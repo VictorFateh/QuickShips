@@ -30,10 +30,12 @@ public class quickShipViewGridBorder extends View {
     private Paint titlePaint;
     private Float mTitleHeight;
     private quickShipActivityMain mContext;
+    private int mFrameColor;
 
-    public quickShipViewGridBorder(quickShipActivityMain context) {
+    public quickShipViewGridBorder(quickShipActivityMain context, int frameColor) {
         super(context);
         mContext = context;
+        mFrameColor = frameColor;
         Display display = context.getWindowManager().getDefaultDisplay();
         display.getSize(screen);
         calculateBoardGUIPositions();
@@ -46,7 +48,7 @@ public class quickShipViewGridBorder extends View {
         DisplayMetrics dm = mContext.getResources().getDisplayMetrics() ;
         boardGridFrameBorderStrokeWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpSize, dm);
         boardGridFrameBorderPaint.setStrokeWidth(boardGridFrameBorderStrokeWidth);
-        boardGridFrameBorderPaint.setColor(Color.BLACK);
+        boardGridFrameBorderPaint.setColor(mFrameColor);
 
         titlePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         titlePaint.setColor(Color.BLACK);

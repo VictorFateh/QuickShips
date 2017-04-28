@@ -163,7 +163,7 @@ public class quickShipViewChooseModeGrid extends View {
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         canvas.drawText(mTitle, mTitleX, mTitleY, titlePaint);
-        canvas.drawRect(boardGridFrameStartX, boardGridFrameStartY, boardGridFrameEndX, boardGridFrameEndY, boardGridFramePaint);
+        //canvas.drawRect(boardGridFrameStartX, boardGridFrameStartY, boardGridFrameEndX, boardGridFrameEndY, boardGridFramePaint);
 
         float verticalX = boardGridFrameStartX + boardGridCellWidth;
         for (int i = 0; i < 9; i++) {
