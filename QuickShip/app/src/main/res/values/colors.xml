@@ -27,7 +27,7 @@
     <color name="choose_mode_top">#758e9f</color>
     <color name="choose_mode_bottom">#758e9f</color>
     <color name="choose_mode_grid">#66b75c</color>
-    <color name="choose_mode_grid_line">#dcdfe5</color>
+    <color name="choose_mode_grid_line">#478040</color>
     <color name="choose_mode_cell_selected">#f4a442</color>
     <color name="choose_mode_bottom_left">#758e9f</color>
     <color name="choose_mode_bottom_right">#758e9f</color>

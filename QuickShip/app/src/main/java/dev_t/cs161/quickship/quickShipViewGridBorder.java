@@ -30,13 +30,15 @@ public class quickShipViewGridBorder extends View {
     private Paint titlePaint;
     private Float mTitleHeight;
     private quickShipActivityMain mContext;
+    private int boardType;
 
-    public quickShipViewGridBorder(quickShipActivityMain context) {
+    public quickShipViewGridBorder(quickShipActivityMain context, int boardType) {
         super(context);
         mContext = context;
         Display display = context.getWindowManager().getDefaultDisplay();
         display.getSize(screen);
         calculateBoardGUIPositions();
+        this.boardType = boardType;
     }
 
     public void calculateBoardGUIPositions() {
@@ -46,7 +48,18 @@ public class quickShipViewGridBorder extends View {
         DisplayMetrics dm = mContext.getResources().getDisplayMetrics() ;
         boardGridFrameBorderStrokeWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpSize, dm);
         boardGridFrameBorderPaint.setStrokeWidth(boardGridFrameBorderStrokeWidth);
-        boardGridFrameBorderPaint.setColor(Color.BLACK);
+        //boardGridFrameBorderPaint.setColor(Color.BLACK);
+
+        switch (boardType){
+            case 0: boardGridFrameBorderPaint.setColor(Color.BLACK);
+                    break;
+            case 1: boardGridFrameBorderPaint.setColor(mContext.getResources().getColor(R.color.play_mode_opponent_grid));
+                    break;
+            case 2: boardGridFrameBorderPaint.setColor(mContext.getResources().getColor(R.color.play_mode_player_grid));
+                    break;
+            default: boardGridFrameBorderPaint.setColor(Color.WHITE);
+                    break;
+        }
 
         titlePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         titlePaint.setColor(Color.BLACK);
