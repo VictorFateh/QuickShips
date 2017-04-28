@@ -1187,12 +1187,12 @@ public class quickShipActivityMain extends Activity implements Runnable {
     }
 
     public void debugView(View v) {
-        FrameLayout tempDebugScreen = (FrameLayout) findViewById(R.id.debug_animation_root);
+        setContentView(R.layout.debug_animation_screen);
+        LinearLayout debug_screen = (LinearLayout) findViewById(R.id.debug_animation_root2);
         debugQuickShipViewPlayModeOpponentGrid testGrid = new debugQuickShipViewPlayModeOpponentGrid(this, mGameModel);
-        //tempDebugScreen.addView(testGrid);
+        debug_screen.addView(testGrid);
         mFPSTextureView = (FPSTextureView) findViewById(R.id.animation_texture_view);
         emojiBitmap = textToBitmap(opponentChosenEmoji, 50);
-        setContentView(tempDebugScreen);
         mFPSTextureView.tickStart();
 
         Timer mTimer = new Timer();
