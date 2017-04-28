@@ -303,7 +303,11 @@ public class quickShipActivityMain extends Activity implements Runnable {
         topFrame.getLayoutParams().height = Math.round(screenWidth);
         topFrame.addView(chooseModeGrid);
         FrameLayout topFrameBorder = (FrameLayout) findViewById(R.id.choose_mode_top_frame_border);
+<<<<<<< HEAD
         topFrameBorder.addView(new quickShipViewGridBorder(this, getResources().getColor(R.color.choose_mode_player_frame_color)));
+=======
+        topFrameBorder.addView(new quickShipViewGridBorder(this, 0));
+>>>>>>> origin/master
         LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Math.round(screenWidth));
         topLinear.setLayoutParams(param);
 
@@ -315,7 +319,11 @@ public class quickShipActivityMain extends Activity implements Runnable {
         LinearLayout.LayoutParams param2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Math.round(screenWidth));
         topOpponentLinear.setLayoutParams(param2);
         FrameLayout topOpponentFrameBorder = (FrameLayout) findViewById(R.id.play_mode_opponent_top_frame_border);
+<<<<<<< HEAD
         topOpponentFrameBorder.addView(new quickShipViewGridBorder(this, getResources().getColor(R.color.play_mode_opponent_frame_color)));
+=======
+        topOpponentFrameBorder.addView(new quickShipViewGridBorder(this, 1));
+>>>>>>> origin/master
 
         LinearLayout topPlayerLinear = (LinearLayout) findViewById(R.id.play_mode_player_top_linear);
         FrameLayout topPlayerFrame = (FrameLayout) findViewById(R.id.play_mode_player_top_frame);
@@ -325,7 +333,11 @@ public class quickShipActivityMain extends Activity implements Runnable {
         LinearLayout.LayoutParams param3 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Math.round(screenWidth));
         topPlayerLinear.setLayoutParams(param3);
         FrameLayout topPlayerFrameBorder = (FrameLayout) findViewById(R.id.play_mode_player_top_frame_border);
+<<<<<<< HEAD
         topPlayerFrameBorder.addView(new quickShipViewGridBorder(this, getResources().getColor(R.color.play_mode_player_frame_color)));
+=======
+        topPlayerFrameBorder.addView(new quickShipViewGridBorder(this, 2));
+>>>>>>> origin/master
     }
 
     public void blueToothInitializeObjects() {

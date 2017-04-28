@@ -108,7 +108,7 @@ public class quickShipViewPlayModeOpponentGrid extends View {
 
         boardGridLinePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         boardGridLinePaint.setStyle(Paint.Style.STROKE);
-        int dpSize = 1;
+        int dpSize = 2;
         DisplayMetrics dm = mMainActivity.getResources().getDisplayMetrics();
         boardGridLinePaintStrokeWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpSize, dm);
         boardGridLinePaint.setStrokeWidth(boardGridLinePaintStrokeWidth);
