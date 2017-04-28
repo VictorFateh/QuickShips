@@ -289,6 +289,13 @@ public class BluetoothConnectionService {
 
                 } catch (IOException e) {
                     Log.e(TAG, "write: Error reading Input Stream. " + e.getMessage() );
+                    //if game is active and player disconnected
+                    if(startGame){
+                        quickShipBluetoothPacketsToBeSent disconnect = new quickShipBluetoothPacketsToBeSent(quickShipBluetoothPacketsToBeSent.DISCONNECTED, true);
+                        Intent quickShipCargo = new Intent("quickShipCargo");
+                        quickShipCargo.putExtra("quickShipPackage", disconnect);
+                        LocalBroadcastManager.getInstance(mContext).sendBroadcast(quickShipCargo);
+                    }
                     break;
                 }
             }
@@ -335,6 +342,12 @@ public class BluetoothConnectionService {
         //Log.d(TAG, "write: Write Called.");
         //perform the write
         mConnectedThread.write(out);
+    }
+
+    public void disconnect_threads(){
+        mConnectedThread.cancel();
+        mConnectThread.cancel();
+        mInsecureAcceptThread.cancel();
     }
 
 }

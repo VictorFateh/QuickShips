@@ -21,6 +21,7 @@ public class quickShipBluetoothPacketsToBeSent implements Parcelable {
     static final int GAME_WON = 4;
     static final int QUIT = 5;
     static final int NAME_CHANGE = 6;
+    static final int DISCONNECTED = 7;
 
     public quickShipBluetoothPacketsToBeSent(int packetType, String stringType) {
         this.packetType = packetType;
@@ -44,7 +45,7 @@ public class quickShipBluetoothPacketsToBeSent implements Parcelable {
 
     public quickShipBluetoothPacketsToBeSent(int packetType, boolean status) {
         this.packetType = packetType;
-        if (packetType == TURN_DONE) {
+        if (packetType == TURN_DONE || packetType == DISCONNECTED) {
             this.turnDone = status;
         }
     }

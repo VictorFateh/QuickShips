@@ -535,6 +535,10 @@ public class quickShipActivityMain extends Activity implements Runnable {
         chooseModeGrid.setGameModel(mGameModel);
         playModeOpponentGrid.setGameModel(mGameModel);
         playModePlayerGrid.setGameModel(mGameModel);
+        chooseModeGrid.invalidate();
+        playModeOpponentGrid.invalidate();
+        playModePlayerGrid.invalidate();
+        mPlayModeStatusText.setText("");
         //mPlayModeFireBtn.setText("Fire!");
         playModeFlipper.setDisplayedChild(1);
         running = true;
@@ -701,6 +705,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
         else {
             // Add bluetooth disconnection code here
             mainScreenViewFlipper.setDisplayedChild(0);
+            mBluetoothConnection.disconnect_threads();
         }
     }
 
@@ -888,6 +893,21 @@ public class quickShipActivityMain extends Activity implements Runnable {
 
                     case quickShipBluetoothPacketsToBeSent.NAME_CHANGE:
                         break;
+
+                    case quickShipBluetoothPacketsToBeSent.DISCONNECTED:
+                        AlertDialog alertDialog = new AlertDialog.Builder(mActivityMain).create();
+                        alertDialog.setTitle("Player Has Disconnected");
+                        alertDialog.setMessage("Returning to main screen.");
+                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                });
+                        alertDialog.show();
+                        mainScreenViewFlipper.setDisplayedChild(0);
+                        mBluetoothConnection.disconnect_threads();
+                        break;
                 }
             } else if (intent.getBooleanExtra("startGame", false)) {
                 Log.d("MainActivity ->", "startGame triggered.");
@@ -1052,6 +1072,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
     };
 
     private void startConnection() {
+        ((ViewGroup) mDevicesListView.getParent()).removeView(mDevicesListView);
         startBTConnection(mBTDevice, MY_UUID_INSECURE);
     }
 
@@ -1100,7 +1121,6 @@ public class quickShipActivityMain extends Activity implements Runnable {
                 dialogInterface.cancel();
             }
         });
-
         mBTListViewDialog = ad_displayBTDevices.create();
         mBTListViewDialog.show();
         mDevicesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
