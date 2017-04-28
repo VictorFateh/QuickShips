@@ -17,6 +17,9 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
@@ -25,6 +28,9 @@ import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.text.Html;
+import android.text.Layout;
+import android.text.StaticLayout;
+import android.text.TextPaint;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
@@ -48,7 +54,14 @@ import android.widget.ViewFlipper;
 import android.widget.PopupWindow.OnDismissListener;
 import android.view.View.OnClickListener;
 
+import com.daasuu.library.DisplayObject;
+import com.daasuu.library.FPSTextureView;
+import com.daasuu.library.callback.AnimCallBack;
+import com.daasuu.library.drawer.BitmapDrawer;
+
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.UUID;
 
 public class quickShipActivityMain extends Activity implements Runnable {
@@ -115,6 +128,8 @@ public class quickShipActivityMain extends Activity implements Runnable {
     private String opponentChosenEmoji = "\uD83D\uDE00";
     private int turnCount;
     private EmojiconsPopup tempPop;
+    private FPSTextureView mFPSTextureView;
+    private Bitmap emojiBitmap;
 
     private static final UUID MY_UUID_INSECURE = UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
 
@@ -1172,9 +1187,25 @@ public class quickShipActivityMain extends Activity implements Runnable {
     }
 
     public void debugView(View v) {
+        FrameLayout tempDebugScreen = (FrameLayout) findViewById(R.id.debug_animation_screen);
         debugQuickShipViewPlayModeOpponentGrid testGrid = new debugQuickShipViewPlayModeOpponentGrid(this, mGameModel);
-        setContentView(testGrid);
+        //tempDebugScreen.addView(testGrid);
+        mFPSTextureView = (FPSTextureView) findViewById(R.id.animation_texture_view);
+        emojiBitmap = textToBitmap(opponentChosenEmoji, 50);
+        setContentView(tempDebugScreen);
+        mFPSTextureView.tickStart();
+
+        Timer mTimer = new Timer();
+        mTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                for (int i = 0; i < 5; i++) {
+                    createParabolicMotionBitmap(emojiBitmap);
+                }
+            }
+        }, 0, 100);
     }
+
     public void trinhTest(View v) {
         Double widthWithMargin = screenWidth * 0.9;
         Double heightWithMargin = screenHeight - (screenWidth * 0.1);
@@ -1198,4 +1229,52 @@ public class quickShipActivityMain extends Activity implements Runnable {
             }
         });
     }
+
+    private void createParabolicMotionBitmap(Bitmap mBitmap) {
+        final DisplayObject bitmapDisplay = new DisplayObject();
+
+        bitmapDisplay.with(new BitmapDrawer(mBitmap).dpSize(mActivityMain))
+                .parabolic()
+                .transform(0, mFPSTextureView.getHeight())
+                .reboundBottom(false)
+                .accelerationX((float) (15 + Math.random() * 7))
+                .initialVelocityY((float) (-65 + Math.random() * 15))
+                .bottomHitCallback(new AnimCallBack() {
+                    @Override
+                    public void call() {
+                        mFPSTextureView.removeChild(bitmapDisplay);
+                    }
+                })
+                .end();
+
+        mFPSTextureView.addChild(bitmapDisplay);
+    }
+
+    public static Bitmap textToBitmap(String text, float textWidth) {
+        final float testTextSize = 48f;
+        TextPaint textBoundPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG | Paint.LINEAR_TEXT_FLAG);
+        textBoundPaint.setStyle(Paint.Style.FILL);
+        textBoundPaint.setColor(Color.BLACK);
+        textBoundPaint.setTextAlign(Paint.Align.LEFT);
+
+        textBoundPaint.setTextSize(testTextSize);
+        Rect bounds = new Rect();
+        textBoundPaint.getTextBounds(text, 0, text.length(), bounds);
+
+        float calculatedTextSize = (testTextSize * textWidth / bounds.width())-2;
+        textBoundPaint.setTextSize(calculatedTextSize);
+
+        StaticLayout mTextLayout = new StaticLayout(text, textBoundPaint, Math.round(textWidth), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
+
+        Bitmap b = Bitmap.createBitmap(Math.round(textWidth), mTextLayout.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(b);
+
+        c.save();
+        c.translate(2, 0);
+        mTextLayout.draw(c);
+        c.restore();
+
+        return b;
+    }
+
 }

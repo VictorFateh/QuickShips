@@ -216,11 +216,11 @@ public class quickShipViewPlayModePlayerGrid extends View {
 
         // Draw a hit emoji icon over any ship spot that got hit
         for (int i = 0; i < 100; i++) {
-            if (mGameModel.getOpponentGameBoard().isHit(i) && mGameModel.getOpponentGameBoard().isOccupied(i)) {
+            if (mGameModel.getPlayerGameBoard().isHit(i) && mGameModel.getPlayerGameBoard().isOccupied(i)) {
                 hitXY = getIndexXYCoord(i);
                 String emoji = mMainActivity.getOpponentChosenEmoji();
                 //renderEmoji(emoji, boardGridCellWidth, hitXY[0], hitXY[1], canvas);
-                Bitmap emojiBitmap = textToBitmap(emoji, boardGridCellWidth);
+                Bitmap emojiBitmap = mMainActivity.textToBitmap(emoji, boardGridCellWidth);
                 hitSquare.set(Math.round(hitXY[0]), Math.round(hitXY[1]), Math.round(hitXY[2]), Math.round(hitXY[3]));
                 canvas.drawBitmap(emojiBitmap, null, hitSquare, null);
             }
@@ -486,32 +486,5 @@ public class quickShipViewPlayModePlayerGrid extends View {
         // Set the paint for that size.
         emojiPaint.setTextSize(desiredTextSize - 2);
         canvas.drawText(emojiString, x+1, y - (1.4f*(emojiPaint.ascent()+emojiPaint.descent())), emojiPaint);
-    }
-
-    public static Bitmap textToBitmap(String text, float textWidth) {
-        final float testTextSize = 48f;
-        TextPaint textBoundPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG | Paint.LINEAR_TEXT_FLAG);
-        textBoundPaint.setStyle(Paint.Style.FILL);
-        textBoundPaint.setColor(Color.BLACK);
-        textBoundPaint.setTextAlign(Paint.Align.LEFT);
-
-        textBoundPaint.setTextSize(testTextSize);
-        Rect bounds = new Rect();
-        textBoundPaint.getTextBounds(text, 0, text.length(), bounds);
-
-        float calculatedTextSize = (testTextSize * textWidth / bounds.width())-2;
-        textBoundPaint.setTextSize(calculatedTextSize);
-
-        StaticLayout mTextLayout = new StaticLayout(text, textBoundPaint, Math.round(textWidth), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
-
-        Bitmap b = Bitmap.createBitmap(Math.round(textWidth), mTextLayout.getHeight(), Bitmap.Config.ARGB_8888);
-        Canvas c = new Canvas(b);
-
-        c.save();
-        c.translate(2, 0);
-        mTextLayout.draw(c);
-        c.restore();
-
-        return b;
     }
 }
