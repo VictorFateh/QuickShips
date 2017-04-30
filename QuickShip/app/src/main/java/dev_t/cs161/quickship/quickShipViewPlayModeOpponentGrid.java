@@ -225,8 +225,7 @@ public class quickShipViewPlayModeOpponentGrid extends View {
         for (int i = 0; i < 100; i++) {
             if (mGameModel.getOpponentGameBoard().isHit(i) && mGameModel.getOpponentGameBoard().isOccupied(i)) {
                 hitXY = getIndexXYCoord(i);
-                String emoji = mMainActivity.getOpponentChosenEmoji();
-                //renderEmoji(emoji, boardGridCellWidth, hitXY[0], hitXY[1], canvas);
+                String emoji = mGameModel.getOpponentGameBoard().getSlotEmoji(i);
                 Bitmap emojiBitmap = mMainActivity.textToBitmap(emoji, boardGridCellWidth);
                 hitSquare.set(Math.round(hitXY[0]), Math.round(hitXY[1]), Math.round(hitXY[2]), Math.round(hitXY[3]));
                 canvas.drawBitmap(emojiBitmap, null, hitSquare, null);

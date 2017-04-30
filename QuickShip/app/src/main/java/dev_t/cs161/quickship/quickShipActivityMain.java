@@ -127,7 +127,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
     private String playerChosenEmoji;
     private String opponentChosenEmoji = "\uD83D\uDE00";
     private int turnCount;
-    private EmojiconsPopup tempPop;
+    private EmojiconsPopup emojiPopup;
     private FPSTextureView mFPSTextureView;
     private Bitmap emojiBitmap;
 
@@ -707,20 +707,15 @@ public class quickShipActivityMain extends Activity implements Runnable {
 
     //Update opponent grid when user presses fire button
     public void fireOpponentBtn(View v) {
+
         if (!gameOver) {
-            playerChosenTarget = playModeOpponentGrid.getCurrentIndex();
-        /*
-        Bluetooth Packet Code Goes here to send updated information
-         */
-            quickShipBluetoothPacketsToBeSent data = new quickShipBluetoothPacketsToBeSent(quickShipBluetoothPacketsToBeSent.MOVES, playerChosenTarget, "");
-            mBluetoothConnection.write(ParcelableUtil.marshall(data));
-            playerTurnDone = true;
-            checkPlayModeTurnDone("player");
+            emojiPopup.showAtBottom();
         }
         else {
             // Add bluetooth disconnection code here
             mainScreenViewFlipper.setDisplayedChild(0);
             mBluetoothConnection.disconnect_threads();
+
         }
     }
 
@@ -728,6 +723,8 @@ public class quickShipActivityMain extends Activity implements Runnable {
         if (playerTurnDone && opponentTurnDone) {
             mGameModel.getPlayerGameBoard().setHit(opponentChosenTarget, true);
             mGameModel.getOpponentGameBoard().setHit(playerChosenTarget, true);
+            mGameModel.getPlayerGameBoard().getShipSlotAtIndex(opponentChosenTarget).setEmoji(opponentChosenEmoji);
+            mGameModel.getOpponentGameBoard().getShipSlotAtIndex(playerChosenTarget).setEmoji(playerChosenEmoji);
             playModeOpponentGrid.deSelectCell();
             playModePlayerGrid.invalidate();
             playModeOpponentGrid.invalidate();
@@ -893,6 +890,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
 
                     case quickShipBluetoothPacketsToBeSent.MOVES:
                         opponentChosenTarget = data.getMovesChosen();
+                        opponentChosenEmoji = data.getEmojiType();
                         opponentTurnDone = true;
                         checkPlayModeTurnDone("opponent");
                         break;
@@ -1226,25 +1224,29 @@ public class quickShipActivityMain extends Activity implements Runnable {
         }, 0, 100);
     }
 
-    public void trinhTest(View v) {
-        Double widthWithMargin = screenWidth * 0.9;
-        Double heightWithMargin = screenHeight - (screenWidth * 0.1);
-        tempPop.setSize(widthWithMargin.intValue(), heightWithMargin.intValue());
-        tempPop.showAtBottom();
-    }
-
     public void emojiPopUpInitializer() {
         FrameLayout root = (FrameLayout) findViewById(R.id.root_frame);
-        tempPop = new EmojiconsPopup(root, this);
+        emojiPopup = new EmojiconsPopup(root, this);
 
-        tempPop.setOnEmojiconClickedListener(new OnEmojiconClickedListener() {
+        Double widthWithMargin = screenWidth * 0.9;
+        Double heightWithMargin = screenHeight - (screenWidth * 0.1);
+        emojiPopup.setSize(widthWithMargin.intValue(), heightWithMargin.intValue());
+
+        emojiPopup.setOnEmojiconClickedListener(new OnEmojiconClickedListener() {
 
             @Override
             public void onEmojiconClicked(Emojicon emojicon) {
 
-                opponentChosenEmoji = emojicon.getEmoji();
+                playerChosenEmoji = emojicon.getEmoji();
                 Log.d("DEBUG", opponentChosenEmoji);
-                tempPop.dismiss();
+                emojiPopup.dismiss();
+
+                playerChosenTarget = playModeOpponentGrid.getCurrentIndex();
+
+                quickShipBluetoothPacketsToBeSent data = new quickShipBluetoothPacketsToBeSent(quickShipBluetoothPacketsToBeSent.MOVES, playerChosenTarget, getPlayerChosenEmoji());
+                mBluetoothConnection.write(ParcelableUtil.marshall(data));
+                playerTurnDone = true;
+                checkPlayModeTurnDone("player");
 
             }
         });

@@ -21,6 +21,10 @@ public class quickShipModelBoard {
         }
     }
 
+    public String getSlotEmoji(int index) {
+        return completeBoard[index].getEmoji();
+    }
+
     public quickShipModelBoard(String playerID) {
         mPlayerID = playerID;
         mPlayerName = "Player";

@@ -45,8 +45,9 @@ public class quickShipModelBoardSlot {
         setShipType(shipType);
         mEmoji = "";
     }
-    public void setEmoji(String newEmoji) {
-        mEmoji = newEmoji;
+
+    public void setEmoji(String emoji) {
+        mEmoji = emoji;
     }
 
     public String getEmoji() {
