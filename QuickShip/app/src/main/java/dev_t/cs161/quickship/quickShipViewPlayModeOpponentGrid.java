@@ -553,4 +553,8 @@ public class quickShipViewPlayModeOpponentGrid extends View {
         emojiPaint.setTextSize(desiredTextSize - 2);
         canvas.drawText(emojiString, x+1, y - (1.4f*(emojiPaint.ascent()+emojiPaint.descent())), emojiPaint);
     }
+
+    public float getCellWidth() {
+        return boardGridCellWidth;
+    }
 }

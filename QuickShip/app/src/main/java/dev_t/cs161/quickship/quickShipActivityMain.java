@@ -130,6 +130,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
     private EmojiconsPopup emojiPopup;
     private FPSTextureView mFPSTextureView;
     private Bitmap emojiBitmap;
+    private debugQuickShipViewPlayModeOpponentGrid testGrid;
 
     private static final UUID MY_UUID_INSECURE = UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
 
@@ -346,7 +347,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
                                           // mainScreenViewFlipper.setDisplayedChild(1);
                                       }
                                   });
-            alertDialog.show();
+            //alertDialog.show();
         } else if (!btAdapter.isEnabled()) {
             startGame.setEnabled(false);
             mSplashScreenPlayerName.setVisibility(View.INVISIBLE);//em
@@ -1206,11 +1207,21 @@ public class quickShipActivityMain extends Activity implements Runnable {
 
     public void debugView(View v) {
         setContentView(R.layout.debug_animation_screen);
-        LinearLayout debug_screen = (LinearLayout) findViewById(R.id.debug_animation_root2);
-        debugQuickShipViewPlayModeOpponentGrid testGrid = new debugQuickShipViewPlayModeOpponentGrid(this, mGameModel);
+        FrameLayout debug_screen = (FrameLayout) findViewById(R.id.debug_animation_root);
+        testGrid = new debugQuickShipViewPlayModeOpponentGrid(this, mGameModel);
         debug_screen.addView(testGrid);
+        FrameLayout debug_border_frame = (FrameLayout) findViewById(R.id.debug_top_frame_border);
+        debug_border_frame.addView(new quickShipViewGridBorder(this, getResources().getColor(R.color.play_mode_opponent_frame_color)));
         mFPSTextureView = (FPSTextureView) findViewById(R.id.animation_texture_view);
-        emojiBitmap = textToBitmap(opponentChosenEmoji, 50);
+    }
+
+    public void debugStartAnimationBtn(View v) {
+        Float bitmapSize = testGrid.getCellWidth();
+        startAnimation(null, bitmapSize);
+    }
+
+    public void startAnimation(Float[] slotIndex, Float bitmapSize) {
+        emojiBitmap = textToBitmap(opponentChosenEmoji, bitmapSize);
         mFPSTextureView.tickStart();
 
         Timer mTimer = new Timer();

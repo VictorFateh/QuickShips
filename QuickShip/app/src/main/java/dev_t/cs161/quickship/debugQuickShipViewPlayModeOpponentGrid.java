@@ -580,4 +580,8 @@ public class debugQuickShipViewPlayModeOpponentGrid extends View {
 
         return b;
     }
+
+    public float getCellWidth() {
+        return boardGridCellWidth;
+    }
 }

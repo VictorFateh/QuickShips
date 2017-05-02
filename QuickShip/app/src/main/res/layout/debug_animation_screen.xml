@@ -1,21 +1,169 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:app="http://schemas.android.com/apk/res-auto"
+             android:id="@+id/quickship_play_mode_opponent"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
+
+<dev_t.cs161.quickship.quickShipLayoutPlayModeOpponent
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/play_mode_opponent_top_linear"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:id="@+id/debug_animation_root2">
+        android:layout_weight="10"
+        android:orientation="horizontal">
 
-        <com.daasuu.library.FPSTextureView
-            android:id="@+id/animation_texture_view"
+        <FrameLayout
+            android:id="@+id/debug_animation_root"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:FPSAnimator_fps="24"
-            />
+            android:background="@color/play_mode_oppponent_top">
+        </FrameLayout>
     </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="16">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/play_mode_oppponent_bottom"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <Button
+                        android:id="@+id/play_mode_fire_btn"
+                        android:background="@drawable/firebutton_01"
+                        android:layout_width="120dp"
+                        android:layout_height="120dp"
+                        android:onClick="fireOpponentBtn"
+                        android:focusable="true"/>
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:onClick="debugStartAnimationBtn"
+                        android:focusable="true"
+                        android:text="Start Animation"></Button>
+
+                    <TextView
+                        android:id="@+id/play_mode_status"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        android:layout_gravity="center"
+                        android:textColor="@color/play_mode_status"></TextView>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+
+                    <LinearLayout
+                        xmlns:android="http://schemas.android.com/apk/res/android"
+                        android:id="@+id/chat_message_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <ScrollView
+                                android:id="@+id/play_mode_scroller"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:fillViewport="true">
+                                <TextView
+                                    android:id="@+id/edit_text_chat_log_in_game"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:background="@color/choose_mode_chat_box"
+                                    android:padding="5dp"
+                                    android:text="Welcome to the battlefield!"
+                                    android:textColor="@color/choose_mode_choose_ship_title"/>
+                            </ScrollView>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:paddingBottom="8dp"
+                            android:paddingTop="8dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:orientation="vertical"
+                                android:paddingRight="5dp">
+
+                                <EditText
+                                    android:id="@+id/edit_text_send_message_in_game"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:background="@color/choose_mode_chat_message"
+                                    android:hint="@string/choose_mode_chat_message_input_box_hint"
+                                    android:includeFontPadding="false"
+                                    android:inputType="textPersonName"
+                                    android:lineSpacingExtra="0dp"
+                                    android:paddingBottom="0dp"
+                                    android:paddingLeft="10dp"
+                                    android:paddingTop="0dp"
+                                    android:textColor="@color/choose_mode_chat_message_text"
+                                    android:textColorHint="@color/choose_mode_chat_message_hint"
+                                    android:textSize="20sp"/>
+                            </LinearLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </FrameLayout>
+
+</dev_t.cs161.quickship.quickShipLayoutPlayModeOpponent>
+
+<FrameLayout
+    android:id="@+id/debug_top_frame_border"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+</FrameLayout>
+
+<com.daasuu.library.FPSTextureView
+    android:id="@+id/animation_texture_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:FPSAnimator_fps="24"
+    />
 </FrameLayout>

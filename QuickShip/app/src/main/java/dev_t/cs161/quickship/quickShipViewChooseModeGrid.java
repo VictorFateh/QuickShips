@@ -893,4 +893,8 @@ public class quickShipViewChooseModeGrid extends View {
             return true;
         }
     }
+
+    public float getCellWidth() {
+        return boardGridCellWidth;
+    }
 }
