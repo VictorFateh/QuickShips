@@ -50,8 +50,8 @@
                     <Button
                         android:id="@+id/play_mode_fire_btn"
                         android:background="@drawable/firebutton_01"
-                        android:layout_width="120dp"
-                        android:layout_height="120dp"
+                        android:layout_width="200dp"
+                        android:layout_height="200dp"
                         android:onClick="fireOpponentBtn"
                         android:focusable="true"/>
 
