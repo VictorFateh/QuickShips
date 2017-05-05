@@ -625,27 +625,33 @@ public class quickShipActivityMain extends Activity implements Runnable {
                 switch (shipTag) {
                     case "image_view_ship_size_2":
                         chooseModeGrid.setShipSelected(quickShipModelBoardSlot.TWO);
+                        mShipSize2.setImageBitmap(scaleDownDrawableImage(R.drawable.ship_size2_horizontal, mShipSize2.getHeight(), mShipSize2.getWidth()));
                         break;
 
                     case "image_view_ship_size_3_a":
                         chooseModeGrid.setShipSelected(quickShipModelBoardSlot.THREE_A);
+                        mShipSize3a.setImageBitmap(scaleDownDrawableImage(R.drawable.ship_size3_a_horizontal, mShipSize3a.getHeight(), mShipSize3a.getWidth()));
                         break;
 
                     case "image_view_ship_size_3_b":
                         chooseModeGrid.setShipSelected(quickShipModelBoardSlot.THREE_B);
+                        mShipSize3b.setImageBitmap(scaleDownDrawableImage(R.drawable.ship_size3_b_horizontal, mShipSize3b.getHeight(), mShipSize3b.getWidth()));
                         break;
 
                     case "image_view_ship_size_4":
                         chooseModeGrid.setShipSelected(quickShipModelBoardSlot.FOUR);
+                        mShipSize4.setImageBitmap(scaleDownDrawableImage(R.drawable.ship_size4_horizontal, mShipSize4.getHeight(), mShipSize4.getWidth()));
                         break;
 
                     case "image_view_ship_size_5":
                         chooseModeGrid.setShipSelected(quickShipModelBoardSlot.FIVE);
+                        mShipSize5.setImageBitmap(scaleDownDrawableImage(R.drawable.ship_size5_horizontal, mShipSize5.getHeight(), mShipSize5.getWidth()));
                         break;
                 }
             } else {
                 mSelectedShip = null;
                 chooseModeGrid.deSelectShip();
+                changePlacedShipsBitmaps();
             }
         }
     }
@@ -658,6 +664,36 @@ public class quickShipActivityMain extends Activity implements Runnable {
         mShipSize5.setBackgroundColor(0);
         mSelectedShip = null;
         chooseModeGrid.deSelectShip();
+        changePlacedShipsBitmaps();
+    }
+
+    public void changePlacedShipsBitmaps() {
+        for(int i = 0; i < 100; i++){
+            if(mGameModel.getPlayerGameBoard().getShipSlotAtIndex(i).isOccupied() && mGameModel.getPlayerGameBoard().getShipSlotAtIndex(i).isAnchor()) {
+                quickShipModelBoardSlot currentShip = mGameModel.getPlayerGameBoard().getShipSlotAtIndex(i);
+                switch (currentShip.getShipType()) {
+                    case quickShipModelBoardSlot.TWO:
+                        mShipSize2.setImageBitmap(scaleDownDrawableImage(R.drawable.ship_size2_01_used, mShipSize2.getHeight(), mShipSize2.getWidth()));
+                        break;
+
+                    case quickShipModelBoardSlot.THREE_A:
+                        mShipSize3a.setImageBitmap(scaleDownDrawableImage(R.drawable.ship_size3_01_used, mShipSize3a.getHeight(), mShipSize3a.getWidth()));
+                        break;
+
+                    case quickShipModelBoardSlot.THREE_B:
+                        mShipSize3b.setImageBitmap(scaleDownDrawableImage(R.drawable.ship_size3_02_used, mShipSize3b.getHeight(), mShipSize3b.getWidth()));
+                        break;
+
+                    case quickShipModelBoardSlot.FOUR:
+                        mShipSize4.setImageBitmap(scaleDownDrawableImage(R.drawable.ship_size4_01_used, mShipSize4.getHeight(), mShipSize4.getWidth()));
+                        break;
+
+                    case quickShipModelBoardSlot.FIVE:
+                        mShipSize5.setImageBitmap(scaleDownDrawableImage(R.drawable.ship_size5_01_used, mShipSize5.getHeight(), mShipSize5.getWidth()));
+                        break;
+                }
+            }
+        }
     }
 
     public void play_again_btn(View button) {
@@ -1236,7 +1272,8 @@ public class quickShipActivityMain extends Activity implements Runnable {
     }
 
     public void emojiPopUpInitializer() {
-        FrameLayout root = (FrameLayout) findViewById(R.id.root_frame);
+        //FrameLayout root = (FrameLayout) findViewById(R.id.root_frame);
+        LinearLayout root = (LinearLayout) findViewById(R.id.play_mode_opponent_top_linear);
         emojiPopup = new EmojiconsPopup(root, this);
 
         Double widthWithMargin = screenWidth * 0.9;

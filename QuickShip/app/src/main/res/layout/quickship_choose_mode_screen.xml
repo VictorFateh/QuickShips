@@ -284,6 +284,5 @@
     <FrameLayout
         android:id="@+id/choose_mode_top_frame_border"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </FrameLayout>
+        android:layout_height="match_parent"></FrameLayout>
 </FrameLayout>

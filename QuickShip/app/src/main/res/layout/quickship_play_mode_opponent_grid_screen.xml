@@ -47,13 +47,24 @@
                         android:gravity="center"
                         android:orientation="vertical">
 
-                    <Button
-                        android:id="@+id/play_mode_fire_btn"
-                        android:background="@drawable/firebutton_01"
-                        android:layout_width="120dp"
-                        android:layout_height="120dp"
-                        android:onClick="fireOpponentBtn"
-                        android:focusable="true"/>
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginBottom="15dp">
+
+                        <Button
+                            android:id="@+id/play_mode_fire_btn"
+                            android:background="@drawable/firebutton_01"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:onClick="fireOpponentBtn"
+                            android:focusable="true"/>
+
+                    </LinearLayout>
 
                         <TextView
                             android:id="@+id/play_mode_status"
