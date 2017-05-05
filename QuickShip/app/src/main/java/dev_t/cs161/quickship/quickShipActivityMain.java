@@ -629,33 +629,37 @@ public class quickShipActivityMain extends Activity implements Runnable {
                 switch (shipTag) {
                     case "image_view_ship_size_2":
                         chooseModeGrid.setShipSelected(quickShipModelBoardSlot.TWO);
+                        changePlacedShipsBitmaps();
                         mShipSize2.setImageBitmap(scaleDownDrawableImage(R.drawable.ship_size2_horizontal, mShipSize2.getHeight(), mShipSize2.getWidth()));
                         break;
 
                     case "image_view_ship_size_3_a":
                         chooseModeGrid.setShipSelected(quickShipModelBoardSlot.THREE_A);
+                        changePlacedShipsBitmaps();
                         mShipSize3a.setImageBitmap(scaleDownDrawableImage(R.drawable.ship_size3_a_horizontal, mShipSize3a.getHeight(), mShipSize3a.getWidth()));
                         break;
 
                     case "image_view_ship_size_3_b":
                         chooseModeGrid.setShipSelected(quickShipModelBoardSlot.THREE_B);
+                        changePlacedShipsBitmaps();
                         mShipSize3b.setImageBitmap(scaleDownDrawableImage(R.drawable.ship_size3_b_horizontal, mShipSize3b.getHeight(), mShipSize3b.getWidth()));
                         break;
 
                     case "image_view_ship_size_4":
                         chooseModeGrid.setShipSelected(quickShipModelBoardSlot.FOUR);
+                        changePlacedShipsBitmaps();
                         mShipSize4.setImageBitmap(scaleDownDrawableImage(R.drawable.ship_size4_horizontal, mShipSize4.getHeight(), mShipSize4.getWidth()));
                         break;
 
                     case "image_view_ship_size_5":
                         chooseModeGrid.setShipSelected(quickShipModelBoardSlot.FIVE);
+                        changePlacedShipsBitmaps();
                         mShipSize5.setImageBitmap(scaleDownDrawableImage(R.drawable.ship_size5_horizontal, mShipSize5.getHeight(), mShipSize5.getWidth()));
                         break;
                 }
             } else {
                 mSelectedShip = null;
                 chooseModeGrid.deSelectShip();
-                changePlacedShipsBitmaps();
             }
         }
     }
