@@ -62,6 +62,7 @@ import com.daasuu.library.easing.Ease;
 import com.daasuu.library.util.Util;
 
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
@@ -1261,7 +1262,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
 
     public void debugStartAnimationBtn(View v) {
         Float bitmapSize = testGrid.getCellWidth();
-        emojiBitmap = textToBitmap(opponentChosenEmoji, bitmapSize);
+        emojiBitmap = textToBitmap("\uD83D\uDCA9", bitmapSize);
         startAnimation(testGrid.getIndexXYCoord(testGrid.getCurrentIndex()));
     }
 
@@ -1272,8 +1273,10 @@ public class quickShipActivityMain extends Activity implements Runnable {
         }
     }
 
-    private void createHitTextBitmap(float[] slotIndex) {
+    private void createHitTextBitmap(final float[] slotIndex) {
         final DisplayObject bitmapDisplay = new DisplayObject();
+
+        float initialRotate = (float) randInt(0, 360);
 
         bitmapDisplay.with(new BitmapDrawer(emojiBitmap).scaleRegistration(emojiBitmap.getWidth() / 2, emojiBitmap.getHeight() / 2))
                 .tween()
@@ -1286,6 +1289,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
                     @Override
                     public void call() {
                         mFPSTextureView.removeChild(bitmapDisplay);
+                        spawnRandomEmojis(emojiBitmap, slotIndex);
                     }
                 })
                 .end();
@@ -1295,6 +1299,7 @@ public class quickShipActivityMain extends Activity implements Runnable {
 
     public void startEmojiSpawning(final float[] slotIndex) {
         Timer mTimer = new Timer();
+
         mTimer.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -1303,6 +1308,48 @@ public class quickShipActivityMain extends Activity implements Runnable {
                 }
             }
         }, 0, 300);
+    }
+
+    public void spawnRandomEmojis(final Bitmap mBitmap, final float[] slotIndex) {
+        Timer mTimer = new Timer();
+        mTimer.scheduleAtFixedRate(new TimerTask() {
+            long t0 = System.currentTimeMillis();
+            @Override
+            public void run() {
+                if (System.currentTimeMillis() - t0 > 10 * 1000) {
+                    cancel();
+                }
+                else {
+                    int randomAmount = randInt(1,3);
+                    for (int i = 0; i < randomAmount; i++) {
+                        animateRandomEmoji(mBitmap, slotIndex);
+                    }
+                }
+            }
+        }, 0, 300);
+    }
+
+    public void animateRandomEmoji(Bitmap mBitmap, final float[] slotIndex) {
+        final DisplayObject bitmapDisplay = new DisplayObject();
+
+        float initialRotate = (float) randInt(0, 360);
+
+        bitmapDisplay.with(new BitmapDrawer(mBitmap).scaleRegistration(mBitmap.getWidth() / 2, mBitmap.getHeight() / 2).rotateRegistration(initialRotate, mBitmap.getHeight()/2))
+                .tween()
+                .tweenLoop(false)
+                .transform(slotIndex[0], slotIndex[1], Util.convertAlphaFloatToInt(1f), 1f, 1f, initialRotate)
+                .to(500, slotIndex[0], slotIndex[1], 0, 5f, 5f, initialRotate, Ease.SINE_IN_OUT)
+                .waitTime(400)
+                .transform(slotIndex[0], slotIndex[1], Util.convertAlphaFloatToInt(1f), 1f, 1f, initialRotate)
+                .call(new AnimCallBack() {
+                    @Override
+                    public void call() {
+                        mFPSTextureView.removeChild(bitmapDisplay);
+                    }
+                })
+                .end();
+
+        mFPSTextureView.addChild(bitmapDisplay);
     }
 
     private void createParabolicMotionBitmap(Bitmap mBitmap) {
@@ -1387,5 +1434,18 @@ public class quickShipActivityMain extends Activity implements Runnable {
 
     public void setMissText(Bitmap b) {
         mMissText = b;
+    }
+
+    // Pick a random number
+    public static int randInt(int min, int max) {
+
+        // Usually this can be a field rather than a method variable
+        Random rand = new Random();
+
+        // nextInt is normally exclusive of the top value,
+        // so add 1 to make it inclusive
+        int randomNum = rand.nextInt((max - min) + 1) + min;
+
+        return randomNum;
     }
 }
