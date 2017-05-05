@@ -1217,11 +1217,19 @@ public class quickShipActivityMain extends Activity implements Runnable {
 
     public void debugStartAnimationBtn(View v) {
         Float bitmapSize = testGrid.getCellWidth();
-        startAnimation(null, bitmapSize);
+        startAnimation(testGrid.getIndexXYCoord(testGrid.getCurrentIndex()), bitmapSize);
     }
 
-    public void startAnimation(Float[] slotIndex, Float bitmapSize) {
+    public void startAnimation(float[] slotIndex, Float bitmapSize) {
         emojiBitmap = textToBitmap(opponentChosenEmoji, bitmapSize);
+        if (slotIndex != null) {
+            mFPSTextureView.setX(slotIndex[0]);
+            mFPSTextureView.setY(slotIndex[1]);
+//            mFPSTextureView.getLayoutParams().width = (Math.round(testGrid.getCellWidth()));
+//            mFPSTextureView.getLayoutParams().height = (Math.round(testGrid.getCellWidth()));
+            Log.d("DEBUG", "Slot 0: "+slotIndex[0]);
+            Log.d("DEBUG", "Slot 1: "+slotIndex[1]);
+        }
         mFPSTextureView.tickStart();
 
         Timer mTimer = new Timer();

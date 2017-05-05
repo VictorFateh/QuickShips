@@ -230,17 +230,24 @@ public class quickShipViewChooseModeGrid extends View {
                     if (endX >= boardGridFrameStartX && endX <= boardGridFrameEndX && endY >= boardGridFrameStartY && endY <= boardGridFrameEndY && abs(endX - initialX) < 5 && abs(endY - initialY) < 5) {
                         selectedIndex = calculateCellTouched(endX, endY);
                         if (mShipSelected && selectedIndex >= 0 && selectedIndex < 100) {
-                            if (!mGameModel.getPlayerGameBoard().isCollisionExist(selectedIndex, mShipSelectedShipType, mCurrentOrientation)) {
-                                currentIndex = calculateBestPlacement(selectedIndex);
-                                calculateSelectedRect(currentIndex);
-                                setTempShipVisibility();
-                                mMainActivity.setChooseModeRotateBtnStatus(true);
-                                mMainActivity.setChooseModePlaceBtnStatus(true);
+                            if (!mGameModel.getPlayerGameBoard().isCollisionExist(selectedIndex, mShipSelectedShipType, mCurrentOrientation) && calculateBestPlacement(selectedIndex) != -1) {
+                                int tempIndex = calculateBestPlacement(selectedIndex);
+                                if (tempIndex != -1) {
+                                    currentIndex = tempIndex;
+                                    calculateSelectedRect(currentIndex);
+                                    setTempShipVisibility();
+                                    mMainActivity.setChooseModeRotateBtnStatus(true);
+                                    mMainActivity.setChooseModePlaceBtnStatus(true);
+                                }
+                                selectedIndex = -1;
                             }
                         } else if (!mShipSelected) {
                             if (mGameModel.getPlayerGameBoard().isOccupied(selectedIndex)) {
                                 setShipSelected(mGameModel.getPlayerGameBoard().getShipType(selectedIndex));
                             }
+                        }
+                        else {
+                            selectedIndex = -1;
                         }
                     }
                 }
@@ -753,16 +760,11 @@ public class quickShipViewChooseModeGrid extends View {
             }
         }
         int returnIndex = ((yIndex * 10) + xIndex);
-        if (held2) {
-            if (!mGameModel.getPlayerGameBoard().isCollisionExist(returnIndex, mShipSelectedShipType, mCurrentOrientation)) {
-                return returnIndex;
-            }
-            else {
-                return -1;
-            }
+        if (!mGameModel.getPlayerGameBoard().isCollisionExist(returnIndex, mShipSelectedShipType, mCurrentOrientation)) {
+            return returnIndex;
         }
         else {
-            return returnIndex;
+            return -1;
         }
     }
 

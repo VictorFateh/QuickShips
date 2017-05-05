@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 
 import static java.lang.Math.abs;
 
+// Used to detect swiping motion at the play mode screen while at the options screen
 public class quickShipLayoutPlayModeOptions extends LinearLayout {
 
     private Point screen = new Point();
