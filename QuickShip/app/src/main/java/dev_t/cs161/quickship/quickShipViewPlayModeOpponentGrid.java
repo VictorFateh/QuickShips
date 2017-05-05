@@ -11,6 +11,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
@@ -63,12 +64,12 @@ public class quickShipViewPlayModeOpponentGrid extends View {
     private Float mTitleY;
     private quickShipModel mGameModel;
     private quickShipActivityMain mMainActivity;
-    private Bitmap hitBitmap;
     private Rect hitSquare;
     private int fireIndex;
     private float[] hitXY;
     private float[] missXY;
     private Paint emojiPaint;
+    private Paint mPlacedShipPaint;
 
 
     public quickShipViewPlayModeOpponentGrid(quickShipActivityMain context, quickShipModel gameModel) {
@@ -96,8 +97,7 @@ public class quickShipViewPlayModeOpponentGrid extends View {
 
         boardGridFramePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         boardGridFramePaint.setStyle(Paint.Style.FILL);
-        boardGridFramePaint.setColor(mMainActivity.getResources().getColor(R.color.play_mode_opponent_grid));
-
+        boardGridFramePaint.setColor(ContextCompat.getColor(mMainActivity, R.color.play_mode_opponent_grid));
         boatHitPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         boatHitPaint.setStyle(Paint.Style.FILL);
         boatHitPaint.setColor(mMainActivity.getResources().getColor(R.color.play_mode_opponent_ship_hit));
@@ -124,6 +124,11 @@ public class quickShipViewPlayModeOpponentGrid extends View {
         emojiPaint.setStyle(Paint.Style.FILL);
         emojiPaint.setColor(Color.BLACK);
         emojiPaint.setTextAlign(Paint.Align.LEFT);
+
+        mPlacedShipPaint = new Paint();
+        mPlacedShipPaint.setAntiAlias(true);
+        mPlacedShipPaint.setFilterBitmap(true);
+        mPlacedShipPaint.setDither(true);
     }
 
     public void setGameModel(quickShipModel playerBoardData) {
@@ -152,7 +157,11 @@ public class quickShipViewPlayModeOpponentGrid extends View {
         boardGridCellWidth = boardGridFrameWidth / 10;
         boardGridCellHeight = boardGridFrameHeight / 10;
 
-        hitBitmap = mMainActivity.scaleDownDrawableImage(R.drawable.fire_01, Math.round(boardGridCellWidth), Math.round(boardGridCellHeight));
+        String hitString = mMainActivity.getResources().getString(R.string.hit_text);
+        String missString = mMainActivity.getResources().getString(R.string.miss_text);
+
+        mMainActivity.setHitText(mMainActivity.textToBitmap(hitString, boardGridCellWidth));
+        mMainActivity.setMissText(mMainActivity.textToBitmap(missString, boardGridCellWidth));
 
         hitSquare = new Rect();
 
@@ -213,11 +222,7 @@ public class quickShipViewPlayModeOpponentGrid extends View {
                 quickShipModelBoardSlot anchorShip = mGameModel.getOpponentGameBoard().getShipSlotAtIndex(i);
                 Bitmap tempBitmap = getGenerateBitmap(anchorShip.getShipType(), anchorShip.getOrientation());
                 float[] tempXYcoord = getIndexXYCanvasBox(anchorShip.getAnchorIndex(), anchorShip.getShipType(), anchorShip.getOrientation());
-                Paint paintTempShip = new Paint();
-                paintTempShip.setAntiAlias(true);
-                paintTempShip.setFilterBitmap(true);
-                paintTempShip.setDither(true);
-                canvas.drawBitmap(tempBitmap, null, new RectF(tempXYcoord[0], tempXYcoord[1], tempXYcoord[2], tempXYcoord[3]), paintTempShip);
+                canvas.drawBitmap(tempBitmap, null, new RectF(tempXYcoord[0], tempXYcoord[1], tempXYcoord[2], tempXYcoord[3]), mPlacedShipPaint);
             }
         }
 
@@ -243,11 +248,12 @@ public class quickShipViewPlayModeOpponentGrid extends View {
         int xIndex = index % 10;
         index = index / 10;
         int yIndex = index % 10;
-        float[] returnArray = new float[4];
+        float[] returnArray = new float[5];
         returnArray[0] = boardGridFrameDividerX[xIndex];
         returnArray[1] = boardGridFrameDividerY[yIndex];
         returnArray[2] = boardGridFrameDividerX[xIndex + 1];
         returnArray[3] = boardGridFrameDividerY[yIndex + 1];
+        returnArray[4] = boardGridCellWidth;
         return returnArray;
     }
 

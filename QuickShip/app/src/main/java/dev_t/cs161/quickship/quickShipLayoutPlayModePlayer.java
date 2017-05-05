@@ -14,6 +14,7 @@ import android.widget.ViewFlipper;
 
 import static java.lang.Math.abs;
 
+// Used to detect swiping motion at the play mode screen while at the player grid screen
 public class quickShipLayoutPlayModePlayer extends LinearLayout {
 
     private Point screen = new Point();

@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -68,6 +69,7 @@ public class quickShipViewChooseModeGrid extends View {
     private boolean mShipSelected;
     private int mShipSelectedShipType;
     private Bitmap[] mShipBitmaps;
+    private Paint mPlacedShipPaint;
 
     public quickShipViewChooseModeGrid(quickShipActivityMain context, quickShipModel playerBoardData, FrameLayout chooseModeFrameLayout, ImageView tempShipSpot) {
         super(context);
@@ -111,6 +113,11 @@ public class quickShipViewChooseModeGrid extends View {
         boardGridFrameDividerX = new Float[11];
         boardGridFrameDividerY = new Float[11];
         mCurrentOrientation = quickShipModelBoardSlot.HORIZONTAL;
+
+        mPlacedShipPaint = new Paint();
+        mPlacedShipPaint.setAntiAlias(true);
+        mPlacedShipPaint.setFilterBitmap(true);
+        mPlacedShipPaint.setDither(true);
     }
 
     public void setGameModel(quickShipModel playerBoardData) {
@@ -155,7 +162,7 @@ public class quickShipViewChooseModeGrid extends View {
         boardGridSelectedStartY = boardGridFrameDividerY[0];
 
         mTempShipSpotLayoutParam = new FrameLayout.LayoutParams(0, 0);
-        mTempShipSpot.setBackgroundColor(mMainActivity.getResources().getColor(R.color.choose_mode_ship_selected));
+        mTempShipSpot.setBackgroundColor(ContextCompat.getColor(mMainActivity, R.color.choose_mode_ship_selected));
         mShipSelected = false;
     }
 
@@ -181,11 +188,7 @@ public class quickShipViewChooseModeGrid extends View {
                 quickShipModelBoardSlot anchorShip = mGameModel.getPlayerGameBoard().getShipSlotAtIndex(i);
                 Bitmap tempBitmap = getGenerateBitmap(anchorShip.getShipType(), anchorShip.getOrientation());
                 float[] tempXYcoord = getIndexXYCanvasBox(anchorShip.getAnchorIndex(), anchorShip.getShipType(), anchorShip.getOrientation());
-                Paint paint = new Paint();
-                paint.setAntiAlias(true);
-                paint.setFilterBitmap(true);
-                paint.setDither(true);
-                canvas.drawBitmap(tempBitmap, null, new RectF(tempXYcoord[0], tempXYcoord[1], tempXYcoord[2], tempXYcoord[3]), paint);
+                canvas.drawBitmap(tempBitmap, null, new RectF(tempXYcoord[0], tempXYcoord[1], tempXYcoord[2], tempXYcoord[3]), mPlacedShipPaint);
             }
         }
     }
@@ -230,17 +233,24 @@ public class quickShipViewChooseModeGrid extends View {
                     if (endX >= boardGridFrameStartX && endX <= boardGridFrameEndX && endY >= boardGridFrameStartY && endY <= boardGridFrameEndY && abs(endX - initialX) < 5 && abs(endY - initialY) < 5) {
                         selectedIndex = calculateCellTouched(endX, endY);
                         if (mShipSelected && selectedIndex >= 0 && selectedIndex < 100) {
-                            if (!mGameModel.getPlayerGameBoard().isCollisionExist(selectedIndex, mShipSelectedShipType, mCurrentOrientation)) {
-                                currentIndex = calculateBestPlacement(selectedIndex);
-                                calculateSelectedRect(currentIndex);
-                                setTempShipVisibility();
-                                mMainActivity.setChooseModeRotateBtnStatus(true);
-                                mMainActivity.setChooseModePlaceBtnStatus(true);
+                            if (!mGameModel.getPlayerGameBoard().isCollisionExist(selectedIndex, mShipSelectedShipType, mCurrentOrientation) && calculateBestPlacement(selectedIndex) != -1) {
+                                int tempIndex = calculateBestPlacement(selectedIndex);
+                                if (tempIndex != -1) {
+                                    currentIndex = tempIndex;
+                                    calculateSelectedRect(currentIndex);
+                                    setTempShipVisibility();
+                                    mMainActivity.setChooseModeRotateBtnStatus(true);
+                                    mMainActivity.setChooseModePlaceBtnStatus(true);
+                                }
+                                selectedIndex = -1;
                             }
                         } else if (!mShipSelected) {
                             if (mGameModel.getPlayerGameBoard().isOccupied(selectedIndex)) {
                                 setShipSelected(mGameModel.getPlayerGameBoard().getShipType(selectedIndex));
                             }
+                        }
+                        else {
+                            selectedIndex = -1;
                         }
                     }
                 }
@@ -423,8 +433,6 @@ public class quickShipViewChooseModeGrid extends View {
             currentIndex = newIndex;
             calculateSelectedRect(currentIndex);
             setTempShipVisibility();
-        } else {
-
         }
     }
 
@@ -753,16 +761,11 @@ public class quickShipViewChooseModeGrid extends View {
             }
         }
         int returnIndex = ((yIndex * 10) + xIndex);
-        if (held2) {
-            if (!mGameModel.getPlayerGameBoard().isCollisionExist(returnIndex, mShipSelectedShipType, mCurrentOrientation)) {
-                return returnIndex;
-            }
-            else {
-                return -1;
-            }
+        if (!mGameModel.getPlayerGameBoard().isCollisionExist(returnIndex, mShipSelectedShipType, mCurrentOrientation)) {
+            return returnIndex;
         }
         else {
-            return returnIndex;
+            return -1;
         }
     }
 

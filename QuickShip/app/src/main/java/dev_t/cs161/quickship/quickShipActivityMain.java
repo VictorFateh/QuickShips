@@ -58,6 +58,8 @@ import com.daasuu.library.DisplayObject;
 import com.daasuu.library.FPSTextureView;
 import com.daasuu.library.callback.AnimCallBack;
 import com.daasuu.library.drawer.BitmapDrawer;
+import com.daasuu.library.easing.Ease;
+import com.daasuu.library.util.Util;
 
 import java.util.ArrayList;
 import java.util.Timer;
@@ -129,8 +131,10 @@ public class quickShipActivityMain extends Activity implements Runnable {
     private int turnCount;
     private EmojiconsPopup emojiPopup;
     private FPSTextureView mFPSTextureView;
-    private Bitmap emojiBitmap;
     private debugQuickShipViewPlayModeOpponentGrid testGrid;
+    private Bitmap emojiBitmap;
+    private Bitmap mHitText;
+    private Bitmap mMissText;
 
     private static final UUID MY_UUID_INSECURE = UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
 
@@ -1253,22 +1257,68 @@ public class quickShipActivityMain extends Activity implements Runnable {
 
     public void debugStartAnimationBtn(View v) {
         Float bitmapSize = testGrid.getCellWidth();
-        startAnimation(null, bitmapSize);
+        emojiBitmap = textToBitmap(opponentChosenEmoji, bitmapSize);
+        startAnimation(testGrid.getIndexXYCoord(testGrid.getCurrentIndex()));
     }
 
-    public void startAnimation(Float[] slotIndex, Float bitmapSize) {
-        emojiBitmap = textToBitmap(opponentChosenEmoji, bitmapSize);
-        mFPSTextureView.tickStart();
+    public void startAnimation(final float[] slotIndex) {
+        if (slotIndex != null) {
+            mFPSTextureView.tickStart();
+            createHitTextBitmap(slotIndex);
+        }
+    }
 
+    private void createHitTextBitmap(float[] slotIndex) {
+        final DisplayObject bitmapDisplay = new DisplayObject();
+
+        bitmapDisplay.with(new BitmapDrawer(emojiBitmap).scaleRegistration(emojiBitmap.getWidth() / 2, emojiBitmap.getHeight() / 2))
+                .tween()
+                .tweenLoop(false)
+                .transform(slotIndex[0], slotIndex[1])
+                .to(500, slotIndex[0], slotIndex[1], 0, 6f, 6f, 0, Ease.SINE_IN_OUT)
+                .waitTime(400)
+                .transform(slotIndex[0], slotIndex[1], Util.convertAlphaFloatToInt(1f), 1f, 1f, 0)
+                .call(new AnimCallBack() {
+                    @Override
+                    public void call() {
+                        mFPSTextureView.removeChild(bitmapDisplay);
+                    }
+                })
+                .end();
+
+        mFPSTextureView.addChild(bitmapDisplay);
+    }
+
+    public void startEmojiSpawning(final float[] slotIndex) {
         Timer mTimer = new Timer();
         mTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                for (int i = 0; i < 5; i++) {
+                for (int i = 0; i < 2; i++) {
                     createParabolicMotionBitmap(emojiBitmap);
                 }
             }
-        }, 0, 100);
+        }, 0, 300);
+    }
+
+    private void createParabolicMotionBitmap(Bitmap mBitmap) {
+        final DisplayObject bitmapDisplay = new DisplayObject();
+
+        bitmapDisplay.with(new BitmapDrawer(mBitmap))
+                .parabolic()
+                .transform(0, mFPSTextureView.getHeight())
+                .reboundBottom(false)
+                .accelerationX((float) (15 + Math.random() * 7))
+                .initialVelocityY((float) (-65 + Math.random() * 15))
+                .bottomHitCallback(new AnimCallBack() {
+                    @Override
+                    public void call() {
+                        mFPSTextureView.removeChild(bitmapDisplay);
+                    }
+                })
+                .end();
+
+        mFPSTextureView.addChild(bitmapDisplay);
     }
 
     public void emojiPopUpInitializer() {
@@ -1300,26 +1350,6 @@ public class quickShipActivityMain extends Activity implements Runnable {
         });
     }
 
-    private void createParabolicMotionBitmap(Bitmap mBitmap) {
-        final DisplayObject bitmapDisplay = new DisplayObject();
-
-        bitmapDisplay.with(new BitmapDrawer(mBitmap).dpSize(mActivityMain))
-                .parabolic()
-                .transform(0, mFPSTextureView.getHeight())
-                .reboundBottom(false)
-                .accelerationX((float) (15 + Math.random() * 7))
-                .initialVelocityY((float) (-65 + Math.random() * 15))
-                .bottomHitCallback(new AnimCallBack() {
-                    @Override
-                    public void call() {
-                        mFPSTextureView.removeChild(bitmapDisplay);
-                    }
-                })
-                .end();
-
-        mFPSTextureView.addChild(bitmapDisplay);
-    }
-
     public static Bitmap textToBitmap(String text, float textWidth) {
         final float testTextSize = 48f;
         TextPaint textBoundPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG | Paint.LINEAR_TEXT_FLAG);
@@ -1347,4 +1377,11 @@ public class quickShipActivityMain extends Activity implements Runnable {
         return b;
     }
 
+    public void setHitText(Bitmap b) {
+        mHitText = b;
+    }
+
+    public void setMissText(Bitmap b) {
+        mMissText = b;
+    }
 }
