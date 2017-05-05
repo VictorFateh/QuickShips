@@ -60,11 +60,11 @@ public class quickShipViewPlayModePlayerGrid extends View {
     private Float mTitleY;
     private quickShipModel mGameModel;
     private quickShipActivityMain mMainActivity;
-    private Bitmap hitBitmap;
     private Rect hitSquare;
     private float[] hitXY;
     private float[] missXY;
     private Paint emojiPaint;
+    private Paint mPlacedShipPaint;
 
 
 
@@ -118,6 +118,11 @@ public class quickShipViewPlayModePlayerGrid extends View {
         emojiPaint.setStyle(Paint.Style.FILL);
         emojiPaint.setColor(Color.BLACK);
         emojiPaint.setTextAlign(Paint.Align.LEFT);
+
+        mPlacedShipPaint = new Paint();
+        mPlacedShipPaint.setAntiAlias(true);
+        mPlacedShipPaint.setFilterBitmap(true);
+        mPlacedShipPaint.setDither(true);
     }
 
     public void setGameModel(quickShipModel playerBoardData) {
@@ -145,8 +150,6 @@ public class quickShipViewPlayModePlayerGrid extends View {
         float boardGridFrameHeight = boardGridFrameEndY - boardGridFrameStartY;
         boardGridCellWidth = boardGridFrameWidth / 10;
         boardGridCellHeight = boardGridFrameHeight / 10;
-
-        hitBitmap = mMainActivity.scaleDownDrawableImage(R.drawable.fire_01, Math.round(boardGridCellWidth), Math.round(boardGridCellHeight));
 
         hitSquare = new Rect();
 
@@ -208,11 +211,7 @@ public class quickShipViewPlayModePlayerGrid extends View {
                 quickShipModelBoardSlot anchorShip = mGameModel.getPlayerGameBoard().getShipSlotAtIndex(i);
                 Bitmap tempBitmap = getGenerateBitmap(anchorShip.getShipType(), anchorShip.getOrientation());
                 float[] tempXYcoord = getIndexXYCanvasBox(anchorShip.getAnchorIndex(), anchorShip.getShipType(), anchorShip.getOrientation());
-                Paint paint = new Paint();
-                paint.setAntiAlias(true);
-                paint.setFilterBitmap(true);
-                paint.setDither(true);
-                canvas.drawBitmap(tempBitmap, null, new RectF(tempXYcoord[0], tempXYcoord[1], tempXYcoord[2], tempXYcoord[3]), paint);
+                canvas.drawBitmap(tempBitmap, null, new RectF(tempXYcoord[0], tempXYcoord[1], tempXYcoord[2], tempXYcoord[3]), mPlacedShipPaint);
             }
         }
 
@@ -413,11 +412,12 @@ public class quickShipViewPlayModePlayerGrid extends View {
         int xIndex = index % 10;
         index = index / 10;
         int yIndex = index % 10;
-        float[] returnArray = new float[4];
+        float[] returnArray = new float[5];
         returnArray[0] = boardGridFrameDividerX[xIndex];
         returnArray[1] = boardGridFrameDividerY[yIndex];
         returnArray[2] = boardGridFrameDividerX[xIndex + 1];
         returnArray[3] = boardGridFrameDividerY[yIndex + 1];
+        returnArray[4] = boardGridCellWidth;
         return returnArray;
     }
 

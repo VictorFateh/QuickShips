@@ -22,4 +22,7 @@
     <string name="play_mode_options_btn">Options</string>
 
     <string name="game_over_play_again_btn">Play Again</string>
+
+    <string name="hit_text">Hit!</string>
+    <string name="miss_text">Miss!</string>
 </resources>
